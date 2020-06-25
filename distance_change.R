@@ -101,10 +101,12 @@ trs1r_filt_pd<-filtrationDiag(filtration = trs1_red_filt, maxdimension = 2, libr
 
 trs1r_filt_pl<-calc_landscape(trs1r_filt_pd, maxscale = 3)
 
+#---------------------------------------------
+##セルに含まれるインデックスをトーラス全体のインデックスから消そうとした
 cell_idx<-1:length(trs1_cell)
 for (n in cell_idx) {
   
-  if(length(trs1_cell[[n]])>1  && any(trs1_cell[[n]][-1]) %in% cell_idx){
+  if(length(trs1_cell[[n]])>1  && any(trs1_cell[[n]][-1] %in% cell_idx)){
     
     cell_idx<-cell_idx[ -(which(cell_idx == trs1_cell[[n]][-1])) ]
     
@@ -114,6 +116,10 @@ for (n in cell_idx) {
   debugText(cell_idx)
   
 }
+
+#-----------------------------------------------------------------
+#セルの平均に最も近い点を残したのち、距離関数を変更
+#その後フィルトレーション計算
 
 trs1_cnct2<-cell_cnct(1, trs1_cell)
 #trs1_cnct2A<-connect2(1, cell_p = trs1_cnct2, all = 1:length(trs1_cnct2))
