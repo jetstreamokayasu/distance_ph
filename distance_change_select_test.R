@@ -1,7 +1,8 @@
 #距離行列の変化のさせ方を色々試す
 
 #---------------------------------------------------
-#変化対象点固定
+#操作対象点固定。操作量を変える。
+#0.1~1まで0.1刻みで操作量を変えている
 trs300_1_7_dc_dist4<-lapply(seq(0.1, 1, 0.1), function(th)dist_mat_change(X_dist = trs300_1_7_dist, idx = trs300_1_7_dc_idx2[[5]], thresh = th))
 
 trs300_1_7_dc_pd4<-lapply(trs300_1_7_dc_dist4, function(dist){
@@ -43,3 +44,19 @@ trs300_1_7_dc_pd5<-lapply(1:10, function(k){
 })
 
 trs300_1_7_dc_pl5<-lapply(trs300_1_7_dc_pd5, function(pd)calc_landscape(diag = pd, maxscale = 3))
+
+#-----------------------------------------------------------
+#データセット7以外でも試す。7も含めて1~10セット目を計算する
+#距離変化0.4固定、操作点の割合を変えてPDを計算
+#10~100%まで割合を変えて計算する
+
+trs_list<-1:10 %>% .[-7]
+
+#操作点数の割合50%に固定。操作量0.4に固定。操作点を変化させてPH計算
+trs300_1_1_10_rate_chng_pds<-lapply(1:10, function(k)select_rate_change_pd(X = torus300_colle_set[[1]][[k]][["noizyX"]], rates = rep(0.5, 10), thresh = 0.4))
+  
+  
+  
+  
+  
+  

@@ -120,3 +120,60 @@ dist_mat_change<-function(X_dist, idx, thresh){
   return(X_dist)
   
 }
+
+#距離操作量固定、操作点数の割合を変えてPDを計算する関数
+#ratesは操作点数の割合の集合。すべて同一の割合にすれば割合を固定し、操作対象点を変えて計算できる。
+#ratesの要素数分PDを計算
+select_rate_change_pd<-function(X, rates, thresh){
+  
+  idx_list<-lapply(rates, function(rate)sample(nrow(X), nrow(X)*0.8))
+  
+  X_dist<-dist(X) %>% as.matrix()
+  
+  X_dists<-lapply(idx_list, function(idx)dist_mat_change(X_dist = X_dist, idx = idx, thresh = thresh))
+  
+  pds<-lapply(X_dists, function(dist){
+  
+    pd<-ripsFiltration(X = dist, maxdimension = 2, maxscale = 3, dist = "arbitrary", library = "Dionysus", 
+                       printProgress = T) %>% 
+      
+      filtrationDiag(filtration = ., maxdimension = 2, library = "Dionysus", printProgress = T)
+    
+    return(pd)
+    
+  })
+  
+  return(pds)
+  
+}
+
+#変化後の距離行列からサブサンプルを抽出。PDを計算する関数
+#操作量固定
+#sub_rateはサブサンプルの割合、n_pdは計算するPDの数
+manupulated_dist_mat_subs_pd<-function(X, threth, sub_rate, n_pd){
+  
+  X_red<-cell_set2(x = X, thresh = threth) %>% 
+         connect2(i = 1, cell_p = ., all = 1:nrow(X)) %>% 
+         reduce_points(X, .)
+  
+  X_rme<-1:nrow(X) %>% .[-X_red[[2]]]
+  
+  X_ched_dist<-dist(X) %>% as.matrix() %>% 
+               dist_mat_change(X_dist = ., idx = X_rme, thresh = thresh)
+  
+  pds<-lapply(1:n_pd, function(k){
+    
+    idx<-sample(nrow(X), nrow(X)*sub_rate)
+    
+    pd<-ripsFiltration(X = X_ched_dist[idx, idx], maxdimension = 2, maxscale = 3, dist = "arbitrary", library = "Dionysus", 
+                       printProgress = T) %>% 
+      
+      filtrationDiag(filtration = ., maxdimension = 2, library = "Dionysus", printProgress = T)
+    
+    return(pd)
+    
+  })
+  
+  return(pds)
+  
+}
