@@ -79,16 +79,22 @@ dist_changed_pl_peak_count <-function(X,maxdim,maxscale,const.band=0,maximum.thr
 }
 
 #距離関数変更後のパーシステント図を返す
-calc_dist_changed_pd<-function(X, maxdim, maxscale, th_rate=0.8){
+calc_dist_changed_pd<-function(X, maxdim, maxscale, th_rate=0.8, const_th=0, idx=0){
   
   require(TDA)
+  require(tidyverse)
   
-  thesh<-quantile_threshold(th_rate, X)
-  cell<-cell_set(X, thresh)
+  if(const_th==0){thresh<-quantile_threshold(th_rate, X)}
+  
+  if(idx==0){
+    
+  cell<-cell_set2(X, thresh)
   cnct<-connect2(1, cell, all = 1:nrow(X))
   red<-reduce_points(X, cnct)
   
   idx<-1:nrow(X) %>% .[-red[[2]]]
+  
+  }
   
   X_dist<-dist(X) %>% as.matrix()
   X_dist[idx, ]<-X_dist[idx, ]-thresh
@@ -102,4 +108,15 @@ calc_dist_changed_pd<-function(X, maxdim, maxscale, th_rate=0.8){
  
   return(pd)
    
+}
+
+#距離行列において指定したインデックスの値を変化させる
+dist_mat_change<-function(X_dist, idx, thresh){
+  
+  X_dist[idx, ]<-X_dist[idx, ]-thresh
+  X_dist[-idx, idx]<-X_dist[-idx, idx]-thresh
+  X_dist[X_dist < 0]<-0
+  
+  return(X_dist)
+  
 }
