@@ -126,7 +126,7 @@ dist_mat_change<-function(X_dist, idx, thresh){
 #ratesの要素数分PDを計算
 select_rate_change_pd<-function(X, rates, thresh){
   
-  idx_list<-lapply(rates, function(rate)sample(nrow(X), nrow(X)*0.8))
+  idx_list<-lapply(rates, function(rate)sample(nrow(X), nrow(X)*rate))
   
   X_dist<-dist(X) %>% as.matrix()
   
@@ -134,6 +134,29 @@ select_rate_change_pd<-function(X, rates, thresh){
   
   pds<-lapply(X_dists, function(dist){
   
+    pd<-ripsFiltration(X = dist, maxdimension = 2, maxscale = 3, dist = "arbitrary", library = "Dionysus", 
+                       printProgress = T) %>% 
+      
+      filtrationDiag(filtration = ., maxdimension = 2, library = "Dionysus", printProgress = T)
+    
+    return(c(pd, list(idx)))
+    
+  })
+  
+  return(pds)
+  
+}
+
+#操作対象店固定、操作量を変化させてPH計算する関数
+#thesは操作量の集合
+manupilate_dist_change_pd<-function(X, idx, thes){
+  
+  X_dist<-dist(X) %>% as.matrix()
+  
+  X_dists<-lapply(thes, function(idx)dist_mat_change(X_dist = X_dist, idx = idx, thresh = thes))
+  
+  pds<-lapply(X_dists, function(dist){
+    
     pd<-ripsFiltration(X = dist, maxdimension = 2, maxscale = 3, dist = "arbitrary", library = "Dionysus", 
                        printProgress = T) %>% 
       
@@ -175,5 +198,28 @@ manupulated_dist_mat_subs_pd<-function(X, threth, sub_rate, n_pd){
   })
   
   return(pds)
+  
+}
+
+#---------------------------------------------
+#ランドマーク点を決定する関数
+#Wittness複体を参考に
+#Xはポイントクラウドデータ、n_landはランドマーク点の数
+
+landmark_points<-function(X, n_land){
+  
+  X_dist<-dist(X) %>% as.matrix()
+  
+  l_idx<-sample(nrow(X), 1)
+  
+  l_idx<-which.max(X_dist[l_idx, ]) %>% c(., l_idx)
+  
+  for (i in 1:(n_land-2)) {
+    
+    l_idx<-apply(X_dist[-l_idx, l_idx], 1, min) %>% which.max() %>% attributes() %>% .$names %>% as.integer() %>% c(., l_idx)
+
+  }
+  
+  return(l_idx)
   
 }
