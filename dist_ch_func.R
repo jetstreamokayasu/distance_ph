@@ -249,11 +249,10 @@ maxmin_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=
     cat("data set", t, "calculating\n")
     if(const.size==0){size<-X[[t]]$nsample*(4/5)}
     B <- seephacm:::bootstrapper(X[[t]]$noizyX,size,samples)
-    speak <- bootstrap.homology.mk2(B,maxdim,maxscale)
+    speak <- maxmin_dist_changed_pl_peak_count(B,maxdim,maxscale)
     m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"dhole")]])
     
     aggr1[t,1] <- m5[1]
-    
     aggr2[t,1] <- m5[2]
     
   }
@@ -276,14 +275,15 @@ maxmin_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=
 #距離行列変更後、PH計算・PLの局所最大値をカウント
 #bootstrap.homology.mk2から変形
 #witness複体のランドマーク点を使用
-naxmin_dist_changed_pl_peak_count <-function(X,maxdim,maxscale,const.band=0,maximum.thresh = F){
+#calc.landscape.peak(BootstrapHomology-mk1.R)をパッケージ化して置き換えるべし
+maxmin_dist_changed_pl_peak_count <-function(X,maxdim,maxscale,const.band=0,maximum.thresh = F){
   require(TDA)
-  # require(pracma)
+  
   if(!("bootsSamples" %in% class(X))) stop("input must be bootsSamples")
   peak <- matrix(0,maxdim,length(X))
-  # band <- ifelse(const.band > 0,const.band,hausdInterval(X, m=sample.size, B=times, alpha = (1-confidence)))
+  
   tseq <- seq(0,maxscale,length.out = 1000)
-  diags <- lapply(X,function(x)maxmin_dist_changed_pd(x,maxdim,maxscale))
+  diags <- lapply(X,function(x)maxmin_dist_changed_pd(x,maxdim,maxscale)[[1]])
   print(sapply(diags,function(diag)seephacm:::calc_diag_centroid(diag)[1]))
   band <- ifelse(const.band==0,max(sapply(diags,function(diag)seephacm:::calc_diag_centroid(diag)[1])),const.band)
   print(band)
@@ -307,6 +307,7 @@ naxmin_dist_changed_pl_peak_count <-function(X,maxdim,maxscale,const.band=0,maxi
 #距離関数変更後のパーシステント図を返す
 #witness複体のランドマーク点に関する距離行列の要素を変化させる
 #l_rate=ランドマーク点の割合、n_vics=近傍点の数
+#PDとランドマーク点のインデックスを返す
 maxmin_dist_changed_pd<-function(X, maxdim, maxscale, l_rate=0.15, n_vic=10){
   
   require(TDA)
@@ -331,15 +332,14 @@ maxmin_dist_changed_pd<-function(X, maxdim, maxscale, l_rate=0.15, n_vic=10){
   for (i in 1:length(l_idx)) {
     
     X_dist[l_idx[i], ]<-X_dist[l_idx[i], ]-vics_dmean[i]/2
-    X_dist[, l_idx[i]]<-X_dist2[, l_idx[i]]-vics_dmean[i]/2
+    X_dist[, l_idx[i]]<-X_dist[, l_idx[i]]-vics_dmean[i]/2
     
   }
   
   
-  pd<-ripsFiltration(X = X_dist, maxdimension = maxdim, maxscale = maxscale, dist = "arbitrary", library = "Dionysus", 
-                       printProgress = T) %>% 
-        filtrationDiag(filtration = ., maxdimension = maxdim, library = "Dionysus", printProgress = T)
+  pd<-ripsFiltration(X = X_dist, maxdimension = maxdim, maxscale = maxscale, dist = "arbitrary", library = "Dionysus") %>% 
+        filtrationDiag(filtration = ., maxdimension = maxdim, library = "Dionysus")
   
-  return(pd)
+  return(list(pd=pd, l_idx=l_idx))
   
 }

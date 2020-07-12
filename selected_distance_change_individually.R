@@ -90,11 +90,6 @@ trs300_1_10_vdmean_pd2<-ripsFiltration(X = trs300_1_10_vdmean_dist2, maxdimensio
 trs300_1_10_vdmean_pl2<-calc_landscape(diag = trs300_1_10_vdmean_pd2, maxscale = 3)
 
 
-sapply(trs300_1_10_lidx2, function(k){
-  
-  vics_dmean<-trs300_1_10_dist[k, ] %>% sort() %>% .[2:(nvic+1)] %>% mean()
-  names(vics_dmean)<-k
-  
-  return(vics_dmean)
-  
-})
+#ランドマーク点の距離変更後のPD
+trs300_1_10_sub_pd<-maxmin_dist_changed_pd(X = torus300_colle_set[[1]][[10]][["noizyX"]][sample(300, 300*0.8), ], maxdim = 2, maxscale = 3)
+
