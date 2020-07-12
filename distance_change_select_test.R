@@ -105,41 +105,50 @@ trs300_1_10_dist<-dist(torus300_colle_set[[1]][[10]][["noizyX"]]) %>% as.matrix(
 set.seed(121)
 l_idx1<-sample(300, 1)
 
-l_idx2<-which.max(trs300_1_10_dist[l_idx1,])
-
-l_idx3_1<-which.max(trs300_1_10_dist[l_idx1, -l_idx2]) %>% attributes() %>% .$names %>% as.integer() 
-l_idx3_2<-which.max(trs300_1_10_dist[l_idx2, -l_idx1]) %>% attributes() %>% .$names %>% as.integer()
-
-l_idx<-c(l_idx1, l_idx2)
-
-l_idx3s<-sapply(1:length(l_idx), function(k){
-  
-  which.max(trs300_1_10_dist[l_idx[k], -l_idx[-k]]) %>% attributes() %>% .$names %>% as.integer() 
-  
-})
-
-l_idx3s_dist<-sapply(1:length(l_idx), function(k){trs300_1_10_dist[l_idx[k], l_idx3s[k]]})
-
-l_idx3<-l_idx3s[which.min(l_idx3s_dist)]
-
-
-land10C<-landmark_points(X = torus300_colle_set[[1]][[10]][["noizyX"]], n_land = 100)
-land10D<-landmark_points(X = torus300_colle_set[[1]][[10]][["noizyX"]], n_land = 100)
-
-
-#ランドマーク決定関数のデバック
-land10E<-l_idx
-
-cand<-apply(trs300_1_10_dist[-land10E, land10E], 1, min)
-
-
-
-land10E<-which.max(cand) %>% attributes() %>% .$names %>% as.integer() %>% c(., land10E)
-land10E<-apply(trs300_1_10_dist[-land10E, land10E], 1, min) %>%  which.max() %>% attributes() %>% .$names %>% as.integer() %>% c(., land10E)
-
 land10F<-landmark_points(X = torus300_colle_set[[1]][[10]][["noizyX"]], n_land = 30)
 
-x_rand<-rnorm(100)
-y_rand<-rnorm(100)
+#---------------------------------------------------
+#maxminランドマーク選出により操作点を選出。距離行列を変更。PH計算
 
-xy_land<-landmark_points(X = cbind(x_rand, y_rand), n_land = 10)
+#変化量は0.4
+trs300_1_10_dist2<-dist_mat_change(trs300_1_10_dist, idx = land10F, thresh = 0.4)
+
+trs300_1_10_lmdc_pd<-ripsFiltration(X = trs300_1_10_dist2, maxdimension = 2, maxscale = 3, dist = "arbitrary", library = "Dionysus", 
+                              printProgress = T) %>% 
+  filtrationDiag(filtration = ., maxdimension = 2, library = "Dionysus", printProgress = T)
+
+trs300_1_10_lmdc_pl<-calc_landscape(diag = trs300_1_10_lmdc_pd, maxscale = 3)
+
+#変化量は0.5
+trs300_1_10_dist3<-dist_mat_change(trs300_1_10_dist, idx = land10F, thresh = 0.5)
+
+trs300_1_10_lmdc_pd2<-ripsFiltration(X = trs300_1_10_dist3, maxdimension = 2, maxscale = 3, dist = "arbitrary", library = "Dionysus", 
+                                    printProgress = T) %>% 
+  filtrationDiag(filtration = ., maxdimension = 2, library = "Dionysus", printProgress = T)
+
+trs300_1_10_lmdc_pl2<-calc_landscape(diag = trs300_1_10_lmdc_pd2, maxscale = 3)
+
+#変化量は1
+trs300_1_10_dist4<-dist_mat_change(trs300_1_10_dist, idx = land10F, thresh = 1)
+
+trs300_1_10_lmdc_pd3<-ripsFiltration(X = trs300_1_10_dist3, maxdimension = 2, maxscale = 3, dist = "arbitrary", library = "Dionysus", 
+                                     printProgress = T) %>% 
+  filtrationDiag(filtration = ., maxdimension = 2, library = "Dionysus", printProgress = T)
+
+trs300_1_10_lmdc_pl3<-calc_landscape(diag = trs300_1_10_lmdc_pd3, maxscale = 3)
+
+#サブサンプルで試す
+#変化量0.5
+
+trs300_1_10_sub<-torus300_colle_set[[1]][[10]][["noizyX"]][sample(300, 300*0.8), ]
+trs300_1_10_sub_lidx<-landmark_points(X = trs300_1_10_sub, n_land = 300*0.8*0.1)
+
+trs300_1_10_sub_dist<-dist(trs300_1_10_sub) %>% as.matrix()
+
+trs300_1_10_sub_ched_dist<-dist_mat_change(trs300_1_10_sub_dist, idx = trs300_1_10_sub_lidx, thresh = 0.5)
+
+trs300_1_10_sub_pd<-ripsFiltration(X = trs300_1_10_sub_ched_dist, maxdimension = 2, maxscale = 3, dist = "arbitrary", library = "Dionysus", 
+                                     printProgress = T) %>% 
+  filtrationDiag(filtration = ., maxdimension = 2, library = "Dionysus", printProgress = T)
+
+trs300_1_10_sub_pl<-calc_landscape(diag = trs300_1_10_sub_pd, maxscale = 3)
