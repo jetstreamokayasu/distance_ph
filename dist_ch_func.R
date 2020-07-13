@@ -337,8 +337,8 @@ maxmin_dist_changed_pd<-function(X, maxdim, maxscale, l_rate=0.15, n_vic=10){
   }
   
   
-  pd<-ripsFiltration(X = X_dist, maxdimension = maxdim, maxscale = maxscale, dist = "arbitrary", library = "Dionysus") %>% 
-        filtrationDiag(filtration = ., maxdimension = maxdim, library = "Dionysus")
+  pd<-ripsFiltration(X = X_dist, maxdimension = maxdim, maxscale = maxscale, dist = "arbitrary", library = "Dionysus", printProgress = T) %>% 
+        filtrationDiag(filtration = ., maxdimension = maxdim, library = "Dionysus", printProgress = T)
   
   return(list(pd=pd, l_idx=l_idx))
   
