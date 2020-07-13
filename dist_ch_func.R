@@ -214,10 +214,10 @@ manupulated_dist_mat_subs_pd<-function(X, threth, sub_rate, n_pd){
 #ランドマーク点を決定する関数
 #Wittness複体を参考に
 #Xはポイントクラウドデータ、n_landはランドマーク点の数
-
-landmark_points<-function(X, n_land){
+#d_mat=TならXに距離行列を入れられる
+landmark_points<-function(X, n_land, d_mat=F){
   
-  X_dist<-dist(X) %>% as.matrix()
+  if(d_mat){X_dist<-X}else{X_dist<-dist(X) %>% as.matrix()}
   
   l_idx<-sample(nrow(X), 1)
   
@@ -308,10 +308,12 @@ maxmin_dist_changed_pl_peak_count <-function(X,maxdim,maxscale,const.band=0,maxi
 #witness複体のランドマーク点に関する距離行列の要素を変化させる
 #l_rate=ランドマーク点の割合、n_vics=近傍点の数
 #PDとランドマーク点のインデックスを返す
+#TDAstats(ripser)で書き換えた
 maxmin_dist_changed_pd<-function(X, maxdim, maxscale, l_rate=0.15, n_vic=10){
   
   require(TDA)
   require(tidyverse)
+  require(TDAstats)
   
   X_dist<-dist(X) %>% as.matrix()
   
@@ -336,6 +338,7 @@ maxmin_dist_changed_pd<-function(X, maxdim, maxscale, l_rate=0.15, n_vic=10){
     
   }
   
+  X_dist[X_dist < 0]<-0 
   
   pd<-ripsFiltration(X = X_dist, maxdimension = maxdim, maxscale = maxscale, dist = "arbitrary", library = "Dionysus", printProgress = T) %>% 
         filtrationDiag(filtration = ., maxdimension = maxdim, library = "Dionysus", printProgress = T)
