@@ -15,7 +15,7 @@ trs300_coll1_aggr2<-maxmin_distance_change_method(X = torus300_colle_set[[1]], m
 trs300_coll1_ori_time<-system.time(trs300_coll1_ori_aggr<-proposedMethodOnly(X = torus300_colle_set[[1]], maxdim = 2, maxscale = 3, samples = 10, const.size = 300*0.85))
 
 #--------------------------------------
-#TDAstat(ripserをつかったパッケージ)テスト
+#TDAstat(ripserを使ったパッケージ)テスト
 #ポイントクラウドデータ
 trs300_1_10_subs_2_time2<-system.time(trs300_1_10_subs_2_pd2<-calculate_homology(mat = trs300_1_10_subs2[[2]], dim = 2))
 
@@ -34,3 +34,10 @@ trs300_1_10_vdmean_pl3B<-landscape(Diag = trs300_1_10_vdmean_pd3, dimension = 2)
 
 tseq <-seq(min(trs300_1_10_vdmean_pd3[, 2:3]), max(trs300_1_10_vdmean_pd3[, 2:3]), length = 500)
 plot(tseq, trs300_1_10_vdmean_pl3B, type = "l", col = 3)
+
+#--------------------------------------------------------
+#ランドマーク点の距離を変化させたときのベッチ数推定実験
+#torus300_colle_set
+#TDAstat(ripser)を使う
+#85%サブサンプル
+trs300_coll1_aggr3<-maxmin_distance_change_method(X = torus300_colle_set[[1]][1:10], maxdim = 2, maxscale = 3, samples = 10)

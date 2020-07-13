@@ -238,7 +238,7 @@ landmark_points<-function(X, n_land, d_mat=F){
 #proposedMethodOnlyから変形
 #witness複体のランドマーク点を使用
 
-maxmin_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=0){
+maxmin_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=0, l_rate=0.15, n_vic=10){
   aggr1 <- matrix(0,length(X),1)
   aggr2 <- matrix(0,length(X),1)
   dimnames(aggr1) <- list(paste0("data-set", 1:length(X)),"proposed")
@@ -249,7 +249,7 @@ maxmin_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=
     cat("data set", t, "calculating\n")
     if(const.size==0){size<-X[[t]]$nsample*(4/5)}
     B <- seephacm:::bootstrapper(X[[t]]$noizyX,size,samples)
-    speak <- maxmin_dist_changed_pl_peak_count(B,maxdim,maxscale)
+    speak <- maxmin_dist_changed_pl_peak_count(B, maxdim, maxscale, l_rate=0.15, n_vic=10)
     m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"dhole")]])
     
     aggr1[t,1] <- m5[1]
@@ -276,14 +276,14 @@ maxmin_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=
 #bootstrap.homology.mk2から変形
 #witness複体のランドマーク点を使用
 #calc.landscape.peak(BootstrapHomology-mk1.R)をパッケージ化して置き換えるべし
-maxmin_dist_changed_pl_peak_count <-function(X,maxdim,maxscale,const.band=0,maximum.thresh = F){
+maxmin_dist_changed_pl_peak_count <-function(X,maxdim,maxscale,const.band=0,maximum.thresh = F, l_rate=0.15, n_vic=10){
   require(TDA)
   
   if(!("bootsSamples" %in% class(X))) stop("input must be bootsSamples")
   peak <- matrix(0,maxdim,length(X))
   
   tseq <- seq(0,maxscale,length.out = 1000)
-  diags <- lapply(X,function(x)maxmin_dist_changed_pd(x,maxdim,maxscale)[[1]])
+  diags <- lapply(X,function(x)maxmin_dist_changed_pd(x, maxdim, maxscale, l_rate=0.15, n_vic=10)[[1]])
   print(sapply(diags,function(diag)seephacm:::calc_diag_centroid(diag)[1]))
   band <- ifelse(const.band==0,max(sapply(diags,function(diag)seephacm:::calc_diag_centroid(diag)[1])),const.band)
   print(band)

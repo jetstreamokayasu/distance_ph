@@ -180,3 +180,33 @@ trs300_1_10_subs_pl2<-lapply(trs300_1_10_subs_pd2, function(X)calc_landscape(X, 
 #DionysusとGUDHIの計算時間比較
 trs300_1_10_subs_2_time<-system.time(trs300_1_10_subs_2_pd<-ripsDiag(X = trs300_1_10_subs2[[2]], maxdimension = 2, maxscale = 3, library = "Dionysus"))
 trs300_1_10_subs_timeB<-system.time(trs300_1_10_subs_pd2<-lapply(trs300_1_10_subs2, function(X)ripsDiag(X = X, maxdimension = 2, maxscale = 3, printProgress = T)))
+
+
+#-----------------------------------------------------
+#TDAstats(ripser)を使って計算し直し
+#サブサンプルにおいて、素のPDと距離を変化させた場合のPDを比較
+
+#距離を変化させた場合のPD
+#85%サブサンプル、ランドマーク点の数20%、近傍点の数10
+trs300_1_10_subs_time5B<-system.time(trs300_1_10_subs_dcpd5B<-lapply(trs300_1_10_subs2, function(X)maxmin_dist_changed_pd(X = X, maxdim = 2, maxscale = 3, l_rate = 0.2, n_vic = 10)))
+
+trs300_1_10_subs2_dcpl5B<-lapply(trs300_1_10_subs_dcpd5B, function(X)calc_landscape(list(X[[1]]), 3))
+
+#距離を変化させた場合のPD
+#85%サブサンプル、ランドマーク点の数20%、近傍点の数8
+trs300_1_10_subs2_time6B<-system.time(trs300_1_10_subs2_dcpd6B<-lapply(trs300_1_10_subs2, function(X)maxmin_dist_changed_pd(X = X, maxdim = 2, maxscale = 3, l_rate = 0.2, n_vic = 8)))
+
+trs300_1_10_subs2_dcpl6B<-lapply(trs300_1_10_subs2_dcpd6B, function(X)calc_landscape(list(X[[1]]), 3))
+
+#距離を変化させた場合のPD
+#85%サブサンプル、ランドマーク点の数15%、近傍点の数10
+#最も1次ランドスケープの形がいい
+trs300_1_10_subs2_time7B<-system.time(trs300_1_10_subs2_dcpd7B<-lapply(trs300_1_10_subs2, function(X)maxmin_dist_changed_pd(X = X, maxdim = 2, maxscale = 3, l_rate = 0.15, n_vic = 10)))
+
+trs300_1_10_subs2_dcpl7B<-lapply(trs300_1_10_subs2_dcpd7B, function(X)calc_landscape(list(X[[1]]), 3))
+
+#素のPD
+#85%サブサンプル
+trs300_1_10_subs_timeC<-system.time(trs300_1_10_subs_pd2B<-lapply(trs300_1_10_subs2, function(X)calculate_homology(mat = X, dim = 2, threshold = 3)))
+
+trs300_1_10_subs2_pl2B<-lapply(trs300_1_10_subs_pd2B, function(X)calc_landscape(list(X), 3))
