@@ -289,7 +289,7 @@ maxmin_dist_changed_pl_peak_count <-function(X,maxdim,maxscale,const.band=0,maxi
   print(band)
   
   for (t in 1:length(X)) {
-    land <- lapply(1:maxdim,function(d)landscape(diags[[t]][[1]],dimension = d,KK = 1,tseq = tseq))
+    land <- lapply(1:maxdim,function(d)landscape(diags[[t]],dimension = d,KK = 1,tseq = tseq))
     if(maximum.thresh) band <- max(sapply(land,max))/4
     for(d in 1:maxdim){
       peak[d,t] <- calc.landscape.peak(X=land[[d]], thresh = (band/d), tseq=tseq)
@@ -318,7 +318,7 @@ maxmin_dist_changed_pd<-function(X, maxdim, maxscale, l_rate=0.15, n_vic=10){
   X_dist<-dist(X) %>% as.matrix()
   
   #ランドマーク点を求める。l_idx=ランドマーク点のインデックス
-  l_idx<-landmark_points(X = X, n_land = nrow(X)*l_rate)
+  l_idx<-landmark_points(X = X_dist, n_land = nrow(X)*l_rate, d_mat = T)
   
   #ランドマーク点の近傍n_vics点の距離の平均を求める
   vics_dmean<-sapply(l_idx, function(k){
@@ -340,8 +340,10 @@ maxmin_dist_changed_pd<-function(X, maxdim, maxscale, l_rate=0.15, n_vic=10){
   
   X_dist[X_dist < 0]<-0 
   
-  pd<-ripsFiltration(X = X_dist, maxdimension = maxdim, maxscale = maxscale, dist = "arbitrary", library = "Dionysus", printProgress = T) %>% 
-        filtrationDiag(filtration = ., maxdimension = maxdim, library = "Dionysus", printProgress = T)
+  pd<-TDAstats::calculate_homology(mat = X_dist, dim = maxdim, threshold = maxscale, format = "distmat")
+    
+  class(pd)<-"diagram"
+  
   
   return(list(pd=pd, l_idx=l_idx))
   

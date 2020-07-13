@@ -2,6 +2,8 @@
 #trs300_1_10_distは既にある
 
 trs300_1_10_lidx<-landmark_points(X = torus300_colle_set[[1]][[10]][["noizyX"]], n_land = 300*0.1)
+trs300_1_10_lidx2<-landmark_points(X = trs300_1_10_dist, n_land = nrow(trs300_1_10_dist)*0.15, d_mat = T)
+
 
 #ランドマーク点の近傍10点の距離の平均を求める
 nvic<-10
@@ -12,6 +14,15 @@ trs300_1_10_land_vics_dsum<-sapply(trs300_1_10_lidx, function(k){
   names(vics_dmean)<-k
   
   return(vics_dmean)
+  
+})
+
+trs300_1_10_land_vics_dmean<-sapply(trs300_1_10_lidx2, function(k){
+  
+  vic_dmean<-trs300_1_10_dist[k, ] %>% sort() %>% .[2:(nvic+1)] %>% mean()
+  names(vic_dmean)<-k
+  
+  return(vic_dmean)
   
 })
 
