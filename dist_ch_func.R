@@ -222,10 +222,11 @@ landmark_points<-function(X, n_land, d_mat=F){
   l_idx<-sample(nrow(X), 1)
   
   l_idx<-which.max(X_dist[l_idx, ]) %>% c(., l_idx)
+
   
   for (i in 1:(n_land-2)) {
-    
-    l_idx<-apply(X_dist[-l_idx, l_idx], 1, min) %>% which.max() %>% attributes() %>% .$names %>% as.integer() %>% c(., l_idx)
+
+    l_idx<-apply(X_dist[-l_idx, l_idx], 1, min) %>% which.max() %>% attributes() %$% as.integer(.) %>% c(., l_idx)
 
   }
   
@@ -238,7 +239,7 @@ landmark_points<-function(X, n_land, d_mat=F){
 #proposedMethodOnlyから変形
 #witness複体のランドマーク点を使用
 
-maxmin_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=0, l_rate=0.15, n_vic=10){
+maxmin_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=0, l_rate=0.15, n_vic=10, spar = seq(0,1,0.1)){
   aggr1 <- matrix(0,length(X),1)
   aggr2 <- matrix(0,length(X),1)
   dimnames(aggr1) <- list(paste0("data-set", 1:length(X)),"proposed")
@@ -248,8 +249,10 @@ maxmin_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=
     
     cat("data set", t, "calculating\n")
     if(const.size==0){size<-X[[t]]$nsample*(4/5)}
+    else{size<-const.size}
     B <- seephacm:::bootstrapper(X[[t]]$noizyX,size,samples)
-    speak <- maxmin_dist_changed_pl_peak_count(B, maxdim, maxscale, l_rate=0.15, n_vic=10)
+    debugText(nrow(B[[1]]))
+    speak <- maxmin_dist_changed_pl_peak_count(X = B, maxdim = maxdim, maxscale = maxscale, l_rate = l_rate, n_vic = n_vic, spar = spar)
     m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"dhole")]])
     
     aggr1[t,1] <- m5[1]
@@ -276,23 +279,24 @@ maxmin_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=
 #bootstrap.homology.mk2から変形
 #witness複体のランドマーク点を使用
 #calc.landscape.peak(BootstrapHomology-mk1.R)をパッケージ化して置き換えるべし
-maxmin_dist_changed_pl_peak_count <-function(X,maxdim,maxscale,const.band=0,maximum.thresh = F, l_rate=0.15, n_vic=10){
+maxmin_dist_changed_pl_peak_count <-function(X, maxdim, maxscale, const.band=0, maximum.thresh = F, l_rate=0.15, n_vic=10, spar = seq(0,1,0.1)){
   require(TDA)
   
   if(!("bootsSamples" %in% class(X))) stop("input must be bootsSamples")
   peak <- matrix(0,maxdim,length(X))
   
   tseq <- seq(0,maxscale,length.out = 1000)
-  diags <- lapply(X,function(x)maxmin_dist_changed_pd(x, maxdim, maxscale, l_rate=0.15, n_vic=10)[[1]])
-  print(sapply(diags,function(diag)seephacm:::calc_diag_centroid(diag)[1]))
-  band <- ifelse(const.band==0,max(sapply(diags,function(diag)seephacm:::calc_diag_centroid(diag)[1])),const.band)
+  diags <- lapply(X,function(x)maxmin_dist_changed_pd(x, maxdim, maxscale, l_rate, n_vic)[[1]])
+  bands<-sapply(diags,function(diag)seephacm:::calc_diag_centroid(diag)[1])
+  print(bands)
+  band <- ifelse(const.band==0, max(bands),const.band)
   print(band)
   
   for (t in 1:length(X)) {
     land <- lapply(1:maxdim,function(d)landscape(diags[[t]],dimension = d,KK = 1,tseq = tseq))
     if(maximum.thresh) band <- max(sapply(land,max))/4
     for(d in 1:maxdim){
-      peak[d,t] <- calc.landscape.peak(X=land[[d]], thresh = (band/d), tseq=tseq)
+      peak[d,t] <- calc.landscape.peak(X=land[[d]], thresh = (band/d), tseq=tseq, spar = spar)
     }
   }
   

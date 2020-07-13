@@ -40,4 +40,26 @@ plot(tseq, trs300_1_10_vdmean_pl3B, type = "l", col = 3)
 #torus300_colle_set
 #TDAstat(ripser)を使う
 #85%サブサンプル
-trs300_coll1_aggr3<-maxmin_distance_change_method(X = torus300_colle_set[[1]][1:10], maxdim = 2, maxscale = 3, samples = 10)
+trs300_coll1_aggr3_time<-system.time(trs300_coll1_aggr3<-maxmin_distance_change_method(X = torus300_colle_set[[1]][1:10], maxdim = 2, maxscale = 3, samples = 10, const.size = 300*0.85))
+
+#90%サブサンプル
+trs300_coll1_aggr4_time<-system.time(trs300_coll1_aggr4<-maxmin_distance_change_method(X = torus300_colle_set[[1]][1:10], maxdim = 2, maxscale = 3, samples = 10, const.size = 300*0.9))
+
+#80%サブサンプル
+trs300_coll1_aggr5_time<-system.time(trs300_coll1_aggr5<-maxmin_distance_change_method(X = torus300_colle_set[[1]][1:10], maxdim = 2, maxscale = 3, samples = 10))
+
+#85%サブサンプル、ランドマーク点15%、近傍点7
+trs300_coll1_aggr6_time<-system.time(trs300_coll1_aggr6<-maxmin_distance_change_method(X = torus300_colle_set[[1]][1:10], maxdim = 2, maxscale = 3, samples = 10, const.size = 300*0.85, n_vic = 7))
+
+#85%サブサンプル、ランドマーク点20%、近傍点10
+trs300_coll1_aggr7_time<-system.time(trs300_coll1_aggr7<-maxmin_distance_change_method(X = torus300_colle_set[[1]][1:10], maxdim = 2, maxscale = 3, samples = 10, const.size = 300*0.85, l_rate = 0.2, n_vic = 10))
+
+#85%サブサンプル、ランドマーク点20%、近傍点7
+trs300_coll1_aggr8_time<-system.time(trs300_coll1_aggr8<-maxmin_distance_change_method(X = torus300_colle_set[[1]][1:10], maxdim = 2, maxscale = 3, samples = 10, const.size = 300*0.85, l_rate = 0.2, n_vic = 7))
+
+#85%サブサンプル、ランドマーク点20%、近傍点8
+trs300_coll1_aggr9_time<-system.time(trs300_coll1_aggr9<-maxmin_distance_change_method(X = torus300_colle_set[[1]][1:10], maxdim = 2, maxscale = 3, samples = 10, const.size = 300*0.85, l_rate = 0.2, n_vic = 8))
+
+#85%サブサンプル、ランドマーク点20%、近傍点7
+#結果のバランスとしては最も良い？
+trs300_coll1_aggr8B_time<-system.time(trs300_coll1_aggr8B<-maxmin_distance_change_method(X = torus300_colle_set[[1]], maxdim = 2, maxscale = 3, samples = 10, const.size = 300*0.85, l_rate = 0.2, n_vic = 7))
