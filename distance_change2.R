@@ -86,9 +86,102 @@ trs300_coll1_aggr11_time<-system.time(trs300_coll1_aggr11<-maxmin_distance_chang
 torus300_colle13_dc_aggrs<-lapply(1:3, function(k){
   
   cat("list", k, "calc\n")
-  time<-system.time(aggr<-maxmin_distance_change_method(torus300_colle_set[[k]], maxdim = 2, maxscale = 3, spar = seq(0,0.8,0.08)))
+  time<-system.time(aggr<-maxmin_distance_change_method(torus300_colle_set[[k]], maxdim = 2, maxscale = 3, samples = 10, spar = seq(0,0.8,0.08)))
   return(append(aggr, list(time=time)))
   
 })
-save2Rdata(torus300_incolle13_dc_aggrs)
+save2Rdata(torus300_colle13_dc_aggrs)
+}
+
+##300点トーラス補間後1~3セット目を推定
+#80%サブサンプル, ランドマーク点15%、近傍点10, スプライン曲線spar = seq(0,0.5,0.05)
+{
+  torus300_colle13_dc_aggrs2<-lapply(1:3, function(k){
+    
+    cat("list", k, "calc\n")
+    time<-system.time(aggr<-maxmin_distance_change_method(torus300_colle_set[[k]], maxdim = 2, maxscale = 3, samples = 10, spar = seq(0,0.5,0.05)))
+    return(append(aggr, list(time=time)))
+    
+  })
+  save2Rdata(torus300_colle13_dc_aggrs2)
+}
+
+##310点トーラス補間後1~3セット目を推定
+#80%サブサンプル, ランドマーク点15%、近傍点10, スプライン曲線spar = seq(0,0.8,0.08)
+{
+  torus310_colle13_dc_aggrs<-lapply(1:3, function(k){
+    
+    cat("list", k, "calc\n")
+    time<-system.time(aggr<-maxmin_distance_change_method(torus310_colle_set[[k]], maxdim = 2, maxscale = 3, samples = 10, spar = seq(0,0.8,0.08)))
+    return(append(aggr, list(time=time)))
+    
+  })
+  save2Rdata(torus310_colle13_dc_aggrs)
+}
+
+##320点トーラス補間後1~3セット目を推定
+#80%サブサンプル, ランドマーク点15%、近傍点10, スプライン曲線spar = seq(0,0.8,0.08)
+{
+  torus320_colle13_dc_aggrs<-lapply(1:3, function(k){
+    
+    cat("list", k, "calc\n")
+    time<-system.time(aggr<-maxmin_distance_change_method(torus320_colle_set[[k]], maxdim = 2, maxscale = 3, samples = 10, spar = seq(0,0.8,0.08)))
+    return(append(aggr, list(time=time)))
+    
+  })
+  save2Rdata(torus320_colle13_dc_aggrs)
+}
+
+##330点トーラス補間後1~3セット目を推定
+#80%サブサンプル, ランドマーク点15%、近傍点10, スプライン曲線spar = seq(0,0.8,0.08)
+{
+  torus330_colle13_dc_aggrs<-lapply(1:3, function(k){
+    
+    cat("list", k, "calc\n")
+    time<-system.time(aggr<-maxmin_distance_change_method(torus330_colle_set[[k]], maxdim = 2, maxscale = 3, samples = 10, spar = seq(0,0.8,0.08)))
+    return(append(aggr, list(time=time)))
+    
+  })
+  save2Rdata(torus330_colle13_dc_aggrs)
+}
+
+##340点トーラス補間後1~3セット目を推定
+#80%サブサンプル, ランドマーク点15%、近傍点10, スプライン曲線spar = seq(0,0.8,0.08)
+{
+  torus340_colle13_dc_aggrs<-lapply(1:3, function(k){
+    
+    cat("list", k, "calc\n")
+    time<-system.time(aggr<-maxmin_distance_change_method(torus340_colle_set[[k]], maxdim = 2, maxscale = 3, samples = 10, spar = seq(0,0.8,0.08)))
+    return(append(aggr, list(time=time)))
+    
+  })
+  save2Rdata(torus340_colle13_dc_aggrs)
+}
+
+##350点トーラス補間後1~3セット目を推定
+#80%サブサンプル, ランドマーク点15%、近傍点10, スプライン曲線spar = seq(0,0.8,0.08)
+{
+  torus350_colle13_dc_aggrs<-lapply(1:3, function(k){
+    
+    cat("list", k, "calc\n")
+    time<-system.time(aggr<-maxmin_distance_change_method(torus350_colle_set[[k]], maxdim = 2, maxscale = 3, samples = 10, spar = seq(0,0.8,0.08)))
+    return(append(aggr, list(time=time)))
+    
+  })
+  save2Rdata(torus350_colle13_dc_aggrs)
+}
+
+#-------------------------------------------------
+#TDAstatsを使って距離行列変化なしのベッチ数推定を行う
+##300点トーラス補間後1~3セット目を推定
+#80%サブサンプル, スプライン曲線spar = seq(0,0.8,0.08)
+{
+  torus300_colle1to3_aggrs2<-lapply(1:3, function(k){
+    
+    cat("list", k, "calc\n")
+    time<-system.time(aggr<-smooth_landscape_method(torus300_colle_set[[k]], maxdim = 2, maxscale = 3, samples = 10, spar = seq(0,0.8,0.08)))
+    return(append(aggr, list(time=time)))
+    
+  })
+  save2Rdata(torus300_colle1to3_aggrs2)
 }
