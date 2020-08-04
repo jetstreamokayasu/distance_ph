@@ -13,10 +13,9 @@ smooth_landscape_method<-function(X,maxdim,maxscale,samples, const.size=0, spar=
     
     B <- seephacm:::bootstrapper(X[[t]]$noizyX,size,samples)
     speak <- smoothed_landscape_homology(X = B, maxdim = maxdim, maxscale = maxscale, spar = spar)
-    m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"dhole")]])
+    m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]])
     
     aggr1[t,1] <- m5[1]
-  
     aggr2[t,1] <- m5[2]
   }
   
@@ -30,6 +29,7 @@ smooth_landscape_method<-function(X,maxdim,maxscale,samples, const.size=0, spar=
 }
 
 #--------------------------------------------------------
+#bootstrap.homology.mk2をTDAstatsを使う形に書き換え
 smoothed_landscape_homology<-function(X,maxdim,maxscale,const.band=0,maximum.thresh = F, spar=seq(0, 1, 0.1)){
   
   if(!("bootsSamples" %in% class(X))) stop("input must be bootsSamples")
@@ -52,7 +52,50 @@ smoothed_landscape_homology<-function(X,maxdim,maxscale,const.band=0,maximum.thr
   
   dimnames(peak) <- list(paste0("dim",1:maxdim),paste0("sample",1:length(X)))
   bootstrap.summary <- list(peak=peak)
-  bootstrap.summary <- append(bootstrap.summary,band=band)
+  
+  for(d in 1:maxdim){
+    mhole<-mean(peak[d,])
+    bootstrap.summary[[paste0("dim",d,"mhole")]] <- mhole
+    print(paste0("dimension ",d,", ",round(mhole,digits = 2)," mean hole"))
+  }
+  
+  bootstrap.summary <- append(bootstrap.summary,list(band=band))
   class(bootstrap.summary) <- "smoothPhom"
   return(bootstrap.summary)
+}
+
+#------------------------------------------------
+#n次元単位球の表面積を求める関数
+#r=半径
+surface_nshpere<-function(n, r=1){
+  
+  s<-(2*pi^((n+1)/2)*(r^n))/gamma((n+1)/2)
+  
+  return(s)
+  
+}
+
+#----------------------------------------------
+#パーシステンスの平均を求める
+#n次元パーシステンスに対して(n次元単位球面積/1次元単位球面積(=2*pi))をかけている
+persistence_weighted_mean<-function(diag){
+  
+  if(class(diag)=="list"){diag<-diag[[1]]}
+  
+  maxdim<-max(diag[,1])
+  diag <- diag[-which(diag[,1]==0),]
+  
+  centroid<-lapply(1:maxdim, function(k){
+    
+    per<-(diag[diag[,1]==k,3]-diag[diag[,1]==k,2])*(surface_nshpere(k)/(2*pi))
+    return(per)
+    
+  })
+  
+  cpers<-unlist(centroid) %>% mean()
+  
+  names(cpers)<-"cpersistence"
+  
+  return(cpers)
+  
 }

@@ -253,7 +253,7 @@ maxmin_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=
     B <- seephacm:::bootstrapper(X[[t]]$noizyX,size,samples)
     debugText(nrow(B[[1]]))
     speak <- maxmin_dist_changed_pl_peak_count(X = B, maxdim = maxdim, maxscale = maxscale, l_rate = l_rate, n_vic = n_vic, spar = spar)
-    m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"dhole")]])
+    m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]])
     
     aggr1[t,1] <- m5[1]
     aggr2[t,1] <- m5[2]
@@ -350,5 +350,62 @@ maxmin_dist_changed_pd<-function(X, maxdim, maxscale, l_rate=0.15, n_vic=10){
   
   
   return(list(pd=pd, l_idx=l_idx))
+  
+}
+
+#-----------------------------------------------
+#3Dトーラスの角度一様分布
+rad_distribute<-function(r, R1, R2, theta, phi){
+  
+  g<-1/R1*(1 + (r/R2)*sin(theta))*(1/R2 + (1/R1)*sin(phi)*(1 + (r/R2)*sin(theta)))
+  
+  return(g)
+  
+}
+
+
+#-------------------------------------------
+#3Dトーラス一様分布を作る。暫定版
+#n=データ点数、r, R1, R2=半径
+x3Dtorus_unif<-function(n, r, R1, R2){
+  
+  theta<-c()
+  phi<-c()
+  g<-c()
+  
+  for (t in seq(0, 2*pi, length=100)) {
+    for (p in seq(0, 2*pi, length=100)) {
+      g<-c(g, (1/(4*(pi^2)))*rad_distribute(r, R1, R2, t, p))
+    }
+  }
+  
+  max_g<-(1/(4*(pi^2)))*rad_distribute(r, R1, R2, pi/2, pi/2)
+  min_g<-min(g)
+  
+  while(length(theta) < n){
+    
+    xvec<-runif(1, 0, 2*pi)
+    yvec<-runif(1, 0, 2*pi)
+    zvec<-runif(1, min_g, max_g)
+    
+    fxy<-(1/(4*(pi^2)))*rad_distribute(r, R1, R2, xvec, yvec)
+    
+    if(zvec <= fxy){
+      theta<-c(theta, xvec)
+      phi<-c(phi, yvec)
+    }
+    
+  }
+  
+  delta<-runif(n, 0, 2*pi)
+  
+  x<-sin(delta)*(R1 + sin(phi)*(R2 + r*sin(theta)))
+  y<-cos(delta)*(R1 + sin(phi)*(R2 + r*sin(theta)))
+  z<-cos(phi)*(R2 + r*sin(theta))
+  w<-r*cos(theta)
+  
+  out<-cbind(x, y, z, w)
+  
+  return(out)
   
 }
