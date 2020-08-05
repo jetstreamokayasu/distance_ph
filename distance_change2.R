@@ -249,6 +249,17 @@ t3orus2_pl_dim2<-landscape(t3orus2_pd, dimension = 2)
 t3orus2_pl_dim3<-landscape(t3orus2_pd, dimension = 3)
 tseq <- seq(min(t3orus2_pd[,2:3]), max(t3orus2_pd[,2:3]), length=500)
 
+#3Dトーラス一様データセット
+t3orus_colle1<-lapply(1:3, function(k){
+  
+  nsample<-500
+  torus<-x3Dtorus_unif(n = nsample, r = 1, R1 = 5, R2 = 2)
+  return(list(nsample=nsample, noizyX=torus, diag=0))
+  
+})
+
+t3orus_col1_aggr<-smooth_landscape_method(X = t3orus_colle1, maxdim = 3, maxscale = 6, samples = 10)
+
 #---------------------------------------------------------
 #ripserで補間後を計算
 

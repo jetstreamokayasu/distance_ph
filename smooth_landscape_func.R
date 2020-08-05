@@ -1,9 +1,15 @@
 #TDAstasを使ってCTIC2019手法を書き換え
+#次元の数を2に限定しない形に書き換え
 smooth_landscape_method<-function(X,maxdim,maxscale,samples, const.size=0, spar=seq(0, 1, 0.1)){
-  aggr1 <- matrix(0,length(X),1)
-  aggr2 <- matrix(0,length(X),1)
-  dimnames(aggr1) <- list(paste0("data-set", 1:length(X)), "proposed")
-  dimnames(aggr2) <- dimnames(aggr1)
+  
+  aggrs<-lapply(1:maxdim, function(k){
+    
+    aggr<-matrix(0,length(X),1)
+    dimnames(aggr) <- list(paste0("data-set", 1:length(X)), "proposed")
+    
+    return(aggr)
+    
+  })
   
   for(t in 1:length(X)){
     
@@ -15,11 +21,14 @@ smooth_landscape_method<-function(X,maxdim,maxscale,samples, const.size=0, spar=
     speak <- smoothed_landscape_homology(X = B, maxdim = maxdim, maxscale = maxscale, spar = spar)
     m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]])
     
-    aggr1[t,1] <- m5[1]
-    aggr2[t,1] <- m5[2]
+    for (i in 1:maxdim) {
+      
+      aggrs[[i]][t,1]<-m5[i]
+      
+    }
+    
   }
   
-  aggrs <- list(aggr1,aggr2)
   aggrs <- append(aggrs,list(Xsize=sapply(1:length(X), function(l)nrow(X[[l]][["noizyX"]])),Xsamples=length(X),
                              Bsize=size,Bsamples=samples,
                              maxdim=maxdim,maxscale=maxscale))
@@ -37,7 +46,7 @@ smoothed_landscape_homology<-function(X,maxdim,maxscale,const.band=0,maximum.thr
   
   tseq <- seq(0,maxscale,length.out = 1000)
   diags <- lapply(X,function(x)TDAstats::calculate_homology(mat = x, dim = maxdim, threshold = maxscale))
-  bands<-sapply(diags,function(diag)seephacm:::calc_diag_centroid(diag)[1])
+  bands<-sapply(diags,function(diag)persistence_weighted_mean(diag))
   print(bands)
   band <- ifelse(const.band==0, max(bands),const.band)
   print(band)
@@ -46,7 +55,7 @@ smoothed_landscape_homology<-function(X,maxdim,maxscale,const.band=0,maximum.thr
     land <- lapply(1:maxdim,function(d)landscape(diags[[t]],dimension = d,KK = 1,tseq = tseq))
     if(maximum.thresh) band <- max(sapply(land,max))/4
     for(d in 1:maxdim){
-      peak[d,t] <- calc.landscape.peak(X=land[[d]], thresh = (band/d), tseq=tseq, spar = spar)
+      peak[d,t] <- calc.landscape.peak(X=land[[d]], thresh = (band*((2*pi)/surface_nshpere(d))), tseq=tseq, spar = spar)
     }
   }
   
@@ -99,3 +108,6 @@ persistence_weighted_mean<-function(diag){
   return(cpers)
   
 }
+
+#-------------------------------------------------------
+#
