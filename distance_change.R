@@ -6,6 +6,7 @@ figurePlot3d(torus1)
 
 trs1_pd<-ripsDiag(X = torus1, maxdimension = 2, maxscale = 3, printProgress = T)
 trs1_pl<-calc_landscape(diag = trs1_pd, maxscale = 3)
+trs1_pl2<-calcLandscape(trs1_pd, maxscale = 3)
 
 #---------------------------------------------
 #全点の近傍10点の距離を調べる

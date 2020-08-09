@@ -371,15 +371,18 @@ x3Dtorus_unif<-function(n, r, R1, R2){
   
   theta<-c()
   phi<-c()
-  g<-c()
   
-  for (t in seq(0, 2*pi, length=100)) {
-    for (p in seq(0, 2*pi, length=100)) {
-      g<-c(g, (1/(4*(pi^2)))*rad_distribute(r, R1, R2, t, p))
-    }
-  }
+  tp<-expand.grid(seq(0, 2*pi, length=100), seq(0, 2*pi, length=100))
   
-  max_g<-(1/(4*(pi^2)))*rad_distribute(r, R1, R2, pi/2, pi/2)
+  g<-apply(tp, 1, function(i){
+    
+    g0<-rad_distribute(r, R1, R2, i[1], i[2])
+    
+    return(g0)
+    
+  })
+  
+  max_g<-rad_distribute(r, R1, R2, pi/2, pi/2)
   min_g<-min(g)
   
   while(length(theta) < n){
@@ -388,7 +391,7 @@ x3Dtorus_unif<-function(n, r, R1, R2){
     yvec<-runif(1, 0, 2*pi)
     zvec<-runif(1, min_g, max_g)
     
-    fxy<-(1/(4*(pi^2)))*rad_distribute(r, R1, R2, xvec, yvec)
+    fxy<-rad_distribute(r, R1, R2, xvec, yvec)
     
     if(zvec <= fxy){
       theta<-c(theta, xvec)

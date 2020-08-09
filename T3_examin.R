@@ -141,27 +141,102 @@ t3orus2_dpl6<-calcLandscape(diag =  t3orus2_dpd6[[1]], maxscale = 6)
 t3orus2_dpd7<-maxmin_dist_changed_pd(X = t3orus2, maxdim = 3, maxscale = 6, l_rate = 0.3, n_vic = 10)
 t3orus2_dpl7<-calcLandscape(diag =  t3orus2_dpd7[[1]], maxscale = 6)
 
+#3次元トーラス距離行列変化実験8回目
+#ランドマーク点40%、近傍点10
+t3orus2_dpd8<-maxmin_dist_changed_pd(X = t3orus2, maxdim = 3, maxscale = 6, l_rate = 0.4, n_vic = 10)
+t3orus2_dpl8<-calcLandscape(diag =  t3orus2_dpd8[[1]], maxscale = 6)
+
+#3次元トーラス距離行列変化実験9回目
+#ランドマーク点50%、近傍点10
+t3orus2_time9<-system.time(t3orus2_dpd9<-maxmin_dist_changed_pd(X = t3orus2, maxdim = 3, maxscale = 6, l_rate = 0.5, n_vic = 10))
+t3orus2_dpl9<-calcLandscape(diag =  t3orus2_dpd9[[1]], maxscale = 6)
+
+#3次元トーラス距離行列変化実験10回目
+#ランドマーク点40%、近傍点15
+t3orus2_time10<-system.time(t3orus2_dpd10<-maxmin_dist_changed_pd(X = t3orus2, maxdim = 3, maxscale = 6, l_rate = 0.4, n_vic = 15))
+t3orus2_dpl10<-calcLandscape(diag =  t3orus2_dpd10[[1]], maxscale = 6)
+
+#3次元トーラス距離行列変化実験12回目
+#ランドマーク点40%、近傍点15
+t3orus2_time10<-system.time(t3orus2_dpd10<-maxmin_dist_changed_pd(X = t3orus2, maxdim = 3, maxscale = 6, l_rate = 0.4, n_vic = 15))
+t3orus2_dpl10<-calcLandscape(diag =  t3orus2_dpd10[[1]], maxscale = 6)
+
+#--------------------------------------------------
 #1000点3次元トーラスのPD計算
-g<-c()
+t3orus1000<-x3Dtorus_unif(n = 1000, r = 1, R1 = 5, R2 = 2)
+t3orus1000_pd<-calculate_homology(mat = t3orus1000, dim = 3, threshold = 6)
 
-tp<-expand.grid(seq(0, 2*pi, length=1000), seq(0, 2*pi, length=1000))
+t3orus1000_pl<-calcLandscape(diag = t3orus1000_pd, maxscale = 6)
 
-g<-apply(tp, 1, function(i){
-  
-  g0<-(1/(4*(pi^2)))*rad_distribute(1, 5, 2, i[1], i[2])
-  
-  return(g0)
-  
-})
+#1000点3次元トーラス距離行列変化実験1回目
+#ランドマーク点15%、近傍点10
+t3orus1000_pd1<-maxmin_dist_changed_pd(X = t3orus1000, maxdim = 3, maxscale = 6, l_rate = 0.15, n_vic = 10)
+t3orus1000_pl1<-calcLandscape(diag =  t3orus1000_pd1[[1]], maxscale = 6)
 
-tp2<-expand.grid(seq(0, 2*pi, length=100), seq(0, 2*pi, length=100))
+#800点3次元トーラスのPD計算
+t3orus800<-x3Dtorus_unif(n = 800, r = 1, R1 = 5, R2 = 2)
+t3orus800_pd<-calculate_homology(mat = t3orus800, dim = 3, threshold = 6)
+t3orus800_pl<-calcLandscape(diag = t3orus800_pd, maxscale = 6)
 
-g2<-apply(tp2, 1, function(i){
-  
-  g0<-(1/(4*(pi^2)))*rad_distribute(1, 5, 2, i[1], i[2])
-  
-  return(g0)
-  
-})
+#------------------------------------------------------
+#600点3次元トーラスのPD計算
+t3orus600<-x3Dtorus_unif(n = 600, r = 1, R1 = 5, R2 = 2)
+t3orus600_time<-system.time(t3orus600_pd<-calculate_homology(mat = t3orus600, dim = 3, threshold = 6))
+t3orus600_pl<-calcLandscape(diag = t3orus600_pd, maxscale = 6)
 
+#600点3次元トーラス距離行列変化実験1回目
+#ランドマーク点15%、近傍点10
+t3orus600_time_dpd1<-system.time(t3orus600_dpd1<-maxmin_dist_changed_pd(X = t3orus600, maxdim = 3, maxscale = 6, l_rate = 0.15, n_vic = 10))
+t3orus600_dpl1<-calcLandscape(t3orus600_dpd1[[1]], 6)
 
+#600点3次元トーラス距離行列変化実験2回目
+#ランドマーク点20%、近傍点10
+t3orus600_time_dpd2<-system.time(t3orus600_dpd2<-maxmin_dist_changed_pd(X = t3orus600, maxdim = 3, maxscale = 6, l_rate = 0.20, n_vic = 10))
+t3orus600_dpl2<-calcLandscape(t3orus600_dpd2[[1]], 6)
+
+ #-----------------------------------------
+t3orus2_pd3<-calculate_homology(mat = t3orus2, dim = 3)
+t3orus2_pl3<-calcLandscape(diag = t3orus2_pd3, maxscale = 5)
+
+#---------------------------------------
+#500点3次元トーラスのPD計算
+#r=2, R1=8, R2=4
+t3orus3<-x3Dtorus_unif(n = 500, r = 2, R1 = 8, R2 = 4)
+t3orus3_time<-system.time(t3orus3_pd<-calculate_homology(mat = t3orus3, dim = 3, threshold = 9))
+t3orus3_pl<-calcLandscape(diag = t3orus600_pd, maxscale = 9)
+
+#500点3次元トーラス距離行列変化実験1回目(実質11回目)
+#r=2, R1=8, R2=4
+#ランドマーク点40%、近傍点10
+t3orus3_time11<-system.time(t3orus3_dpd11<-maxmin_dist_changed_pd(X = t3orus3, maxdim = 3, maxscale = 9, l_rate = 0.4, n_vic = 10))
+t3orus3_dpl11<-calcLandscape(diag = t3orus3_dpd11[["pd"]], maxscale = 9)
+
+#500点3次元トーラス距離行列変化実験2回目
+#r=2, R1=8, R2=4
+#ランドマーク点45%、近傍点8
+t3orus3_time2<-system.time(t3orus3_dpd2<-maxmin_dist_changed_pd(X = t3orus3, maxdim = 3, maxscale = 9, l_rate = 0.45, n_vic = 8))
+t3orus3_dpl2<-calcLandscape(diag = t3orus3_dpd2[["pd"]], maxscale = 9)
+
+#500点3次元トーラス距離行列変化実験3回目
+#r=2, R1=8, R2=4
+#ランドマーク点50%、近傍点7
+t3orus3_dpd3<-maxmin_dist_changed_pd(X = t3orus3, maxdim = 3, maxscale = 9, l_rate = 0.5, n_vic = 7)
+t3orus3_dpl3<-calcLandscape(diag = t3orus3_dpd3[["pd"]], maxscale = 9)
+
+#500点3次元トーラス距離行列変化実験4回目
+#r=2, R1=8, R2=4
+#ランドマーク点20%、近傍点10
+t3orus3_dpd4<-maxmin_dist_changed_pd(X = t3orus3, maxdim = 3, maxscale = 9, l_rate = 0.2, n_vic = 10)
+t3orus3_dpl4<-calcLandscape(diag = t3orus3_dpd4[["pd"]], maxscale = 9)
+
+#500点3次元トーラス距離行列変化実験5回目
+#r=2, R1=8, R2=4
+#ランドマーク点45%、近傍点10
+t3orus3_dpd5<-maxmin_dist_changed_pd(X = t3orus3, maxdim = 3, maxscale = 9, l_rate = 0.45, n_vic = 10)
+t3orus3_dpl5<-calcLandscape(diag = t3orus3_dpd5[["pd"]], maxscale = 9)
+
+#500点3次元トーラス距離行列変化実験6回目
+#r=2, R1=8, R2=4
+#ランドマーク点45%、近傍点15
+t3orus3_dpd6<-maxmin_dist_changed_pd(X = t3orus3, maxdim = 3, maxscale = 9, l_rate = 0.45, n_vic = 15)
+t3orus3_dpl6<-calcLandscape(diag = t3orus3_dpd6[["pd"]], maxscale = 9)

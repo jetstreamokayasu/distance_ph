@@ -23,3 +23,4 @@ source('~/R/p_reduce/reduce_func.R', encoding = 'UTF-8')
 source('~/R/interpolation_test/reduce_func2.R', encoding = 'UTF-8')
 
 require(TDAstats)
+require(abind)
