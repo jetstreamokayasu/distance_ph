@@ -93,7 +93,7 @@ for (i in 1:length(jp_Gait_list)) {
   showImage(jp_Gait_list[[i]])
 }
 
-
+#画像を行ベクトルとして並べて行列化
 jp_Gait_mat<-do.call(rbind, lapply(jp_Gait_list, as.vector))
 
 jp_Gait_pca<-prcomp(jp_Gait_mat)
@@ -102,6 +102,35 @@ texts3d(jp_Gait_pca[["x"]][, 1:3], texts = 1:24)
 
 jp_Gait_pd1<-calculate_homology(jp_Gait_mat, dim = 2)
 ahiru_pd1<-calculate_homology(ahiru.mat, dim = 2)
+
+#----------------------------------------------
+#5度刻みの歩容データ
+
+#歩容画像一括読み込み
+
+jp_gait2<-load.image("D:/okayasu/D_documents/MMD_walk/japan_gait2/japan_gait_000deg2/japan_gait_000deg2_00001.png")
+jp_gait_gray<-imsub(jp_gait2, x > 250) %>% imsub(., x < 150) %>% resize(., round(width(.)/2), round(height(.)/2)) %>% convert2Gray(.) %>% t() %>%  showImage(.)
+
+jp_gaits2_list<-lapply(seq(0, 355,by=5), function(k){
+  debugText(k)
+  img<-load.image(paste0("D:/okayasu/D_documents/MMD_walk/japan_gait2/japan_gait_", formatC(k, width = 3, flag = "0"), "deg2/japan_gait_", formatC(k, width = 3, flag = "0"), "deg2_00001.png"))
+  gray_img<-imsub(img, x > 250) %>% imsub(., x < 150) %>% resize(., round(width(.)/2), round(height(.)/2)) %>% convert2Gray(.)
+  
+  return(gray_img)
+  
+})
+
+jp_gait2_mat<-do.call(rbind, lapply(jp_gaits2_list, as.vector))
+
+jp_gait2_pca<-prcomp(x = jp_gait2_mat)
+plot3d(jp_gait2_pca[["x"]][, 1:3], col=rainbow(72))
+rgl.snapshot("./data/jp_gait2_pca.png")
+
+jp_gait2_pd1<-calculate_homology(jp_gait2_mat, dim = 2)
+
+#プロット
+jp_gaits2_list4plot<-lapply(jp_gaits2_list, t)
+showImageList(jp_gaits2_list4plot[c(1, 10, 19, 28, 37, 46, 55, 64, 72)])
 
 #-----------------------------------------
 #COIL-20データの回転を試してみる
@@ -129,9 +158,98 @@ ahiru_rot45<-imrotate(ahiru1, angle = 45) %>% plot()
 ahiru_rot45B<-imsub(ahiru_rot45, x < (181-27) ) %>% imsub(., x > 27 ) %>% imsub(., y < (181-27) ) %>% imsub(., y > 27 ) %>%  plot()
 
 #黒部分を増やして画像を拡大
-ahiru1B<-rbind()
+#ahiru_rot60と同じピクセルサイズになるように
+ahiru1B<-cbind(matrix(0, 128, 23), ahiru1[, , 1, 1]) %>% cbind(., matrix(0, 128, 23)) %>% rbind(matrix(0, 23, 174), .) %>% rbind(., matrix(0, 23, 174))
 
 #配列結合テスト
 array1<-array(0, dim=c(4, 3, 2))
 
 array2<-array(1, dim=c(4, 3, 2))
+
+#アヒル回転画像のリストを作る
+ahiru_rot_list<-lapply(seq(0, 360, by=5), function(k){
+  
+  a_rot<-imrotate(ahiru1, angle = k)
+  return(a_rot)
+  
+})
+
+#アヒル回転画像のサイズを統一する
+ahiru_pix<-sapply(ahiru_rot_list, function(X)dim(X)[1])
+
+ahiru_align_list<-align_img_size(ahiru_rot_list)
+ahiru_align_list_4plot<-lapply(ahiru_align_list, t)
+
+#画像を行ベクトルとして並べて行列化
+ahiru_rot_mat<-do.call(rbind, lapply(ahiru_align_list, as.vector))
+ahiru_rot_pca<-prcomp(ahiru_rot_mat)
+plot3d(ahiru_rot_pca[["x"]][, 1:3], col=rainbow(72))
+texts3d(ahiru_rot_pca[["x"]][, 1:3], texts = 1:72)
+rgl.snapshot("./data/ahiru_rot_pca.png")
+
+ahiru_rot_pd1<-calculate_homology(ahiru_rot_mat, dim = 2)
+class(ahiru_rot_pd1)<-NULL
+plot(ahiru_rot_pd1[, 2:3], pch=c(20, 2, 3)[ahiru_rot_pd1[, 1]+1], col=c(1, 2, 3)[ahiru_rot_pd1[, 1]+1], xlim = c(0, 55), ylim = c(0, 55))
+abline(0, 1)
+
+#----------------------------------------------
+showImageList(ahiru.img[c(1, 10, 19, 28, 37, 46, 55, 64, 72)])
+
+#-------------------------------------------------
+#アヒル画像一括読み込み
+ahiru_list<-lapply(0:71, function(k){
+  
+  ahiru<-load.image(paste0("D:/okayasu/D_documents/coil-20-proc/coil-20-proc/obj1__", k, ".png"))
+  
+  return(ahiru)
+  
+})
+
+#アヒル回転画像リスト作成
+ahiru2_rot_list<-lapply(seq(0, 360, by=5), function(k){
+  
+  a_rot<-imrotate(ahiru_list[[2]], angle = k)
+  return(a_rot)
+  
+})
+
+
+ahiru2_pix<-align_img_pix(imgs = ahiru2_rot_list, pix = 181)
+
+#アヒル回転画像リスト作成
+#全画像に対して
+ahiru_rot_list<-lapply(ahiru_list, function(img){
+  
+  a_list<-lapply(seq(0, 360, by=5), function(k){
+    
+    a_rot<-imrotate(img, angle = k)
+    return(a_rot)
+  
+  })
+  
+  return(a_list)
+
+}) %>% lapply(., function(X)align_img_pix(imgs = X, 181))
+  
+ 
+#画像を行ベクトルとして並べて行列化
+ahiru_rot_mat<-do.call(rbind, lapply(ahiru_align_list, as.vector))  
+
+ahiru_rmat_list<-lapply(ahiru_rot_list, function(X)do.call(rbind, lapply(X, as.vector)))
+ahiru_rmat<-do.call(rbind, ahiru_rmat_list)  
+
+#アヒル回転画像のPD計算
+ahiru_rot_pd<-calculate_homology(mat = ahiru_rmat[sample(nrow(ahiru_rmat), nrow(ahiru_rmat)*0.5), ], dim = 2)
+ahiru_rot_pl<-calcLandscape(diag = ahiru_rot_pd, maxscale = 47)
+
+ahiru_rot_pd2<-calculate_homology(mat = ahiru_rmat[sample(nrow(ahiru_rmat), nrow(ahiru_rmat)*0.3), ], dim = 2, threshold = 50)
+ahiru_rot_pl2<-calcLandscape(diag = ahiru_rot_pd2, maxscale = 50)
+
+ahiru_rot_pd2B<-as_diagram(ahiru_rot_pd2) %>% plot()
+#--------------------------------------------------------------
+#アヒル回転画像をプロット
+ahiru_align_list4plot<-lapply(c(1, 10, 19, 28, 37, 46, 55, 64, 72), function(k)t(ahiru_rot_list[[k]][[1]]))
+ahiru_rot1_list4plot<-lapply(c(1, 10, 19, 28, 37, 46, 55, 64, 72), function(k)t(ahiru_rot_list[[1]][[k]]))
+ahiru_rot10_list4plot<-lapply(c(1, 10, 19, 28, 37, 46, 55, 64, 72), function(k)t(ahiru_rot_list[[10]][[k]]))
+ahiru_rot46_list4plot<-lapply(c(1, 10, 19, 28, 37, 46, 55, 64, 72), function(k)t(ahiru_rot_list[[46]][[k]]))
+showImageList(ahiru_rot46_list4plot)
