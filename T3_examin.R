@@ -305,6 +305,7 @@ t3orus3_sub_dpl7<-calcLandscape(diag = t3orus3_sub_dpd6[["pd"]], maxscale = 9)
 #r=2, R1=8, R2=4
 #ランドマーク点65%、近傍点8
 #ランドマーク点を増やしていく
+#最もパーシステンスが大きくなる
 t3orus3_sub_dpd8<-maxmin_dist_changed_pd(X = t3orus3_sub, maxdim = 3, maxscale = 9, l_rate = 0.65, n_vic = 8)
 t3orus3_sub_dpl8<-calcLandscape(diag = t3orus3_sub_dpd8[["pd"]], maxscale = 9)
 
@@ -315,3 +316,18 @@ t3orus3_sub_dpl8<-calcLandscape(diag = t3orus3_sub_dpd8[["pd"]], maxscale = 9)
 #ランドマーク点を増やしていく
 t3orus3_sub_dpd9<-maxmin_dist_changed_pd(X = t3orus3_sub, maxdim = 3, maxscale = 9, l_rate = 0.7, n_vic = 8) 
 t3orus3_sub_dpl9<-calcLandscape(diag = t3orus3_sub_dpd9[["pd"]], maxscale = 9)
+
+#------------------------------------------
+#T3で100個の推定を試す
+t3orus4_list<- lapply(1:100, function(i){
+  nsample <- 500
+  torus <- x3Dtorus_unif(n = nsample, r = 2, R1 = 8, R2 = 4)
+  return(list(nsample = nsample, noizyX = torus, diag = 0))
+})
+
+t3orus4_aggr<-maxmin_distance_change_method(X = t3orus4_list, maxdim = 3, maxscale = 9, samples = 10, l_rate = 0.65, n_vic = 8)
+
+#--------------------------------------------
+#maxmin_dist_changed_pl_peak_count()関数の修正後のテスト
+t3orus3_sublist<-seephacm:::bootstrapper(X = t3orus3, size = nrow(t3orus3)*0.8, samples = 2)
+t3orus3_subpeak<-maxmin_dist_changed_pl_peak_count(X = t3orus3_sublist, maxdim = 3, maxscale = 9, l_rate = 0.65, n_vic = 8)

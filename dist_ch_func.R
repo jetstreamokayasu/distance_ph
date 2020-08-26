@@ -155,7 +155,7 @@ select_rate_change_pd<-function(X, rates, thresh){
 }
 
 #-----------------------------------------------------------------
-#操作対象店固定、操作量を変化させてPH計算する関数
+#操作対象点固定、操作量を変化させてPH計算する関数
 #thesは操作量の集合
 manupilate_dist_change_pd<-function(X, idx, thes){
   
@@ -240,38 +240,41 @@ landmark_points<-function(X, n_land, d_mat=F){
 #witness複体のランドマーク点を使用
 
 maxmin_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=0, l_rate=0.15, n_vic=10, spar = seq(0,1,0.1)){
-  aggr1 <- matrix(0,length(X),1)
-  aggr2 <- matrix(0,length(X),1)
-  dimnames(aggr1) <- list(paste0("data-set", 1:length(X)),"proposed")
-  dimnames(aggr2) <- dimnames(aggr1)
+  
+  aggrs<-lapply(1:maxdim, function(k){
+    
+    aggr<-matrix(0,length(X),1)
+    dimnames(aggr) <- list(paste0("data-set", 1:length(X)), "proposed")
+    
+    return(aggr)
+    
+  })
   
   for(t in 1:length(X)){
     
     cat("data set", t, "calculating\n")
     if(const.size==0){size<-X[[t]]$nsample*(4/5)}
     else{size<-const.size}
+    
     B <- seephacm:::bootstrapper(X[[t]]$noizyX,size,samples)
-    debugText(nrow(B[[1]]))
     speak <- maxmin_dist_changed_pl_peak_count(X = B, maxdim = maxdim, maxscale = maxscale, l_rate = l_rate, n_vic = n_vic, spar = spar)
     m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]])
     
-    aggr1[t,1] <- m5[1]
-    aggr2[t,1] <- m5[2]
+    for (i in 1:maxdim) {
+      
+      aggrs[[i]][t,1]<-m5[i]
+      
+    }
     
   }
   
-  aggrs <- list(aggr1,aggr2)
-  
-  Xsize<-sapply(1:length(X), function(l){return(nrow(X[[l]][["noizyX"]]))})
-  if(const.size==0){Bsize<-sapply(1:length(X), function(l){return(nrow(X[[l]][["noizyX"]])*(4/5))})}
-  else{Bsize<-const.size}
-  
-  aggrs <- append(aggrs,list(Xsize=Xsize,Xsamples=length(X),
-                             Bsize=Bsize,Bsamples=samples,
+  aggrs <- append(aggrs,list(Xsize=sapply(1:length(X), function(l)nrow(X[[l]][["noizyX"]])),Xsamples=length(X),
+                             Bsize=size,Bsamples=samples,
                              maxdim=maxdim,maxscale=maxscale))
   class(aggrs) <- "bettiComp"
   
   return(aggrs)
+
 }
 
 #------------------------------------------------
@@ -279,6 +282,7 @@ maxmin_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=
 #bootstrap.homology.mk2から変形
 #witness複体のランドマーク点を使用
 #calc.landscape.peak(BootstrapHomology-mk1.R)をパッケージ化して置き換えるべし
+#seephacm:::calc_diag_centroid(diag)からpersistence_weighted_mean(diag)へ変更
 maxmin_dist_changed_pl_peak_count <-function(X, maxdim, maxscale, const.band=0, maximum.thresh = F, l_rate=0.15, n_vic=10, spar = seq(0,1,0.1)){
   require(TDA)
   
@@ -287,7 +291,7 @@ maxmin_dist_changed_pl_peak_count <-function(X, maxdim, maxscale, const.band=0, 
   
   tseq <- seq(0,maxscale,length.out = 1000)
   diags <- lapply(X,function(x)maxmin_dist_changed_pd(x, maxdim, maxscale, l_rate, n_vic)[[1]])
-  bands<-sapply(diags,function(diag)seephacm:::calc_diag_centroid(diag)[1])
+  bands<-sapply(diags,function(diag)persistence_weighted_mean(diag))
   print(bands)
   band <- ifelse(const.band==0, max(bands),const.band)
   print(band)
