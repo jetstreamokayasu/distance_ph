@@ -416,3 +416,15 @@ x3Dtorus_unif<-function(n, r, R1, R2){
   return(out)
   
 }
+
+#-----------------------------------------------
+#TDAstasのPDからTDAのPD(diagramクラス)へ変換
+pd_conv_stats2tda<-function(pd){
+  
+  class(pd)<-"diagram"
+  attr(pd, "maxdimension")<-max(pd[,1])
+  attr(pd, "scale")<-c(0, max(pd[,3]))
+  
+  return(pd)
+  
+}

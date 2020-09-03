@@ -244,6 +244,7 @@ t3orus3_dpl6<-calcLandscape(diag = t3orus3_dpd6[["pd"]], maxscale = 9)
 #500点3次元トーラス距離行列変化実験7回目
 #r=2, R1=8, R2=4
 #ランドマーク点50%、近傍点8
+#最もランドマークが大きくなる、はず
 t3orus3_dpd7<-maxmin_dist_changed_pd(X = t3orus3, maxdim = 3, maxscale = 9, l_rate = 0.5, n_vic = 8)
 t3orus3_dpl7<-calcLandscape(diag = t3orus3_dpd7[["pd"]], maxscale = 9)
 
@@ -331,3 +332,17 @@ t3orus4_aggr<-maxmin_distance_change_method(X = t3orus4_list, maxdim = 3, maxsca
 #maxmin_dist_changed_pl_peak_count()関数の修正後のテスト
 t3orus3_sublist<-seephacm:::bootstrapper(X = t3orus3, size = nrow(t3orus3)*0.8, samples = 2)
 t3orus3_subpeak<-maxmin_dist_changed_pl_peak_count(X = t3orus3_sublist, maxdim = 3, maxscale = 9, l_rate = 0.65, n_vic = 8)
+
+#500点3次元トーラス距離行列変化実験
+#サブサンプルで実験10回目
+#r=2, R1=8, R2=4
+#ランドマーク点65%、近傍点8
+t3orus3_sublist1_dpd10<-maxmin_dist_changed_pd(X = t3orus3_sublist[[1]], maxdim = 3, maxscale = 9, l_rate = 0.65, n_vic = 8)
+t3orus3_sublist1_dpl10<-calcLandscape(diag = t3orus3_sublist1_dpd10[["pd"]], maxscale = 9)
+
+#500点3次元トーラス距離行列変化実験
+#サブサンプルで実験11回目
+#r=2, R1=8, R2=4
+#ランドマーク点65%、近傍点8
+t3orus3_sublist1_dpd11<-maxmin_dist_changed_pd(X = t3orus3_sublist[[2]], maxdim = 3, maxscale = 9, l_rate = 0.65, n_vic = 8)
+t3orus3_sublist1_dpl11<-calcLandscape(diag = t3orus3_sublist1_dpd11[["pd"]], maxscale = 9)
