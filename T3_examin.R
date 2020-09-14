@@ -198,6 +198,12 @@ t3orus600_dpl2<-calcLandscape(t3orus600_dpd2[[1]], 6)
 t3orus2_pd3<-calculate_homology(mat = t3orus2, dim = 3)
 t3orus2_pl3<-calcLandscape(diag = t3orus2_pd3, maxscale = 5)
 
+plot(t3orus2_pl3[["tseq"]], t3orus2_pl3[["3-land"]], type = "l", col=4, xlim = c(0, 5), ylim = c(0, 0.09))
+abline(h=t3orus2_pl3[["thresh"]]*(2*pi)/surface_nshpere(3))
+
+plot(t3orus2_pl3[["tseq"]], t3orus2_pl3[["2-land"]], type = "l", col=3, xlim = c(0, 5), ylim = c(0, 0.4))
+abline(h=t3orus2_pl3[["thresh"]]/2)
+
 #---------------------------------------
 #500点3次元トーラスのPD計算
 #r=2, R1=8, R2=4
