@@ -161,17 +161,18 @@ for (i in 1:length(t4_land1)) {
   
 }
 
+t3orus4_distA[t3orus4_distA < 0]<-0
+
 t3orus4_dpd1<-calculate_homology(mat = t3orus4_distA, dim = 3, threshold = 1, format = "distmat")
 t3orus4_dpl1<-calcLandscape(diag = t3orus4_dpd1, maxscale = 1)
 
-plot(t3orus3_dpl9[["tseq"]], t3orus3_dpl9[["3-land"]], type = "l", col=4, xlim = c(0, 0.2))
-abline(h=t3orus3_dpl9[["thresh"]]*(2*pi)/surface_nshpere(3))
+plot(t3orus4_dpl1[["tseq"]], t3orus4_dpl1[["3-land"]], type = "l", col=4, xlim = c(0, 0.1), ylim = c(0, 0.03))
+abline(h=t3orus4_dpl1[["thresh"]]*(2*pi)/surface_nshpere(3))
 
-plot(t3orus3_dpl9[["tseq"]], t3orus3_dpl9[["2-land"]], type = "l", col=3, xlim = c(0, 0.18))
-abline(h=t3orus3_dpl9[["thresh"]]/2)
+plot(t3orus4_dpl1[["tseq"]], t3orus4_dpl1[["2-land"]], type = "l", col=3, xlim = c(0, 0.3))
+abline(h=t3orus4_dpl1[["thresh"]]/2)
 
-#正規化した距離行列
-t3orus3_distD<-t3orus3_dist/max(t3orus3_dist)
+
 
 #----------------------------------------------
 #任意のデータ点を中心とした座標ベクトル表現を試す
