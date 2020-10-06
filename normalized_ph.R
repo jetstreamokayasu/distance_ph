@@ -75,20 +75,6 @@ abline(h=trs300_1_10_pl5[["thresh"]]/2)
 plot(trs300_1_10_pl5[["tseq"]], trs300_1_10_pl5[["1-land"]], type = "l", col=2, xlim = c(0, 0.2))
 abline(h=trs300_1_10_pl5[["thresh"]])
 
-#-----------------------------------------
-#multiresolution PHの概念図
-#torus300_colle_set[[1]][[10]][["noizyX"]]の1番目の点を使う
-#land10Gの18番目のインデックス
-
-trs300_1_10_arnd1<-torus300_colle_set[[1]][[10]][["noizyX"]][-1, ] - torus300_colle_set[[1]][[10]][["noizyX"]][1, ]
-trs300_1_10_arnd1<-trs300_1_10_arnd1 * ((trs300_1_10_dist5C[1, -1]*max(trs300_1_10_dist))/trs300_1_10_dist[1, -1]) + torus300_colle_set[[1]][[10]][["noizyX"]][1, ]
-
-trs300_1_10_arnd1B<-torus300_colle_set[[1]][[10]][["noizyX"]][2:300, ] - torus300_colle_set[[1]][[10]][["noizyX"]][1, ]
-trs300_1_10_arnd1B<-trs300_1_10_arnd1B/trs300_1_10_dist[1, -1] + torus300_colle_set[[1]][[10]][["noizyX"]][1, ]
-#trs300_1_10_arnd1B<-trs300_1_10_arnd1B + torus300_colle_set[[1]][[10]][["noizyX"]][1, ]
-
-trs300_1_10_arnd1C<-torus300_colle_set[[1]][[10]][["noizyX"]][2, ] - torus300_colle_set[[1]][[10]][["noizyX"]][1, ]
-trs300_1_10_arnd1C<- trs300_1_10_arnd1C/trs300_1_10_dist[1, 2] + torus300_colle_set[[1]][[10]][["noizyX"]][1, ]
 
 #------------------------------
 #スタンフォード・バニーでポリゴン描画の参考に
@@ -148,37 +134,145 @@ t3orus3_distD<-t3orus3_dist/max(t3orus3_dist)
 #500点3次元トーラスで同様に試す
 #3回目
 
+#500点3次元トーラス、ランドマーク点、距離行列
 t3orus4<-x3Dtorus_unif(n = 500, r = 2, R1 = 8, R2 = 4)
-
 t4_land1<-landmark_points(X = t3orus4, n_land = nrow(t3orus4)*0.5)
 t3orus4_dist<-dist(t3orus4) %>% as.matrix()
+
+#距離行列操作なし
+t3orus4_time0<-system.time(t3orus4_dpd0<-calculate_homology(mat = t3orus4_dist, dim = 3, format = "distmat"))
+t3orus4_dpl0<-calcLandscape(diag = t3orus4_dpd0, maxscale = 1)
+
+#500点3次元トーラスで同様に試す
+#3回目
 t3orus4_distA<-t3orus4_dist/max(t3orus4_dist)
 
-for (i in 1:length(t4_land1)) {
+for (i in t4_land1) {
   
-  t3orus4_distA[t4_land1[i], ]<-1-exp(-(t3orus4_distA[t4_land1[i], ]^2)/0.3)
-  t3orus4_distA[, t4_land1[i]]<-1-exp(-(t3orus4_distA[, t4_land1[i]]^2)/0.3)
+  t3orus4_distA[i, ]<-1-exp(-(t3orus4_dist[i, ]/10)^2)
+  t3orus4_distA[, i]<-1-exp(-(t3orus4_dist[, i]/10)^2)
   
 }
 
 t3orus4_distA[t3orus4_distA < 0]<-0
 
-t3orus4_dpd1<-calculate_homology(mat = t3orus4_distA, dim = 3, threshold = 1, format = "distmat")
+t3orus4_time1<-system.time(t3orus4_dpd1<-calculate_homology(mat = t3orus4_distA, dim = 3, threshold = 1, format = "distmat"))
 t3orus4_dpl1<-calcLandscape(diag = t3orus4_dpd1, maxscale = 1)
 
-plot(t3orus4_dpl1[["tseq"]], t3orus4_dpl1[["3-land"]], type = "l", col=4, xlim = c(0, 0.1), ylim = c(0, 0.03))
+plot(t3orus4_dpl1[["tseq"]], t3orus4_dpl1[["3-land"]], type = "l", col=4, xlim = c(0, 0.6), ylim = c(0, 0.03))
 abline(h=t3orus4_dpl1[["thresh"]]*(2*pi)/surface_nshpere(3))
+
+plot(t3orus4_dpl1[["tseq"]], t3orus4_dpl1[["2-land"]], type = "l", col=3, xlim = c(0, 0.6))
+abline(h=t3orus4_dpl1[["thresh"]]/2)
+
+#500点3次元トーラスで同様に試す
+#4回目
+
+t3orus4_dist<-dist(t3orus4) %>% as.matrix()
+t3orus4_distB<-t3orus4_dist/max(t3orus4_dist)
+
+for (i in 1:length(t4_land1)) {
+  
+  t3orus4_distB[t4_land1[i], ]<-1-exp(-(t3orus4_distB[t4_land1[i], ]^2)/0.4)
+  t3orus4_distB[, t4_land1[i]]<-1-exp(-(t3orus4_distB[, t4_land1[i]]^2)/0.4)
+  
+}
+
+t3orus4_distB[t3orus4_distB < 0]<-0
+
+t3orus4_dpd2<-calculate_homology(mat = t3orus4_distB, dim = 3, threshold = 1, format = "distmat")
+t3orus4_dpl2<-calcLandscape(diag = t3orus4_dpd2, maxscale = 1)
+
+plot(t3orus4_dpl2[["tseq"]], t3orus4_dpl2[["3-land"]], type = "l", col=4, xlim = c(0, 0.1))
+abline(h=t3orus4_dpl2[["thresh"]]*(2*pi)/surface_nshpere(3))
 
 plot(t3orus4_dpl1[["tseq"]], t3orus4_dpl1[["2-land"]], type = "l", col=3, xlim = c(0, 0.3))
 abline(h=t3orus4_dpl1[["thresh"]]/2)
 
+#500点3次元トーラスで試す
+#1-exp(r_ij^2)を元の距離で代入
+#5回目
 
+t3orus4_dist<-dist(t3orus4) %>% as.matrix()
+t3orus4_distC<-t3orus4_dist/max(t3orus4_dist)
+
+for (i in t4_land1) {
+  
+  t3orus4_distC[i, ]<-1-exp(-(t3orus4_dist[i, ]/10)^2)
+  t3orus4_distC[, i]<-1-exp(-(t3orus4_dist[, i]/10)^2)
+  
+}
+
+t3orus4_distC[t3orus4_distB < 0]<-0
+
+t3orus4_dpd3<-calculate_homology(mat = t3orus4_distC, dim = 3, threshold = 1, format = "distmat")
+t3orus4_dpl3<-calcLandscape(diag = t3orus4_dpd3, maxscale = 1)
+
+plot(t3orus4_dpl3[["tseq"]], t3orus4_dpl3[["3-land"]], type = "l", col=4, xlim = c(0, 0.6))
+abline(h=t3orus4_dpl3[["thresh"]]*(2*pi)/surface_nshpere(3))
+
+plot(t3orus4_dpl3[["tseq"]], t3orus4_dpl3[["2-land"]], type = "l", col=3, xlim = c(0, 0.6))
+abline(h=t3orus4_dpl3[["thresh"]]/2)
+
+#500点3次元トーラスで試す
+#1-exp(r_ij^2)を元の距離で代入
+#全点で変化させる
+#6回目
+
+t3orus4_distD<-1-exp(-(t3orus4_dist^2)/100)
+
+t3orus4_dpd4<-calculate_homology(mat = t3orus4_distD, dim = 3, threshold = 1, format = "distmat")
+t3orus4_dpl4<-calcLandscape(diag = t3orus4_dpd4, maxscale = 1)
+
+plot(t3orus4_dpl4[["tseq"]], t3orus4_dpl4[["3-land"]], type = "l", col=4, xlim = c(0, 0.6))
+abline(h=t3orus4_dpl4[["thresh"]]*(2*pi)/surface_nshpere(3))
+
+plot(t3orus4_dpl4[["tseq"]], t3orus4_dpl4[["2-land"]], type = "l", col=3, xlim = c(0, 0.6))
+abline(h=t3orus4_dpl4[["thresh"]]/2)
+
+#500点3次元トーラスで試す
+#1-exp(r_ij^2)を元の距離で代入
+#7回目
+
+t3orus4_dist<-dist(t3orus4) %>% as.matrix()
+t3orus4_distC<-t3orus4_dist/max(t3orus4_dist)
+
+for (i in 1:length(t4_land1)) {
+  
+  t3orus4_distC[t4_land1[i], ]<-1-exp(-(t3orus4_dist[t4_land1[i], ]^2)/100)
+  t3orus4_distC[, t4_land1[i]]<-1-exp(-(t3orus4_dist[, t4_land1[i]]^2)/100)
+  
+}
+
+t3orus4_distC[t3orus4_distB < 0]<-0
+
+t3orus4_dpd3<-calculate_homology(mat = t3orus4_distC, dim = 3, threshold = 1, format = "distmat")
+t3orus4_dpl3<-calcLandscape(diag = t3orus4_dpd3, maxscale = 1)
+
+plot(t3orus4_dpl3[["tseq"]], t3orus4_dpl3[["3-land"]], type = "l", col=4, xlim = c(0, 0.6))
+abline(h=t3orus4_dpl3[["thresh"]]*(2*pi)/surface_nshpere(3))
+
+plot(t3orus4_dpl3[["tseq"]], t3orus4_dpl3[["2-land"]], type = "l", col=3, xlim = c(0, 0.6))
+abline(h=t3orus4_dpl3[["thresh"]]/2)
 
 #----------------------------------------------
-#任意のデータ点を中心とした座標ベクトル表現を試す
-#アニュラスデータで
+#アニュラスデータでMPHを試す
+anu_land1<-landmark_points(X = anu, n_land = 10)
 
-anu<-anulusUnif(100)
-anu_dist<-dist(anu) %>% as.matrix()
-anu1_50<-anu[50, ] - anu[1, ]
-anu_1<-anu[-1, ] + anu[1,]
+anu_distB<-anu_dist/max(anu_dist)
+
+for (i in anu_land1) {
+  
+  anu_distB[i, ]<-1-exp(-(anu_dist[i, ]^2)/5)
+  anu_distB[, i]<-1-exp(-(anu_dist[, i]^2)/5)
+  
+}
+
+anu_pd<-calculate_homology(mat = anu_dist, dim = 1, threshold = 2, format = "distmat")
+anu_pl<-calcLandscape(diag = anu_pd, maxscale = 2)
+
+anu_mpd1<-calculate_homology(mat = anu_distB, dim = 1, threshold = 1, format = "distmat")
+anu_mpl1<-calcLandscape(diag = anu_mpd1, maxscale = 1)
+plot(anu_mpl1[["tseq"]], anu_mpl1[["1-land"]], type = "l", col=2)
+abline(h=anu_mpl1[["thresh"]])
+
