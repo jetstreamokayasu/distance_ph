@@ -141,7 +141,7 @@ t3orus4_dist<-dist(t3orus4) %>% as.matrix()
 
 #距離行列操作なし
 t3orus4_time0<-system.time(t3orus4_dpd0<-calculate_homology(mat = t3orus4_dist, dim = 3, format = "distmat"))
-t3orus4_dpl0<-calcLandscape(diag = t3orus4_dpd0, maxscale = 1)
+t3orus4_dpl0<-calcLandscape(diag = t3orus4_dpd0, maxscale = 9)
 
 #500点3次元トーラスで同様に試す
 #3回目
@@ -171,10 +171,12 @@ abline(h=t3orus4_dpl1[["thresh"]]/2)
 t3orus4_dist<-dist(t3orus4) %>% as.matrix()
 t3orus4_distB<-t3orus4_dist/max(t3orus4_dist)
 
-for (i in 1:length(t4_land1)) {
+for (i in t4_land1) {
   
-  t3orus4_distB[t4_land1[i], ]<-1-exp(-(t3orus4_distB[t4_land1[i], ]^2)/0.4)
-  t3orus4_distB[, t4_land1[i]]<-1-exp(-(t3orus4_distB[, t4_land1[i]]^2)/0.4)
+  debugText(i)
+  
+  t3orus4_distB[i, ]<-1-exp(-(t3orus4_dist[i, ]/5)^2)
+  t3orus4_distB[, i]<-1-exp(-(t3orus4_dist[, i]/5)^2)
   
 }
 
