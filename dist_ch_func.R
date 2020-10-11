@@ -357,65 +357,6 @@ maxmin_dist_changed_pd<-function(X, maxdim, maxscale, l_rate=0.15, n_vic=10){
   
 }
 
-#-----------------------------------------------
-#3Dトーラスの角度一様分布
-rad_distribute<-function(r, R1, R2, theta, phi){
-  
-  g<-1/R1*(1 + (r/R2)*sin(theta))*(1/R2 + (1/R1)*sin(phi)*(1 + (r/R2)*sin(theta)))
-  
-  return(g)
-  
-}
-
-
-#-------------------------------------------
-#3Dトーラス一様分布を作る。暫定版
-#n=データ点数、r, R1, R2=半径
-x3Dtorus_unif<-function(n, r, R1, R2){
-  
-  theta<-c()
-  phi<-c()
-  
-  tp<-expand.grid(seq(0, 2*pi, length=100), seq(0, 2*pi, length=100))
-  
-  g<-apply(tp, 1, function(i){
-    
-    g0<-rad_distribute(r, R1, R2, i[1], i[2])
-    
-    return(g0)
-    
-  })
-  
-  max_g<-rad_distribute(r, R1, R2, pi/2, pi/2)
-  min_g<-min(g)
-  
-  while(length(theta) < n){
-    
-    xvec<-runif(1, 0, 2*pi)
-    yvec<-runif(1, 0, 2*pi)
-    zvec<-runif(1, min_g, max_g)
-    
-    fxy<-rad_distribute(r, R1, R2, xvec, yvec)
-    
-    if(zvec <= fxy){
-      theta<-c(theta, xvec)
-      phi<-c(phi, yvec)
-    }
-    
-  }
-  
-  delta<-runif(n, 0, 2*pi)
-  
-  x<-sin(delta)*(R1 + sin(phi)*(R2 + r*sin(theta)))
-  y<-cos(delta)*(R1 + sin(phi)*(R2 + r*sin(theta)))
-  z<-cos(phi)*(R2 + r*sin(theta))
-  w<-r*cos(theta)
-  
-  out<-cbind(x, y, z, w)
-  
-  return(out)
-  
-}
 
 #-----------------------------------------------
 #TDAstasのPDからTDAのPD(diagramクラス)へ変換
@@ -426,5 +367,34 @@ pd_conv_stats2tda<-function(pd){
   attr(pd, "scale")<-c(0, max(pd[,3]))
   
   return(pd)
+  
+}
+
+#------------------------------------------------
+#MPH(?)を計算する関数
+#ランドマーク点に関する要素において、元々の距離rを使って1-exp(-(x/a)^2)に置き換える
+#aはハイパラ
+#l_rate=ランドマーク点の割合
+#PDとランドマーク点のインデックス、計算時間を返す
+
+multiresolut_homology<-function(X, maxdim, l_rate=0.3, a=1){
+  
+  X_dist<-dist(X) %>% as.matrix()
+  
+  #ランドマーク点を求める。l_idx=ランドマーク点のインデックス
+  l_idx<-landmark_points(X = X_dist, n_land = nrow(X)*l_rate, d_mat = T)
+  
+  normed_Xdist<-X_dist/max(X_dist)
+  
+  for (i in l_idx) {
+    
+    normed_Xdist[i, ]<-1-exp(-(X_dist[i, ]/a)^2)
+    normed_Xdist[, i]<-1-exp(-(X_dist[, i]/a)^2)
+    
+  }
+  
+  time<-system.time(pd<-TDAstats::calculate_homology(mat = X_dist, dim = maxdim, threshold = 1, format = "distmat"))
+  
+  return(list(pd=pd, l_idx=l_idx, time=time))
   
 }

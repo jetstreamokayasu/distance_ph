@@ -118,3 +118,19 @@ x3Dtorus_unif<-function(n, r, R1, R2){
   return(out)
   
 }
+
+
+#---------------------------------------
+#円を描く関数
+#(x,y)を中心とした半径rの円をpolygonで描く
+#colで色指定。代入なしの場合は透明な白をpolygonに代入する
+
+plot_circle<-function(x, y, r, col){
+  
+  if(missing(col)){col=rgb(1, 1, 1, 0)}
+  
+  theta <- seq(-pi, pi, length=100)
+  polygon(x + r*cos(theta), y + r*sin(theta), col=col)
+  
+  
+}
