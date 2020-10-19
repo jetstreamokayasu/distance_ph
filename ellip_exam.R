@@ -20,6 +20,7 @@ ellip3_pl1<-calcLandscape(diag = ellip3_pd1, maxscale = 3)
 ellip4<-xEllip_unif(n = 80, a = 5, b = 1, c = 1)
 ellip4_time1<-system.time(ellip4_pd1<-calculate_homology(mat = ellip4, dim = 2))
 ellip4_pl1<-calcLandscape(diag = ellip4_pd1, maxscale = 2)
+plot_landscape(land = ellip4_pl1, dim = 2, xlim = c(0, 2), ylim = c(0, 0.5))
 
 #ellip4にMPH適用
 #1回目

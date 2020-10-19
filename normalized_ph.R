@@ -233,13 +233,36 @@ for (i in t4_land1) {
 t3orus4_distD[t3orus4_distD < 0]<-0
 
 t3orus_time6<-system.time(t3orus4_dpd6<-calculate_homology(mat = t3orus4_distD, dim = 3, threshold = 1, format = "distmat"))
-t3orus4_dpl6<-calcLandscape(diag = t3orus4_dpd6, maxscale = 1)
+t3orus4_dpl6<-calc_landscape(diag = t3orus4_dpd6, maxscale = 1)
 
+plot_landscape(land = t3orus4_dpl6, dim = 3, ylim = c(0, 0.05))
 plot(t3orus4_dpl6[["tseq"]], t3orus4_dpl6[["3-land"]], type = "l", col=4, xlim = c(0, 0.6))
 abline(h=t3orus4_dpl6[["thresh"]]*(2*pi)/surface_nshpere(3))
 
 plot(t3orus4_dpl6[["tseq"]], t3orus4_dpl6[["2-land"]], type = "l", col=3, xlim = c(0, 0.6))
 abline(h=t3orus4_dpl6[["thresh"]]/2)
+
+#500点3次元トーラスで試す
+#1-exp(r_ij^2)を元の距離で代入
+#7回目
+#ランドマーク点を逆にする
+
+t4_land1B<-1:nrow(t3orus4) %>% .[-t4_land1]
+
+t3orus4_dist<-dist(t3orus4) %>% as.matrix()
+t3orus4_distE<-t3orus4_dist/max(t3orus4_dist)
+
+for (i in t4_land1B) {
+  
+  t3orus4_distE[i, ]<-1-exp(-(t3orus4_dist[i, ]/4)^2)
+  t3orus4_distE[, i]<-1-exp(-(t3orus4_dist[, i]/4)^2)
+  
+}
+
+t3orus4_distE[t3orus4_distE < 0]<-0
+
+t3orus_time7<-system.time(t3orus4_dpd7<-calculate_homology(mat = t3orus4_distE, dim = 3, threshold = 1, format = "distmat"))
+t3orus4_dpl7<-calc_landscape(diag = t3orus4_dpd7, maxscale = 1)
 
 #----------------------------------------------
 #アニュラスデータでMPHを試す

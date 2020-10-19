@@ -88,3 +88,104 @@ for (i in 1:length(anu2x)) {
 # 0.86749682 0.86029357 0.59707500 0.71533483 0.64196659 0.59626718 0.56938644 0.62148013 0.48493167 
 # 29         30 
 # 0.62754936 0.56812733 
+
+#-------------------------------------------
+#MHPの適用後の計算を見る
+x1<-c(1.2, 0)
+x2<-c(0, 0.9)
+x3<-c(-1.1, 0)
+x4<-c(0, -1.3)
+x5<-c(0.5, 0.4)
+plot_circle(0, 0, 1)
+plot(c(1.2, 0, -1.1, 0, 0.5), c(0, 0.9, 0, -1.3, 0.4), xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5))
+text(c(1.2, 0, -1.1, 0, 0.5), c(0, 0.9, 0, -1.3, 0.4), labels = 1:5)
+d_t<-cbind(c(1.2, 0, -1.1, 0, 0.5), c(0, 0.9, 0, -1.3, 0.4))
+d_dist<-dist(d_t) %>% as.matrix()
+d_dist_sorted<-sort(dist(d_t))
+
+# > d_dist
+# 1         2        3        4         5
+# 1 0.0000000 1.5000000 2.300000 1.769181 0.8062258
+# 2 1.5000000 0.0000000 1.421267 2.200000 0.7071068
+# 3 2.3000000 1.4212670 0.000000 1.702939 1.6492423
+# 4 1.7691806 2.2000000 1.702939 0.000000 1.7720045
+# 5 0.8062258 0.7071068 1.649242 1.772005 0.0000000
+
+d_t_pd<-calculate_homology(mat = d_t, dim = 1)
+# >d_t_pd
+# dimension    birth     death
+# [1,]         0 0.000000 0.7071068
+# [2,]         0 0.000000 0.8062258
+# [3,]         0 0.000000 1.4212670
+# [4,]         0 0.000000 1.7029386
+# [5,]         1 1.769181 1.7720045
+
+d_t_pd2<-calculate_homology(mat = d_dist, dim = 1, format = "distmat")
+
+lines(c(x2[1], x5[1]), c(x2[2], x5[2]))
+lines(c(x1[1], x5[1]), c(x1[2], x5[2]))
+lines(c(x2[1], x3[1]), c(x2[2], x3[2]))
+lines(c(x1[1], x2[1]), c(x1[2], x2[2]))
+lines(c(x3[1], x5[1]), c(x3[2], x5[2]))
+lines(c(x3[1], x4[1]), c(x3[2], x4[2]))
+lines(c(x1[1], x4[1]), c(x1[2], x4[2]))#生成
+lines(c(x4[1], x5[1]), c(x4[2], x5[2]))#消滅
+
+#距離の正規化
+d_t_x<-(d_t[-5, 1] - x5[1])/d_dist_sorted[10]
+d_t_y<-(d_t[-5, 2] - x5[2])/d_dist_sorted[10]
+plot(d_t_x+x5[1], d_t_y+x5[2], xlim = c(-1, 1), ylim = c(-1, 1))
+points(x5[1], x5[2], pch=16, col=2)
+text(c(d_t_x+x5[1], x5[1]), c(d_t_y+x5[2], x5[2]), labels = 1:5)
+
+#FRI適用後の点５を中心とした分布
+eta<-1.7#ハイパラ
+d_t_xA<-(1-exp(-(d_dist[5, -5]/eta)^2)) * d_t_x/sqrt(d_t_x^2 + d_t_y^2) + x5[1]
+d_t_yA<-(1-exp(-(d_dist[5, -5]/eta)^2)) * d_t_y/sqrt(d_t_x^2 + d_t_y^2) + x5[2]
+points(d_t_xA, d_t_yA, col=4, pch=16)
+
+d_distA<-d_dist/max(d_dist)
+d_distA[5,]<-(1-exp(-(d_dist[5, ]/eta)^2))
+d_distA[,5]<-(1-exp(-(d_dist[, 5]/eta)^2))
+d_distA[4,]<-(1-exp(-(d_dist[4, ]/eta)^2))
+d_distA[,4]<-(1-exp(-(d_dist[, 4]/eta)^2))
+d_dist_normed_sorted<-sort(d_dist/max(d_dist))
+d_distA_sorted<-sort(d_distA) %>% unique()
+d_t_pd3<-calculate_homology(mat = d_dist/max(d_dist), dim = 1, format = "distmat")
+d_t_pdA1<-calculate_homology(mat = d_distA, dim = 1, format = "distmat")
+
+# > d_distA
+# 1         2         3         4         5
+# 1 0.0000000 0.6521739 1.0000000 0.6614370 0.2014147
+# 2 0.6521739 0.0000000 0.6179422 0.8126432 0.1588711
+# 3 1.0000000 0.6179422 0.0000000 0.6333913 0.6098315
+# 4 0.6614370 0.8126432 0.6333913 0.0000000 0.6626064
+# 5 0.2014147 0.1588711 0.6098315 0.6626064 0.0000000
+
+lines(c(d_t_x[2]+x5[1], x5[1]), c(d_t_y[2]+x5[2], x5[2]))
+lines(c(d_t_x[1]+x5[1], x5[1]), c(d_t_y[1]+x5[2], x5[2]))
+lines(c(d_t_x[3]+x5[1], x5[1]), c(d_t_y[3]+x5[2], x5[2]))
+lines(c(d_t_x[2]+x5[1], d_t_x[3]+x5[1]), c(d_t_y[2]+x5[2], d_t_y[3]+x5[2]))
+lines(c(d_t_x[3]+x5[1], d_t_x[4]+x5[1]), c(d_t_y[3]+x5[2], d_t_y[4]+x5[2]))
+lines(c(d_t_x[1]+x5[1], d_t_x[2]+x5[1]), c(d_t_y[1]+x5[2], d_t_y[2]+x5[2]))
+lines(c(d_t_x[1]+x5[1], d_t_x[4]+x5[1]), c(d_t_y[1]+x5[2], d_t_y[4]+x5[2]))#生成
+lines(c(d_t_x[4]+x5[1], x5[1]), c(d_t_y[4]+x5[2], x5[2]))#消滅
+lines(c(d_t_x[2]+x5[1], d_t_x[4]+x5[1]), c(d_t_y[2]+x5[2], d_t_y[4]+x5[2]))
+lines(c(d_t_x[1]+x5[1], d_t_x[3]+x5[1]), c(d_t_y[1]+x5[2], d_t_y[3]+x5[2]))
+
+d_t_pd4<-ripsDiag(X = cbind(c(d_t_x+x5[1], x5[1]), c(d_t_y+x5[2], x5[2])), maxdimension = 1, maxscale = 1)
+
+for (i in 1:length(d_t_x)) {
+  
+  plot_circle(x = d_t_x[i]+x5[1], y = d_t_y[i]+x5[2], r = d_dist[i, 5]/max(d_dist) - d_distA[i, 5])
+  
+}
+
+for (i in 1:3) {
+  
+  plot_circle(x = d_t_x[i]+x5[1], y = d_t_y[i]+x5[2], r = d_dist[i, 4]/max(d_dist) - d_distA[i, 4], col = rgb(1, 0, 0, 0.6))
+  
+}
+
+plot_circle(x = x5[1], y = x5[2], r = d_dist[5, 4]/max(d_dist) - d_distA[5, 4], col = rgb(1, 0, 0, 0.6))
+
