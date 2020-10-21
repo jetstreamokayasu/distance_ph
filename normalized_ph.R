@@ -142,6 +142,8 @@ t3orus4_dist<-dist(t3orus4) %>% as.matrix()
 #距離行列操作なし
 t3orus4_time0<-system.time(t3orus4_dpd0<-calculate_homology(mat = t3orus4_dist, dim = 3, format = "distmat"))
 t3orus4_dpl0<-calcLandscape(diag = t3orus4_dpd0, maxscale = 9)
+plot_landscape(land = t3orus4_dpl0, dim = 3, xlim = c(0, 9))
+plot_landscape(land = t3orus4_dpl0, dim = 2, xlim = c(0, 9))
 
 #500点3次元トーラスで同様に試す
 #3回目
@@ -242,6 +244,9 @@ abline(h=t3orus4_dpl6[["thresh"]]*(2*pi)/surface_nshpere(3))
 plot(t3orus4_dpl6[["tseq"]], t3orus4_dpl6[["2-land"]], type = "l", col=3, xlim = c(0, 0.6))
 abline(h=t3orus4_dpl6[["thresh"]]/2)
 
+plot_landscape(land = t3orus4_dpl6, dim = 2, ylim = c(0, 0.1))
+calc.landscape.peak(X = t3orus4_dpl6[["2-land"]], dimension = 2, thresh = t3orus4_dpl6[["thresh"]]/2, tseq = t3orus4_dpl6[["tseq"]], show = T)
+
 #500点3次元トーラスで試す
 #1-exp(r_ij^2)を元の距離で代入
 #7回目
@@ -263,6 +268,8 @@ t3orus4_distE[t3orus4_distE < 0]<-0
 
 t3orus_time7<-system.time(t3orus4_dpd7<-calculate_homology(mat = t3orus4_distE, dim = 3, threshold = 1, format = "distmat"))
 t3orus4_dpl7<-calc_landscape(diag = t3orus4_dpd7, maxscale = 1)
+plot_landscape(land = t3orus4_dpl7, dim = 3, ylim = c(0, 0.05))
+calc.landscape.peak(X = t3orus4_dpl7[["3-land"]], dimension = 3, thresh = t3orus4_dpl7[["thresh"]]*(2*pi)/surface_nshpere(3), tseq = t3orus4_dpl7[["tseq"]], show = T)
 
 #----------------------------------------------
 #アニュラスデータでMPHを試す
@@ -284,4 +291,6 @@ anu_mpd1<-calculate_homology(mat = anu_distB, dim = 1, threshold = 1, format = "
 anu_mpl1<-calcLandscape(diag = anu_mpd1, maxscale = 1)
 plot(anu_mpl1[["tseq"]], anu_mpl1[["1-land"]], type = "l", col=2)
 abline(h=anu_mpl1[["thresh"]])
+
+
 

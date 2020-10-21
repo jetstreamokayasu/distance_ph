@@ -97,11 +97,12 @@ x3<-c(-1.1, 0)
 x4<-c(0, -1.3)
 x5<-c(0.5, 0.4)
 plot_circle(0, 0, 1)
-plot(c(1.2, 0, -1.1, 0, 0.5), c(0, 0.9, 0, -1.3, 0.4), xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5))
-text(c(1.2, 0, -1.1, 0, 0.5), c(0, 0.9, 0, -1.3, 0.4), labels = 1:5)
 d_t<-cbind(c(1.2, 0, -1.1, 0, 0.5), c(0, 0.9, 0, -1.3, 0.4))
+plot(d_t, xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5))
+text(c(1.2, 0, -1.1, 0, 0.5), c(0, 0.9, 0, -1.3, 0.4), labels = 1:5)
+
 d_dist<-dist(d_t) %>% as.matrix()
-d_dist_sorted<-sort(dist(d_t))
+d_dist_sorted<-sort(dist(d_t)) %>% unique()
 
 # > d_dist
 # 1         2        3        4         5
@@ -132,35 +133,51 @@ lines(c(x1[1], x4[1]), c(x1[2], x4[2]))#生成
 lines(c(x4[1], x5[1]), c(x4[2], x5[2]))#消滅
 
 #距離の正規化
+#点5中心
 d_t_x<-(d_t[-5, 1] - x5[1])/d_dist_sorted[10]
 d_t_y<-(d_t[-5, 2] - x5[2])/d_dist_sorted[10]
 plot(d_t_x+x5[1], d_t_y+x5[2], xlim = c(-1, 1), ylim = c(-1, 1))
 points(x5[1], x5[2], pch=16, col=2)
 text(c(d_t_x+x5[1], x5[1]), c(d_t_y+x5[2], x5[2]), labels = 1:5)
 
+#距離の正規化
+#点4中心
+d_t_x2<-(d_t[-4, 1] - x4[1])/d_dist_sorted[10]
+d_t_y2<-(d_t[-4, 2] - x4[2])/d_dist_sorted[10]
+plot(d_t_x2+x4[1], d_t_y2+x4[2], xlim = c(-1, 1), ylim = c(0, -2))
+points(x4[1], x4[2], pch=16, col=2)
+text(c(d_t_x2+x4[1], x4[1]), c(d_t_y2+x4[2], x4[2]), labels = c(1, 2, 3, 5, 4))
+
 #FRI適用後の点５を中心とした分布
 eta<-1.7#ハイパラ
-d_t_xA<-(1-exp(-(d_dist[5, -5]/eta)^2)) * d_t_x/sqrt(d_t_x^2 + d_t_y^2) + x5[1]
-d_t_yA<-(1-exp(-(d_dist[5, -5]/eta)^2)) * d_t_y/sqrt(d_t_x^2 + d_t_y^2) + x5[2]
-points(d_t_xA, d_t_yA, col=4, pch=16)
+d_t_xA2<-(1-exp(-(d_dist[4, -4]/eta)^2)) * d_t_x2/sqrt(d_t_x2^2 + d_t_y2^2) + x4[1]
+d_t_yA2<-(1-exp(-(d_dist[4, -4]/eta)^2)) * d_t_y2/sqrt(d_t_x2^2 + d_t_y2^2) + x4[2]
+points(d_t_xA2, d_t_yA2, col=4, pch=16)
 
 d_distA<-d_dist/max(d_dist)
-d_distA[5,]<-(1-exp(-(d_dist[5, ]/eta)^2))
-d_distA[,5]<-(1-exp(-(d_dist[, 5]/eta)^2))
 d_distA[4,]<-(1-exp(-(d_dist[4, ]/eta)^2))
 d_distA[,4]<-(1-exp(-(d_dist[, 4]/eta)^2))
+d_distA[5,]<-(1-exp(-(d_dist[5, ]/eta)^2))
+d_distA[,5]<-(1-exp(-(d_dist[, 5]/eta)^2))
+d_distA[3,]<-(1-exp(-(d_dist[3, ]/eta)^2))
+d_distA[,3]<-(1-exp(-(d_dist[, 3]/eta)^2))
 d_dist_normed_sorted<-sort(d_dist/max(d_dist))
 d_distA_sorted<-sort(d_distA) %>% unique()
 d_t_pd3<-calculate_homology(mat = d_dist/max(d_dist), dim = 1, format = "distmat")
 d_t_pdA1<-calculate_homology(mat = d_distA, dim = 1, format = "distmat")
+calcper(d_t_pdA1, 1)
 
-# > d_distA
+# > d_dist/max(d_dist)
 # 1         2         3         4         5
-# 1 0.0000000 0.6521739 1.0000000 0.6614370 0.2014147
-# 2 0.6521739 0.0000000 0.6179422 0.8126432 0.1588711
-# 3 1.0000000 0.6179422 0.0000000 0.6333913 0.6098315
-# 4 0.6614370 0.8126432 0.6333913 0.0000000 0.6626064
-# 5 0.2014147 0.1588711 0.6098315 0.6626064 0.0000000
+# 1 0.0000000 0.6521739 1.0000000 0.7692090 0.3505329
+# 2 0.6521739 0.0000000 0.6179422 0.9565217 0.3074377
+# 3 1.0000000 0.6179422 0.0000000 0.7404081 0.7170618
+# 4 0.7692090 0.9565217 0.7404081 0.0000000 0.7704367
+# 5 0.3505329 0.3074377 0.7170618 0.7704367 0.0000000
+
+# > calcper(diag = d_t_pd3, 1)
+# death 
+# 0.001227788 
 
 lines(c(d_t_x[2]+x5[1], x5[1]), c(d_t_y[2]+x5[2], x5[2]))
 lines(c(d_t_x[1]+x5[1], x5[1]), c(d_t_y[1]+x5[2], x5[2]))
@@ -188,4 +205,291 @@ for (i in 1:3) {
 }
 
 plot_circle(x = x5[1], y = x5[2], r = d_dist[5, 4]/max(d_dist) - d_distA[5, 4], col = rgb(1, 0, 0, 0.6))
+
+
+lines(c(d_t_x[2]+x5[1], x5[1]), c(d_t_y[2]+x5[2], x5[2]))
+lines(c(d_t_x[1]+x5[1], x5[1]), c(d_t_y[1]+x5[2], x5[2]))
+lines(c(d_t_x[3]+x5[1], x5[1]), c(d_t_y[3]+x5[2], x5[2]))
+lines(c(d_t_x[2]+x5[1], d_t_x[3]+x5[1]), c(d_t_y[2]+x5[2], d_t_y[3]+x5[2]))
+lines(c(d_t_x[3]+x5[1], d_t_x[4]+x5[1]), c(d_t_y[3]+x5[2], d_t_y[4]+x5[2]))
+lines(c(d_t_x[1]+x5[1], d_t_x[2]+x5[1]), c(d_t_y[1]+x5[2], d_t_y[2]+x5[2]))
+lines(c(d_t_x[1]+x5[1], d_t_x[4]+x5[1]), c(d_t_y[1]+x5[2], d_t_y[4]+x5[2]))#生成
+lines(c(d_t_x[4]+x5[1], x5[1]), c(d_t_y[4]+x5[2], x5[2]))#消滅
+lines(c(d_t_x[2]+x5[1], d_t_x[4]+x5[1]), c(d_t_y[2]+x5[2], d_t_y[4]+x5[2]))
+lines(c(d_t_x[1]+x5[1], d_t_x[3]+x5[1]), c(d_t_y[1]+x5[2], d_t_y[3]+x5[2]))
+
+#--------------------------------
+#点4だけFRI適用
+#d_t_x2は1,2,3,5点の点4からの方向ベクトル
+lines(c(d_t_x2[2]+x4[1], d_t_x2[4]+x4[1]), c(d_t_y2[2]+x4[2], d_t_y2[4]+x4[2]))#2-5
+lines(c(d_t_x2[1]+x4[1], d_t_x2[4]+x4[1]), c(d_t_y2[1]+x4[2], d_t_y2[4]+x4[2]))#1-5
+lines(c(d_t_x2[2]+x4[1], d_t_x2[3]+x4[1]), c(d_t_y2[2]+x4[2], d_t_y2[3]+x4[2]))#2-3
+lines(c(d_t_x2[3]+x4[1], x4[1]), c(d_t_y2[3]+x4[2], x4[2]))#3-4
+lines(c(d_t_x2[1]+x4[1], d_t_x2[2]+x4[1]), c(d_t_y2[1]+x4[2], d_t_y2[2]+x4[2]))#1-2
+lines(c(d_t_x2[1]+x4[1], x4[1]), c(d_t_y2[1]+x4[2], x4[2]))#1-4#生成
+lines(c(x4[1], d_t_x2[4]+x4[1]), c(x4[2], d_t_y2[4]+x4[2]))#4-5
+lines(c(d_t_x2[3]+x4[1], d_t_x2[4]+x4[1]), c(d_t_y2[3]+x4[2], d_t_y2[4]+x4[2]))#3-5#消滅
+
+
+lines(c(d_t_x[1]+x5[1], x5[1]), c(d_t_y[1]+x5[2], x5[2]))
+lines(c(d_t_x[3]+x5[1], x5[1]), c(d_t_y[3]+x5[2], x5[2]))
+lines(c(d_t_x[2]+x5[1], d_t_x[3]+x5[1]), c(d_t_y[2]+x5[2], d_t_y[3]+x5[2]))
+lines(c(d_t_x[3]+x5[1], d_t_x[4]+x5[1]), c(d_t_y[3]+x5[2], d_t_y[4]+x5[2]))
+lines(c(d_t_x[1]+x5[1], d_t_x[2]+x5[1]), c(d_t_y[1]+x5[2], d_t_y[2]+x5[2]))
+lines(c(d_t_x[1]+x5[1], d_t_x[4]+x5[1]), c(d_t_y[1]+x5[2], d_t_y[4]+x5[2]))#生成
+lines(c(d_t_x[4]+x5[1], x5[1]), c(d_t_y[4]+x5[2], x5[2]))#消滅
+lines(c(d_t_x[2]+x5[1], d_t_x[4]+x5[1]), c(d_t_y[2]+x5[2], d_t_y[4]+x5[2]))
+lines(c(d_t_x[1]+x5[1], d_t_x[3]+x5[1]), c(d_t_y[1]+x5[2], d_t_y[3]+x5[2]))
+
+
+#--------------------------------------
+#FRI適用後の幾何的解釈
+#点4の周辺に点を散らす
+delta<-c(pi/3, pi/2, 2*pi/3, 5*pi/4, 7*pi/4)
+zeta1<-rnorm(n = 5, sd = 0.05)
+zeta2<-rnorm(n = 5, sd = 0.05)
+
+points(0.2*cos(delta)+x4[1]+zeta1, 0.2*sin(delta)+x4[2]+zeta2)
+test_data2<-cbind(0.2*cos(delta)+x4[1]+zeta1, 0.2*sin(delta)+x4[2]+zeta2) %>% rbind(d_t, .)
+plot(test_data2, xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5))
+pointLabel(x = test_data2, labels = as.character(1:10))
+
+test_data2_dist<-dist(test_data2) %>% as.matrix()
+test_data2_dist_sorted<-sort(test_data2_dist) %>% unique()
+
+#FRI適用前PH計算
+test_data2_pd1<-calculate_homology(mat = test_data2, dim = 1)
+calcper(test_data2_pd1, 1)#＝0.134317
+
+#距離を昇順に並べ、相当するインデックスを求める
+for (i in 2:length(test_data2_dist_sorted)) {
+  
+  cat("i=", i, "\n")
+  which(test_data2_dist==test_data2_dist_sorted[i], arr.ind = T) %>% print()
+  
+}
+
+#フィルトレーション順に線を結ぶ
+lines(c(test_data2[7, 1], test_data2[8, 1]), c(test_data2[7, 2], test_data2[8, 2]))#7-8
+lines(c(test_data2[6, 1], test_data2[7, 1]), c(test_data2[6, 2], test_data2[7, 2]))#6-7
+lines(c(test_data2[4, 1], test_data2[9, 1]), c(test_data2[4, 2], test_data2[9, 2]))#4-9
+lines(c(test_data2[4, 1], test_data2[7, 1]), c(test_data2[4, 2], test_data2[7, 2]))#4-7
+lines(c(test_data2[4, 1], test_data2[8, 1]), c(test_data2[4, 2], test_data2[8, 2]))#4-8
+lines(c(test_data2[4, 1], test_data2[6, 1]), c(test_data2[4, 2], test_data2[6, 2]))#4-6
+lines(c(test_data2[6, 1], test_data2[8, 1]), c(test_data2[6, 2], test_data2[8, 2]))#6-8
+lines(c(test_data2[8, 1], test_data2[9, 1]), c(test_data2[8, 2], test_data2[9, 2]))#8-9
+lines(c(test_data2[4, 1], test_data2[10, 1]), c(test_data2[4, 2], test_data2[10, 2]))#4-10
+lines(c(test_data2[7, 1], test_data2[9, 1]), c(test_data2[7, 2], test_data2[9, 2]))#7-9
+lines(c(test_data2[6, 1], test_data2[10, 1]), c(test_data2[6, 2], test_data2[10, 2]))#6-10
+lines(c(test_data2[9, 1], test_data2[10, 1]), c(test_data2[9, 2], test_data2[10, 2]))#9-10
+lines(c(test_data2[7, 1], test_data2[10, 1]), c(test_data2[7, 2], test_data2[10, 2]))#7-10
+lines(c(test_data2[6, 1], test_data2[9, 1]), c(test_data2[6, 2], test_data2[9, 2]))#6-9
+lines(c(test_data2[8, 1], test_data2[10, 1]), c(test_data2[8, 2], test_data2[10, 2]))#8-10
+lines(c(test_data2[2, 1], test_data2[5, 1]), c(test_data2[2, 2], test_data2[5, 2]))#2-5
+lines(c(test_data2[1, 1], test_data2[5, 1]), c(test_data2[1, 2], test_data2[5, 2]))#1-5
+lines(c(test_data2[2, 1], test_data2[3, 1]), c(test_data2[2, 2], test_data2[3, 2]))#2-3
+lines(c(test_data2[3, 1], test_data2[8, 1]), c(test_data2[3, 2], test_data2[8, 2]))#3-8
+lines(c(test_data2[1, 1], test_data2[2, 1]), c(test_data2[1, 2], test_data2[2, 2]))#1-2
+lines(c(test_data2[1, 1], test_data2[6, 1]), c(test_data2[1, 2], test_data2[6, 2]))#1-6#生成
+lines(c(test_data2[5, 1], test_data2[6, 1]), c(test_data2[5, 2], test_data2[6, 2]))#5-6
+lines(c(test_data2[3, 1], test_data2[7, 1]), c(test_data2[3, 2], test_data2[7, 2]))#3-7
+lines(c(test_data2[5, 1], test_data2[7, 1]), c(test_data2[5, 2], test_data2[7, 2]))#5-7
+lines(c(test_data2[5, 1], test_data2[8, 1]), c(test_data2[5, 2], test_data2[8, 2]))#5-8
+lines(c(test_data2[1, 1], test_data2[7, 1]), c(test_data2[1, 2], test_data2[7, 2]))#1-7
+lines(c(test_data2[3, 1], test_data2[5, 1]), c(test_data2[3, 2], test_data2[5, 2]))#3-5#消滅
+lines(c(test_data2[3, 1], test_data2[6, 1]), c(test_data2[3, 2], test_data2[6, 2]))#3-6
+
+#FRIを点４に適用
+test_data2_dist_fri<-test_data2_dist/max(test_data2_dist)
+test_data2_dist_fri[4, ]<-1-exp(-(test_data2_dist[4, ]/1.7)^2)
+test_data2_dist_fri[, 4]<-1-exp(-(test_data2_dist[, 4]/1.7)^2)
+
+for (i in test_data2_land1) {
+  
+  test_data2_dist_fri[i, ]<-1-exp(-(test_data2_dist[i, ]/1.7)^2)
+  test_data2_dist_fri[, i]<-1-exp(-(test_data2_dist[, i]/1.7)^2)
+  
+}
+
+test_data2_normed_pd2<-calculate_homology(mat = test_data2_dist/max(test_data2_dist), dim = 1, format = "distmat")
+test_data2_normed_dist<-test_data2_dist/max(test_data2_dist)
+calcper(test_data2_normed_pd2, 1)#=0.05683944
+test_data2_fri_pd1<-calculate_homology(mat = test_data2_dist_fri, dim = 1, format = "distmat")
+calcper(test_data2_fri_pd1, 1)
+
+test_data2_land1<-landmark_points(X = test_data2, n_land = 3)
+
+test_data2_dist_fri_sorted<-sort(test_data2_dist_fri) %>% unique()
+
+#距離を昇順に並べ、相当するインデックスを求める
+for (i in 2:length(test_data2_dist_fri_sorted)) {
+  
+  cat("i=", i-1, "\n")
+  which(test_data2_dist_fri==test_data2_dist_fri_sorted[i], arr.ind = T) %>% print()
+  
+}
+
+#フィルトレーション順に線を結ぶ
+#FRI後
+lines(c(test_data2[4, 1], test_data2[10, 1]), c(test_data2[4, 2], test_data2[10, 2]))#4-10
+lines(c(test_data2[6, 1], test_data2[10, 1]), c(test_data2[6, 2], test_data2[10, 2]))#6-10
+lines(c(test_data2[9, 1], test_data2[10, 1]), c(test_data2[9, 2], test_data2[10, 2]))#9-10
+lines(c(test_data2[7, 1], test_data2[10, 1]), c(test_data2[7, 2], test_data2[10, 2]))#7-10
+lines(c(test_data2[7, 1], test_data2[8, 1]), c(test_data2[7, 2], test_data2[8, 2]))#7-8
+lines(c(test_data2[6, 1], test_data2[7, 1]), c(test_data2[6, 2], test_data2[7, 2]))#6-7
+lines(c(test_data2[4, 1], test_data2[9, 1]), c(test_data2[4, 2], test_data2[9, 2]))#4-9
+lines(c(test_data2[4, 1], test_data2[7, 1]), c(test_data2[4, 2], test_data2[7, 2]))#4-7
+lines(c(test_data2[8, 1], test_data2[10, 1]), c(test_data2[8, 2], test_data2[10, 2]))#8-10
+lines(c(test_data2[4, 1], test_data2[8, 1]), c(test_data2[4, 2], test_data2[8, 2]))#4-8
+lines(c(test_data2[4, 1], test_data2[6, 1]), c(test_data2[4, 2], test_data2[6, 2]))#4-6
+lines(c(test_data2[6, 1], test_data2[8, 1]), c(test_data2[6, 2], test_data2[8, 2]))#6-8
+lines(c(test_data2[8, 1], test_data2[9, 1]), c(test_data2[8, 2], test_data2[9, 2]))#8-9
+lines(c(test_data2[7, 1], test_data2[9, 1]), c(test_data2[7, 2], test_data2[9, 2]))#7-9
+lines(c(test_data2[2, 1], test_data2[5, 1]), c(test_data2[2, 2], test_data2[5, 2]))#2-5
+lines(c(test_data2[6, 1], test_data2[9, 1]), c(test_data2[6, 2], test_data2[9, 2]))#6-9
+lines(c(test_data2[1, 1], test_data2[5, 1]), c(test_data2[1, 2], test_data2[5, 2]))#1-5
+lines(c(test_data2[2, 1], test_data2[3, 1]), c(test_data2[2, 2], test_data2[3, 2]))#2-3
+lines(c(test_data2[1, 1], test_data2[2, 1]), c(test_data2[1, 2], test_data2[2, 2]))#1-2
+lines(c(test_data2[1, 1], test_data2[6, 1]), c(test_data2[1, 2], test_data2[6, 2]))#1-6
+lines(c(test_data2[1, 1], test_data2[7, 1]), c(test_data2[1, 2], test_data2[7, 2]))#1-7
+lines(c(test_data2[3, 1], test_data2[8, 1]), c(test_data2[3, 2], test_data2[8, 2]))#3-8#生成
+lines(c(test_data2[1, 1], test_data2[10, 1]), c(test_data2[1, 2], test_data2[10, 2]))#1-10
+lines(c(test_data2[1, 1], test_data2[8, 1]), c(test_data2[1, 2], test_data2[8, 2]))#1-8
+lines(c(test_data2[5, 1], test_data2[6, 1]), c(test_data2[5, 2], test_data2[6, 2]))#5-6
+lines(c(test_data2[1, 1], test_data2[4, 1]), c(test_data2[1, 2], test_data2[4, 2]))#1-4
+lines(c(test_data2[3, 1], test_data2[7, 1]), c(test_data2[3, 2], test_data2[7, 2]))#3-7
+lines(c(test_data2[5, 1], test_data2[7, 1]), c(test_data2[5, 2], test_data2[7, 2]))#5-7
+lines(c(test_data2[5, 1], test_data2[8, 1]), c(test_data2[5, 2], test_data2[8, 2]))#5-8
+lines(c(test_data2[3, 1], test_data2[5, 1]), c(test_data2[3, 2], test_data2[5, 2]))#3-5#消滅
+lines(c(test_data2[3, 1], test_data2[6, 1]), c(test_data2[3, 2], test_data2[6, 2]))#3-6
+lines(c(test_data2[3, 1], test_data2[4, 1]), c(test_data2[3, 2], test_data2[4, 2]))#3-4
+
+#--------------------------------------
+#距離を正規化後のプロット
+#点10中心
+
+test_data2_x<-(test_data2[-10, 1] - test_data2[10, 1])/max(test_data2_dist) + test_data2[10, 1] 
+test_data2_x<-c(test_data2_x, test_data2[10, 1])
+
+test_data2_y<-(test_data2[-10, 2] - test_data2[10, 2])/max(test_data2_dist) + test_data2[10, 2]
+test_data2_y<-c(test_data2_y, test_data2[10, 2])
+
+
+plot(test_data2_x, test_data2_y, xlim = c(-0.5, 1), ylim = c(-1.5, 0))
+pointLabel(test_data2_x, test_data2_y, labels = as.character(1:10))
+points(test_data2_x[test_data2_land1], test_data2_y[test_data2_land1], pch=16, col=2)
+lines(c(test_data2_x[4], test_data2_x[10]), c(test_data2_y[4], test_data2_y[10]))#4-10
+
+#正規化された距離行列
+#下三角行列化
+test_data2_dist_normed<-test_data2_dist/max(test_data2_dist)
+test_data2_dist_normed_low<-test_data2_dist_normed
+test_data2_dist_normed_low[upper.tri(test_data2_dist_normed_low)]<-0
+
+#------------------------------------------
+#フィルトレーションのアニメーション
+library(animation)
+library(jpeg)
+library(tcltk)
+
+#FRI適用前
+saveGIF({
+  
+  for (k in 2:28) {
+    
+    cat("i=", k, "\n")
+    plot(test_data2_x, test_data2_y, xlim = c(-0.5, 1), ylim = c(-1.5, 0), main = paste0("r=", test_data2_dist_sorted[k]/max(test_data2_dist)))
+    text(test_data2_x, test_data2_y, labels = 1:10)
+    
+    re<-lapply(2:k, function(i){
+      
+      idx<-which(test_data2_dist==test_data2_dist_sorted[i], arr.ind = T) 
+      lines(c(test_data2_x[idx[1,1]], test_data2_x[idx[1,2]]), c(test_data2_y[idx[1,1]], test_data2_y[idx[1,2]]))
+      
+    })
+    
+  }
+  
+}, interbal=1.0, movie.name = "filt2.gif")
+
+#FRI適用後
+saveGIF({
+  
+  for (k in 2:31) {
+    
+    cat("i=", k, "\n")
+    plot(test_data2_x[-test_data2_land1], test_data2_y[-test_data2_land1], xlim = c(-0.5, 1), ylim = c(-1.5, 0), main = paste0("r=", test_data2_dist_fri_sorted[k]))
+    points(test_data2_x[test_data2_land1], test_data2_y[test_data2_land1], pch=16, col=2)
+    text(test_data2_x, test_data2_y, labels = 1:10)
+    
+    re<-lapply(2:k, function(i){
+      
+      idx<-which(test_data2_dist_fri==test_data2_dist_fri_sorted[i], arr.ind = T) 
+      lines(c(test_data2_x[idx[1,1]], test_data2_x[idx[1,2]]), c(test_data2_y[idx[1,1]], test_data2_y[idx[1,2]]))
+      
+    })
+    
+  }
+  
+}, interbal=1.0, movie.name = "filt_fri.gif")
+
+#--------------------------------------------
+#FRI適用前後比較GIF
+oldpar <- par(no.readonly = TRUE) 
+
+#FRI適用後の下三角距離行列
+test_data2_dist_fri_low<-test_data2_dist_fri
+test_data2_dist_fri_low[upper.tri(test_data2_dist_fri_low)]<-0
+
+plot_filt<-function(){
+  
+  #フィルトレーション用の円の半径増大ベクトル
+  filt_line<-seq(0.004, test_data2_dist_fri_sorted[32], by=0.004)
+  
+  for (r in filt_line){
+    
+    cat("r=", r, "\n")
+    #プロット画面分割
+    par(mfrow=c(1,2)) 
+    
+    #FRI前描画
+    plot(test_data2_x, test_data2_y, xlim = c(-0.5, 1), ylim = c(-1.5, 0), main = paste0("r=", r))
+    text(test_data2_x, test_data2_y, labels = as.character(1:10))
+    
+    #閾値以下の要素のインデックスの行列
+    idx_mat<-which(test_data2_dist_normed_low > 0 & test_data2_dist_normed_low <= r, arr.ind = T)
+    
+    if(length(idx_mat) != 0){
+      #結ばれる線の描画
+      trush<-lapply(1:nrow(idx_mat), function(i){
+        
+        lines(c(test_data2_x[idx_mat[i,1]], test_data2_x[idx_mat[i,2]]), c(test_data2_y[idx_mat[i,1]], test_data2_y[idx_mat[i,2]]))
+        
+      })
+    
+    }
+    
+    #FRI後描画
+    plot(test_data2_x[-test_data2_land1], test_data2_y[-test_data2_land1], xlim = c(-0.5, 1), ylim = c(-1.5, 0), main = paste0("r=", r))
+    points(test_data2_x[test_data2_land1], test_data2_y[test_data2_land1], pch=16, col=2)
+    text(test_data2_x, test_data2_y, labels = as.character(1:10))
+    
+    #閾値以下の要素のインデックスの行列
+    idx_mat<-which(test_data2_dist_fri_low > 0 & test_data2_dist_fri_low <= r, arr.ind = T)
+    
+    if(length(idx_mat) != 0){
+      #結ばれる線の描画
+      trush<-lapply(1:nrow(idx_mat), function(i){
+        
+        lines(c(test_data2_x[idx_mat[i,1]], test_data2_x[idx_mat[i,2]]), c(test_data2_y[idx_mat[i,1]], test_data2_y[idx_mat[i,2]]))
+        
+      })
+    
+    }
+    
+  }
+  
+}
+
+animation::saveGIF(plot_filt(), interbal=0.03, movie.name = "filt_comp2.gif", ani.width=1000, ani.height=500, movietype="gif")
 
