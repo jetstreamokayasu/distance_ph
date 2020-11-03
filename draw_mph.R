@@ -367,6 +367,7 @@ lines(c(test_data2[3, 1], test_data2[4, 1]), c(test_data2[3, 2], test_data2[4, 2
 #--------------------------------------
 #距離を正規化後のプロット
 #点10中心
+library(maptools)
 
 test_data2_x<-(test_data2[-10, 1] - test_data2[10, 1])/max(test_data2_dist) + test_data2[10, 1] 
 test_data2_x<-c(test_data2_x, test_data2[10, 1])
@@ -374,17 +375,44 @@ test_data2_x<-c(test_data2_x, test_data2[10, 1])
 test_data2_y<-(test_data2[-10, 2] - test_data2[10, 2])/max(test_data2_dist) + test_data2[10, 2]
 test_data2_y<-c(test_data2_y, test_data2[10, 2])
 
-
-plot(test_data2_x, test_data2_y, xlim = c(-0.5, 1), ylim = c(-1.5, 0))
+#距離を正規化後のプロット実行
+plot(test_data2_x, test_data2_y, xlim = c(-0.5, 1), ylim = c(-1.5, 0), pch=16)
 pointLabel(test_data2_x, test_data2_y, labels = as.character(1:10))
 points(test_data2_x[test_data2_land1], test_data2_y[test_data2_land1], pch=16, col=2)
-lines(c(test_data2_x[4], test_data2_x[10]), c(test_data2_y[4], test_data2_y[10]))#4-10
 
 #正規化された距離行列
 #下三角行列化
 test_data2_dist_normed<-test_data2_dist/max(test_data2_dist)
 test_data2_dist_normed_low<-test_data2_dist_normed
 test_data2_dist_normed_low[upper.tri(test_data2_dist_normed_low)]<-0
+
+#正規化後の距離をソート
+test_data2_dist_normed_sorted<-sort(test_data2_dist_normed) %>% unique()
+
+#結合順に線分を図示
+#FRI前
+#birth=22
+#death=28
+idx_mat<-which(test_data2_dist_normed_low > 0 & test_data2_dist_normed_low <= test_data2_dist_normed_sorted[28], arr.ind = T)
+#結ばれる線の描画
+title(main = paste("r =", round(test_data2_dist_normed_sorted[28], 5)), cex.main=2)
+trush<-lapply(1:nrow(idx_mat), function(i){
+  
+  lines(c(test_data2_x[idx_mat[i,1]], test_data2_x[idx_mat[i,2]]), c(test_data2_y[idx_mat[i,1]], test_data2_y[idx_mat[i,2]]))
+  
+})
+
+#FRI後
+#birth=23
+#death=31
+idx_mat<-which(test_data2_dist_fri_low > 0 & test_data2_dist_fri_low <= test_data2_dist_fri_sorted[31], arr.ind = T)
+#結ばれる線の描画
+title(main = paste("r =", round(test_data2_dist_fri_sorted[31], 5)), cex.main=2)#タイトル
+trush<-lapply(1:nrow(idx_mat), function(i){
+  
+  lines(c(test_data2_x[idx_mat[i,1]], test_data2_x[idx_mat[i,2]]), c(test_data2_y[idx_mat[i,1]], test_data2_y[idx_mat[i,2]]))
+  
+})
 
 #------------------------------------------
 #フィルトレーションのアニメーション
@@ -444,7 +472,7 @@ test_data2_dist_fri_low[upper.tri(test_data2_dist_fri_low)]<-0
 plot_filt<-function(){
   
   #フィルトレーション用の円の半径増大ベクトル
-  filt_line<-seq(0.004, test_data2_dist_fri_sorted[32], by=0.004)
+  filt_line<-seq(0.004, 0.75, by=0.004)
   
   for (r in filt_line){
     
@@ -491,5 +519,30 @@ plot_filt<-function(){
   
 }
 
-animation::saveGIF(plot_filt(), interbal=0.03, movie.name = "filt_comp2.gif", ani.width=1000, ani.height=500, movietype="gif")
+animation::saveGIF(plot_filt(), interbal=0.02, movie.name = "filt_comp2.gif", ani.width=1000, ani.height=500, movietype="gif")
 
+#saveHTMLを試す
+
+animation::saveHTML(plot_filt(), img.name = "filt_comp3", interval=0.4, htmlfile = "filt_comp3.html", ani.width=1000, ani.height=500, imgdir="data")
+
+#ffmpegによる動画化を試す
+ff_pass<-animation::ani.options(ffmpeg="D:/okayasu/D_download/ffmpeg-4.3.1-2020-10-01-essentials_build/bin/ffmpeg.exe")
+
+saveVideo(expr = plot_filt(), video.name = "filt_comp4.mp4", img.name = "filt_comp_four", interval=0.2, ani.width=1000, ani.height=500)
+
+
+#---------------------------------------------
+#1-exp(-(d_ij/eta)^2)を図示
+
+plot(seq(0, 1, length=100), 1-exp(-(seq(0, 1, length=100)/2)^2), type="l")
+title("1-exp(-(d_ij/eta)^2)")
+
+trs300_1_10_dist5_srt<-sort(trs300_1_10_dist5[land10F[1], ])
+plot(trs300_1_10_dist[land10F[1], ], 1-exp(-(trs300_1_10_dist5[land10F[1], ])^2), ylim = c(0, 1))
+points(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist5[land10F[1], ])
+points(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist5[land10F[1], ]^2)
+
+plot(t3orus4_dist[t4_land1[1], ], t3orus4_distD[t4_land1[1], ])
+points(t3orus4_dist[t4_land1[1], ], t3orus4_dist[t4_land1[1], ]/max(t3orus4_dist))
+
+plot(t3orus4_dist[t4_land1[1], ], 1-exp(-(t3orus4_dist[t4_land1[1], ]/max(t3orus4_dist))^2), ylim = c(0, 1))

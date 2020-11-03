@@ -5,8 +5,15 @@
 
 /data/
 data/
+css/
+js/
+
+video_data/
 
 *.RData
 *.RDataTmp
 
 *.gif
+*.png
+
+*.mp4

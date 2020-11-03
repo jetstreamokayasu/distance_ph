@@ -393,7 +393,7 @@ multiresolut_homology<-function(X, maxdim, l_rate=0.3, a=1){
     
   }
   
-  time<-system.time(pd<-TDAstats::calculate_homology(mat = X_dist, dim = maxdim, threshold = 1, format = "distmat"))
+  time<-system.time(pd<-TDAstats::calculate_homology(mat = normed_Xdist, dim = maxdim, threshold = 1, format = "distmat"))
   
   return(list(pd=pd, l_idx=l_idx, time=time))
   
@@ -405,5 +405,26 @@ multiresolut_homology<-function(X, maxdim, l_rate=0.3, a=1){
 draw_line<-function(x, y){
   
   lines(c(x[1], y[1]), c(x[2], y[2]))
+  
+}
+
+#--------------------------------------------------------------
+#距離行列において指定したインデックスの値を変化させる
+#全体は正規化。変化はFRIによる
+#X_dist=距離行列, lands=ランドマーク点, eta=FRIのハイパラ
+dist_fri_change<-function(X_dist, lands, eta){
+  
+  X_dist<-X_dist/max(X_dist)
+  
+  for (i in lands) {
+    
+    X_dist[i, ]<-1-exp(-(X_dist[i, ]/eta)^2)
+    X_dist[, i]<-1-exp(-(X_dist[, i]/eta)^2)
+    
+  }
+  
+  X_dist[X_dist < 0]<-0
+  
+  return(X_dist)
   
 }

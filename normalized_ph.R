@@ -2,16 +2,16 @@
 #trs300_1_10_distを使う
 
 #オリジナルのPD
-trs300_1_10_pd<-calculate_homology(mat = trs300_1_10_dist, dim = 2, threshold = 3, format = "distmat")
+trs300_1_10_pd_time<-system.time(trs300_1_10_pd<-calculate_homology(mat = trs300_1_10_dist, dim = 2, threshold = 3, format = "distmat"))
 trs300_1_10_pdB<-pd_conv_stats2tda(trs300_1_10_pd)
+trs300_1_10_pl<-calc_landscape(diag = trs300_1_10_pd, maxscale = 3)
 
 #距離行列を[0, 1]に正規化。PH計算
 trs300_1_10_dist5<-trs300_1_10_dist/max(trs300_1_10_dist)
 trs300_1_10_pd2<-calculate_homology(mat = trs300_1_10_dist5, dim = 2, threshold = 3, format = "distmat")
-trs300_1_10_pl2<-calcLandscape(diag = trs300_1_10_pd2, maxscale = 1)
+trs300_1_10_pl2<-calc_landscape(diag = trs300_1_10_pd2, maxscale = 1)
 
-plot(trs300_1_10_pl2[["tseq"]], trs300_1_10_pl2[["2-land"]], type = "l", col=3, xlim = c(0, 0.5), ylim = c(0, 0.015))
-abline(h=trs300_1_10_pl2[["thresh"]]/2)
+plot_landscape(trs300_1_10_pl2, 2, xlim = c(0, 0.5), ylim = c(0, 0.025))
 
 #正規化後の距離行列において、ランドマーク点の距離を変化させる
 #1-exp(r_ij^2)。multiresolution PHを参考に
@@ -31,6 +31,7 @@ for (i in 1:length(land10F)) {
 trs300_1_10_dist5B[trs300_1_10_dist5B < 0]<-0
 trs300_1_10_pd3<-calculate_homology(mat = trs300_1_10_dist5B, dim = 2, threshold = 1, format = "distmat")
 trs300_1_10_pl3<-calcLandscape(diag = trs300_1_10_pd3, maxscale = 1)
+plot_landscape(land = trs300_1_10_pl3, dim = 2, xlim = c(0, 0.5), ylim = c(0, 0.02))
 
 #-------------------------------------
 #正規化後の距離行列において、ランドマーク点の距離を変化させる
@@ -49,8 +50,7 @@ for (i in 1:length(land10G)) {
 trs300_1_10_dist5C[trs300_1_10_dist5C < 0]<-0
 trs300_1_10_pd4<-calculate_homology(mat = trs300_1_10_dist5C, dim = 2, threshold = 1, format = "distmat")
 trs300_1_10_pl4<-calcLandscape(diag = trs300_1_10_pd4, maxscale = 1)
-plot(seq(0, 1, length=1000), trs300_1_10_pl4[["2-land"]], type = "l", col=3, xlim = c(0, 0.4))
-abline(h=trs300_1_10_pl4[["thresh"]]/2)
+plot_landscape(trs300_1_10_pl4, dim = 2, xlim = c(0, 0.4), ylim = c(0, 0.02))
 
 #正規化後の距離行列において、ランドマーク点の距離を変化させる
 #2回目
@@ -67,14 +67,23 @@ for (i in 1:length(land10H)) {
 }
 
 trs300_1_10_dist5D[trs300_1_10_dist5D < 0]<-0
-trs300_1_10_pd5<-calculate_homology(mat = trs300_1_10_dist5D, dim = 2, threshold = 1, format = "distmat")
-trs300_1_10_pl5<-calcLandscape(diag = trs300_1_10_pd5, maxscale = 1)
-plot(trs300_1_10_pl5[["tseq"]], trs300_1_10_pl5[["2-land"]], type = "l", col=3, xlim = c(0, 0.5))
-abline(h=trs300_1_10_pl5[["thresh"]]/2)
+trs300_1_10_pd5_time<-system.time(trs300_1_10_pd5<-calculate_homology(mat = trs300_1_10_dist5D, dim = 2, threshold = 1, format = "distmat"))
+trs300_1_10_pl5<-calc_landscape(diag = trs300_1_10_pd5, maxscale = 1)
+plot_landscape(trs300_1_10_pl5, 2, xlim = c(0, 0.5), ylim = c(0, 0.025))
 
-plot(trs300_1_10_pl5[["tseq"]], trs300_1_10_pl5[["1-land"]], type = "l", col=2, xlim = c(0, 0.2))
-abline(h=trs300_1_10_pl5[["thresh"]])
+plot_landscape(trs300_1_10_pl5, 1, ylim = c(0, 0.3))
 
+#---------------------------------------------------------
+#正規化後の距離行列において、ランドマーク点の距離を変化させる
+#正規化後の距離を2乗する
+#インデックスとしてland10G使用
+trs300_1_10_dist5E<-trs300_1_10_dist/max(trs300_1_10_dist) 
+trs300_1_10_dist5E<-trs300_1_10_dist5E^2
+
+trs300_1_10_pd6_time<-system.time(trs300_1_10_pd6<-calculate_homology(mat = trs300_1_10_dist5E, dim = 2, threshold = 1, format = "distmat"))
+trs300_1_10_pl6<-calc_landscape(diag = trs300_1_10_pd6, maxscale = 1)
+plot_landscape(trs300_1_10_pl6, 2, ylim = c(0, 0.01))
+plot_landscape(trs300_1_10_pl6, 1, ylim = c(0, 0.1))
 
 #------------------------------
 #スタンフォード・バニーでポリゴン描画の参考に
@@ -212,11 +221,9 @@ t3orus4_distC[t3orus4_distC < 0]<-0
 t3orus4_time3<-system.time(t3orus4_dpd3<-calculate_homology(mat = t3orus4_distC, dim = 3, threshold = 1, format = "distmat"))
 t3orus4_dpl3<-calcLandscape(diag = t3orus4_dpd3, maxscale = 1)
 
-plot(t3orus4_dpl3[["tseq"]], t3orus4_dpl3[["3-land"]], type = "l", col=4, ylim = c(0, 0.1))
-abline(h=t3orus4_dpl3[["thresh"]]*(2*pi)/surface_nshpere(3))
+plot_landscape(t3orus4_dpl3, 3, xlim = c(0, 1), ylim = c(0, 0.02))
 
-plot(t3orus4_dpl3[["tseq"]], t3orus4_dpl3[["2-land"]], type = "l", col=3, ylim = c(0, 0.1))
-abline(h=t3orus4_dpl3[["thresh"]]/2)
+plot_landscape(t3orus4_dpl3, 2, xlim = c(0, 1), ylim = c(0, 0.1))
 
 #500点3次元トーラスで試す
 #1-exp(r_ij^2)を元の距離で代入
@@ -238,12 +245,6 @@ t3orus_time6<-system.time(t3orus4_dpd6<-calculate_homology(mat = t3orus4_distD, 
 t3orus4_dpl6<-calc_landscape(diag = t3orus4_dpd6, maxscale = 1)
 
 plot_landscape(land = t3orus4_dpl6, dim = 3, ylim = c(0, 0.05))
-plot(t3orus4_dpl6[["tseq"]], t3orus4_dpl6[["3-land"]], type = "l", col=4, xlim = c(0, 0.6))
-abline(h=t3orus4_dpl6[["thresh"]]*(2*pi)/surface_nshpere(3))
-
-plot(t3orus4_dpl6[["tseq"]], t3orus4_dpl6[["2-land"]], type = "l", col=3, xlim = c(0, 0.6))
-abline(h=t3orus4_dpl6[["thresh"]]/2)
-
 plot_landscape(land = t3orus4_dpl6, dim = 2, ylim = c(0, 0.1))
 calc.landscape.peak(X = t3orus4_dpl6[["2-land"]], dimension = 2, thresh = t3orus4_dpl6[["thresh"]]/2, tseq = t3orus4_dpl6[["tseq"]], show = T)
 
@@ -269,7 +270,32 @@ t3orus4_distE[t3orus4_distE < 0]<-0
 t3orus_time7<-system.time(t3orus4_dpd7<-calculate_homology(mat = t3orus4_distE, dim = 3, threshold = 1, format = "distmat"))
 t3orus4_dpl7<-calc_landscape(diag = t3orus4_dpd7, maxscale = 1)
 plot_landscape(land = t3orus4_dpl7, dim = 3, ylim = c(0, 0.05))
+plot_landscape(land = t3orus4_dpl7, dim = 2, ylim = c(0, 0.1))
 calc.landscape.peak(X = t3orus4_dpl7[["3-land"]], dimension = 3, thresh = t3orus4_dpl7[["thresh"]]*(2*pi)/surface_nshpere(3), tseq = t3orus4_dpl7[["tseq"]], show = T)
+
+#-------------------------------------
+#500点3次元トーラスで試す
+#1-exp(r_ij^2)を元の距離で代入
+#8回目
+
+t3orus4_dist<-dist(t3orus4) %>% as.matrix()
+t3orus4_distG<-dist_fri_change(t3orus4_dist, t4_land1, eta=1)
+
+t3orus_time8<-system.time(t3orus4_dpd8<-calculate_homology(mat = t3orus4_distG, dim = 3, threshold = 1, format = "distmat"))
+t3orus4_dpl8A<-calc_landscape(diag = t3orus4_dpd8A, maxscale = 1)
+t3orus4_dpd8A<-t3orus4_dpd8  
+#ランドスケープ計算で値が小さくなりすぎたので10倍した
+t3orus4_dpd8A[, 3]<-t3orus4_dpd8A[, 3]*10
+t3orus4_dpd8A[, 2]<-t3orus4_dpd8A[, 2]*10
+plot_landscape(t3orus4_dpl8A, 3, ylim = c(0, 0.01), xlim = c(0, 0.1))
+  
+#-------------------------------
+#500点3次元トーラスt3orus4で試す
+#正規化後のPDを求める
+t3orus4_time0A<-system.time(t3orus4_dpd0A<-calculate_homology(mat = t3orus4_dist/max(t3orus4_dist), dim = 3, format = "distmat"))
+t3orus4_dpl0A<-calc_landscape(diag = t3orus4_dpd0A, maxscale = 1)
+plot_landscape(land = t3orus4_dpl0A, dim = 3, xlim = c(0, 0.4), ylim = c(0, 0.05))
+plot_landscape(land = t3orus4_dpl0A, dim = 2, xlim = c(0, 0.4), ylim = c(0, 0.1))
 
 #----------------------------------------------
 #アニュラスデータでMPHを試す
