@@ -542,7 +542,12 @@ plot(trs300_1_10_dist[land10F[1], ], 1-exp(-(trs300_1_10_dist5[land10F[1], ])^2)
 points(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist5[land10F[1], ])
 points(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist5[land10F[1], ]^2)
 
+plot(trs300_1_10_dist[land10F, ], trs300_1_10_dist5B[land10F, ], ylim = c(0, 1))
+points(trs300_1_10_dist[land10F, ], trs300_1_10_dist5[land10F, ])
+
+#t3orus4_distは元々の距離行列、t3orus4_distDはFRI適用後の距離行列
 plot(t3orus4_dist[t4_land1[1], ], t3orus4_distD[t4_land1[1], ])
 points(t3orus4_dist[t4_land1[1], ], t3orus4_dist[t4_land1[1], ]/max(t3orus4_dist))
 
-plot(t3orus4_dist[t4_land1[1], ], 1-exp(-(t3orus4_dist[t4_land1[1], ]/max(t3orus4_dist))^2), ylim = c(0, 1))
+plot(t3orus4_dist[t4_land1[1], ], 1-exp(-(t3orus4_dist[t4_land1[1], ]/10)^2), ylim = c(0, 1))
+

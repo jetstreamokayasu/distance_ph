@@ -22,6 +22,12 @@ ellip4_time1<-system.time(ellip4_pd1<-calculate_homology(mat = ellip4, dim = 2))
 ellip4_pl1<-calcLandscape(diag = ellip4_pd1, maxscale = 2)
 plot_landscape(land = ellip4_pl1, dim = 2, xlim = c(0, 2), ylim = c(0, 0.5))
 
+#ellip4を正規化してPH計算
+#ellip4_dist1が正規化後距離行列
+ellip4_normed_time1<-system.time( ellip4_normed_pd1<-calculate_homology(mat = ellip4_dist1, dim = 2, format = "distmat") )
+ellip4_normed_pl1<-calc_landscape(diag = ellip4_normed_pd1, maxscale = 1)
+plot_landscape(land = ellip4_normed_pl1, dim = 2, xlim = c(0, 0.8), ylim = c(0, 0.04))
+
 #ellip4にMPH適用
 #1回目
 #ランドマーク点、距離行列

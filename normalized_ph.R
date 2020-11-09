@@ -294,8 +294,8 @@ plot_landscape(t3orus4_dpl8A, 3, ylim = c(0, 0.01), xlim = c(0, 0.1))
 #正規化後のPDを求める
 t3orus4_time0A<-system.time(t3orus4_dpd0A<-calculate_homology(mat = t3orus4_dist/max(t3orus4_dist), dim = 3, format = "distmat"))
 t3orus4_dpl0A<-calc_landscape(diag = t3orus4_dpd0A, maxscale = 1)
-plot_landscape(land = t3orus4_dpl0A, dim = 3, xlim = c(0, 0.4), ylim = c(0, 0.05))
-plot_landscape(land = t3orus4_dpl0A, dim = 2, xlim = c(0, 0.4), ylim = c(0, 0.1))
+plot_landscape(land = t3orus4_dpl0A, dim = 3, ylim = c(0, 0.05))
+plot_landscape(land = t3orus4_dpl0A, dim = 2, ylim = c(0, 0.1))
 
 #----------------------------------------------
 #アニュラスデータでMPHを試す
