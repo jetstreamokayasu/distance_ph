@@ -352,3 +352,18 @@ t3orus3_sublist1_dpl10<-calcLandscape(diag = t3orus3_sublist1_dpd10[["pd"]], max
 #ランドマーク点65%、近傍点8
 t3orus3_sublist1_dpd11<-maxmin_dist_changed_pd(X = t3orus3_sublist[[2]], maxdim = 3, maxscale = 9, l_rate = 0.65, n_vic = 8)
 t3orus3_sublist1_dpl11<-calcLandscape(diag = t3orus3_sublist1_dpd11[["pd"]], maxscale = 9)
+
+#----------------------------------------------
+#正規化せず、ランドマーク点に関する距離に1-exp(-(d_ij/eta)^2)を掛けてみる
+t3orus4_distH<-t3orus4_dist
+
+for (i in t4_land1) {
+  
+  t3orus4_distH[i, ]<-t3orus4_dist[i, ]*(1-exp(-(t3orus4_dist[i, ]/10)^2))
+  t3orus4_distH[, i]<-t3orus4_dist[, i]*(1-exp(-(t3orus4_dist[, i]/10)^2))
+  
+}
+
+t3orus4_pdH_time<-system.time(t3orus4_pdH<-calculate_homology(mat = t3orus4_distH, dim = 3, format = "distmat"))
+t3orus4_plH<-calc_landscape(t3orus4_pdH, maxscale = 3)
+plot_landscape(land = trs300_1_10_plE, dim = 2, ylim = c(0, 0.3))

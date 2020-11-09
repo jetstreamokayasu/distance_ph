@@ -153,6 +153,8 @@ t3orus4_time0<-system.time(t3orus4_dpd0<-calculate_homology(mat = t3orus4_dist, 
 t3orus4_dpl0<-calcLandscape(diag = t3orus4_dpd0, maxscale = 9)
 plot_landscape(land = t3orus4_dpl0, dim = 3, xlim = c(0, 9))
 plot_landscape(land = t3orus4_dpl0, dim = 2, xlim = c(0, 9))
+plot_landscape(land = t3orus4_dpl0, dim = 1, xlim = c(0, 9))
+calc.landscape.peak(X = t3orus4_dpl0[["1-land"]], dimension = 1, thresh = t3orus4_dpl0[["thresh"]], tseq = t3orus4_dpl0[["tseq"]], show = T)
 
 #500点3次元トーラスで同様に試す
 #3回目

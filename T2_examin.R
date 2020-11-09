@@ -55,3 +55,18 @@ for (p in 1:nrow(para_part_set)){
 }
 
 plot(trs300_1_10_para_test_pls[[3]][["tseq"]], trs300_1_10_para_test_pls[[3]][["2-land"]], ylim = c(0, 0.1), col=3, type="l", xlab = "")
+
+#-------------------------------------------------
+#正規化せず、ランドマーク点に関する距離に1-exp(-(d_ij/eta)^2)を掛けてみる
+trs300_1_10_distE<-trs300_1_10_dist
+
+for (i in land10F) {
+  
+  trs300_1_10_distE[i, ]<-trs300_1_10_dist[i, ]*(1-exp(-(trs300_1_10_dist[i, ]/3)^2))
+  trs300_1_10_distE[, i]<-trs300_1_10_dist[, i]*(1-exp(-(trs300_1_10_dist[, i]/3)^2))
+  
+}
+
+trs300_1_10_pdE_time<-system.time(trs300_1_10_pdE<-calculate_homology(mat = trs300_1_10_distE, dim = 2, threshold = 3, format = "distmat"))
+trs300_1_10_plE<-calc_landscape(trs300_1_10_pdE, maxscale = 3)
+plot_landscape(land = trs300_1_10_plE, dim = 2, ylim = c(0, 0.3))

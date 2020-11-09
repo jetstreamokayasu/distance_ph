@@ -538,7 +538,7 @@ plot(seq(0, 1, length=100), 1-exp(-(seq(0, 1, length=100)/2)^2), type="l")
 title("1-exp(-(d_ij/eta)^2)")
 
 trs300_1_10_dist5_srt<-sort(trs300_1_10_dist5[land10F[1], ])
-plot(trs300_1_10_dist[land10F[1], ], 1-exp(-(trs300_1_10_dist5[land10F[1], ])^2), ylim = c(0, 1))
+plot(trs300_1_10_dist[land10F[1], ], 1-exp(-(trs300_1_10_dist[land10F[1], ])^2), ylim = c(0, 1))
 points(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist5[land10F[1], ])
 points(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist5[land10F[1], ]^2)
 
@@ -546,8 +546,12 @@ plot(trs300_1_10_dist[land10F, ], trs300_1_10_dist5B[land10F, ], ylim = c(0, 1))
 points(trs300_1_10_dist[land10F, ], trs300_1_10_dist5[land10F, ])
 
 #t3orus4_distは元々の距離行列、t3orus4_distDはFRI適用後の距離行列
-plot(t3orus4_dist[t4_land1[1], ], t3orus4_distD[t4_land1[1], ])
-points(t3orus4_dist[t4_land1[1], ], t3orus4_dist[t4_land1[1], ]/max(t3orus4_dist))
+plot(t3orus4_dist[t4_land1[1], ], t3orus4_dist[t4_land1[1], ]*(1-exp(-(t3orus4_dist[t4_land1[1], ]/10)^2)))
+points(t3orus4_dist[t4_land1[1], ], t3orus4_dist[t4_land1[1], ])
 
 plot(t3orus4_dist[t4_land1[1], ], 1-exp(-(t3orus4_dist[t4_land1[1], ]/10)^2), ylim = c(0, 1))
 
+#1-exp(-(d_ij/eta)^2)を掛けてみる
+
+plot(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist[land10F[1], ]*(1-exp(-(trs300_1_10_dist[land10F[1], ]/3)^2)))
+points(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist[land10F[1], ])
