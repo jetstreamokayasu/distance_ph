@@ -8,6 +8,9 @@ data/
 css/
 js/
 
+/vars
+/vars2
+
 video_data/
 
 *.RData

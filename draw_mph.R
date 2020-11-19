@@ -542,16 +542,37 @@ plot(trs300_1_10_dist[land10F[1], ], 1-exp(-(trs300_1_10_dist[land10F[1], ])^2),
 points(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist5[land10F[1], ])
 points(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist5[land10F[1], ]^2)
 
-plot(trs300_1_10_dist[land10F, ], trs300_1_10_dist5B[land10F, ], ylim = c(0, 1))
-points(trs300_1_10_dist[land10F, ], trs300_1_10_dist5[land10F, ])
+#T2の1-exp(-(d_ij/eta)^2)を図示
+plot(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist5B[land10F[1], ], ylim = c(0, 1), pch=4, col=2)
+points(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist5[land10F[1], ])
 
-#t3orus4_distは元々の距離行列、t3orus4_distDはFRI適用後の距離行列
-plot(t3orus4_dist[t4_land1[1], ], t3orus4_dist[t4_land1[1], ]*(1-exp(-(t3orus4_dist[t4_land1[1], ]/10)^2)))
-points(t3orus4_dist[t4_land1[1], ], t3orus4_dist[t4_land1[1], ])
-
-plot(t3orus4_dist[t4_land1[1], ], 1-exp(-(t3orus4_dist[t4_land1[1], ]/10)^2), ylim = c(0, 1))
+#ggplot使用
+trs300_1_10_dist_p<-ggplot() + geom_point(aes(x = trs300_1_10_dist[land10F[1], ], y = trs300_1_10_dist5[land10F[1], ]), size=3, shape = 1)+ scale_y_continuous(limits = c(0, 1)) + theme(axis.text=element_text(size=14))
+trs300_1_10_dist_p2<-trs300_1_10_dist_p + geom_point(aes(x = trs300_1_10_dist[land10F[1], ], y = trs300_1_10_dist5B[land10F[1], ]), size=3, color = 2, shape = 1)
 
 #1-exp(-(d_ij/eta)^2)を掛けてみる
-
-plot(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist[land10F[1], ]*(1-exp(-(trs300_1_10_dist[land10F[1], ]/3)^2)))
+plot(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist[land10F[1], ]*(1-exp(-(trs300_1_10_dist[land10F[1], ]/3)^2)), col=2, pch=4)
 points(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist[land10F[1], ])
+
+trs300_1_10_dist_WVRp<-ggplot() + geom_point(aes(x = trs300_1_10_dist[land10F[1], ], y = trs300_1_10_dist[land10F[1], ]), size=3, shape = 1) + theme(axis.text=element_text(size=14))
+trs300_1_10_dist_WVRp2<-trs300_1_10_dist_WVRp + geom_point(aes(x = trs300_1_10_dist[land10F[1], ], y = trs300_1_10_dist[land10F[1], ]*(1-exp(-(trs300_1_10_dist[land10F[1], ]/3)^2))), size=3, color=2, shape=1)
+
+#t3orus4_distは元々の距離行列、t3orus4_distDはFRI適用後の距離行列
+plot(t3orus4_dist[t4_land1[1], ], 1-exp(-(t3orus4_dist[t4_land1[1], ]/4)^2), ylim = c(0, 1), pch=4, col=2)
+points(t3orus4_dist[t4_land1[1], ], t3orus4_dist[t4_land1[1], ]/max(t3orus4_dist))
+
+t3orus4_dist_dist_FRIp1<-ggplot() + geom_point(aes(x = t3orus4_dist[t4_land1[1], ], y = t3orus4_distD[t4_land1[1], ]), size=3, shape = 1, color = 2) + theme(axis.text=element_text(size=14)) + scale_y_continuous(limits = c(0, 1))
+t3orus4_dist_dist_FRIp2<-t3orus4_dist_dist_FRIp1 + geom_point(aes(x = t3orus4_dist[t4_land1[1], ], y = t3orus4_dist[t4_land1[1], ]/max(t3orus4_dist)), size=3, shape = 1)
+
+
+#T3に1-exp(-(d_ij/eta)^2)を掛けてみる
+plot(t3orus4_dist[t4_land1[1], ], t3orus4_dist[t4_land1[1], ]*(1-exp(-(t3orus4_dist[t4_land1[1], ]/5)^2)), pch=4, col=2)
+points(t3orus4_dist[t4_land1[1], ], t3orus4_dist[t4_land1[1], ])
+
+t3orus4_dist_dist_WVRp1<-ggplot() + geom_point(aes(x = t3orus4_dist[t4_land1[1], ], y = t3orus4_dist[t4_land1[1], ]), size=3, shape = 1)
+t3orus4_dist_dist_WVRp2<-t3orus4_dist_dist_WVRp1 + theme(axis.text=element_text(size=14))
+t3orus4_dist_dist_WVRp3<-t3orus4_dist_dist_WVRp2 + geom_point(aes(x = t3orus4_dist[t4_land1[1], ], y = t3orus4_dist[t4_land1[1], ]*(1-exp(-(t3orus4_dist[t4_land1[1], ]/5)^2))), size=3, shape = 1, color = 2)
+
+
+
+

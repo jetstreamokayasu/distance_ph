@@ -134,3 +134,40 @@ plot_circle<-function(x, y, r, col){
   
   
 }
+
+#----------------------------------------------------
+#GlobalEnvの全変数(関数含む)を"変数名".RDataにしてvarsディレクトリに保存
+save_environment_variale2rdata<-function (){
+ 
+  dir <- match("vars", list.files())
+  if (is.na(dir)) {
+    dir.create("./vars")
+  }
+  else {
+    if (!(file.info("./vars")$isdir)) {
+      dir.create("./vars")
+    }
+  }
+  
+  vars<-sapply(ls(pos = .GlobalEnv), function(var)save(list = var, file = paste0("./vars/", var, ".RData")))
+  
+}
+
+#-----------------------------------------------------
+#pathで指定したディレクトリ内に、引数で指定した変数のRDataがあれば
+#.GlobalEnvにロードする
+
+search_load<-function(var, path="./data"){
+  
+  elname <- substitute(var) %>% as.character()
+  
+  if(file.exists(paste0(path, "/", elname, ".RData"))){
+
+    cat("file exists\n")
+    load(paste0(path, "/", elname, ".RData"), envir = .GlobalEnv)
+
+  }else{cat("file doesn't exit\n")}
+  
+  print(paste0(path, "/", elname, ".RData"))
+  
+}

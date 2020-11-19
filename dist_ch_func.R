@@ -16,6 +16,7 @@ cell_cnct<-function(i, cell){
 #-------------------------------------------------------------
 #ベッチ数自動推定関数群を距離行列変更に対応させる
 #proposedMethodOnlyから変形
+#bootstrap.homology.mk2を使っているので対応していない
 
 distance_change_method <- function(X,maxdim,maxscale,samples, const.size=0){
   aggr1 <- matrix(0,length(X),1)
@@ -52,7 +53,7 @@ distance_change_method <- function(X,maxdim,maxscale,samples, const.size=0){
 }
 
 #------------------------------------------------------
-#距離行列変更後、PH計算
+#距離行列変更後、PH計算--------------------------------
 #bootstrap.homology.mk2から変形
 dist_changed_pl_peak_count <-function(X,maxdim,maxscale,const.band=0,maximum.thresh = F){
   require(TDA)
@@ -82,7 +83,7 @@ dist_changed_pl_peak_count <-function(X,maxdim,maxscale,const.band=0,maximum.thr
 }
 
 #--------------------------------------------------------------
-#距離関数変更後のパーシステント図を返す
+#距離関数変更後のパーシステント図を返す------------------------
 calc_dist_changed_pd<-function(X, maxdim, maxscale, th_rate=0.8, const_th=0, idx=0){
   
   require(TDA)
@@ -128,7 +129,7 @@ dist_mat_change<-function(X_dist, idx, thresh){
 }
 
 #-----------------------------------------------------------------
-#距離操作量固定、操作点数の割合を変えてPDを計算する関数
+#距離操作量固定、操作点数の割合を変えてPDを計算する関数-----------
 #ratesは操作点数の割合の集合。すべて同一の割合にすれば割合を固定し、操作対象点を変えて計算できる。
 #ratesの要素数分PDを計算
 select_rate_change_pd<-function(X, rates, thresh){
@@ -155,7 +156,7 @@ select_rate_change_pd<-function(X, rates, thresh){
 }
 
 #-----------------------------------------------------------------
-#操作対象点固定、操作量を変化させてPH計算する関数
+#操作対象点固定、操作量を変化させてPH計算する関数----------------
 #thesは操作量の集合
 manupilate_dist_change_pd<-function(X, idx, thes){
   
@@ -179,7 +180,8 @@ manupilate_dist_change_pd<-function(X, idx, thes){
 }
 
 #-----------------------------------------------------------------------
-#変化後の距離行列からサブサンプルを抽出。PDを計算する関数
+
+#変化後の距離行列からサブサンプルを抽出。PDを計算する関数--------------------
 #操作量固定
 #sub_rateはサブサンプルの割合、n_pdは計算するPDの数
 manupulated_dist_mat_subs_pd<-function(X, threth, sub_rate, n_pd){
@@ -210,8 +212,9 @@ manupulated_dist_mat_subs_pd<-function(X, threth, sub_rate, n_pd){
   
 }
 
+
 #---------------------------------------------
-#ランドマーク点を決定する関数
+#ランドマーク点を決定する関数-----------------
 #Wittness複体を参考に
 #Xはポイントクラウドデータ、n_landはランドマーク点の数
 #d_mat=TならXに距離行列を入れられる
@@ -235,7 +238,7 @@ landmark_points<-function(X, n_land, d_mat=F){
 }
 
 #-------------------------------------------------------------
-#ベッチ数自動推定関数群を距離行列変更に対応させる
+#ベッチ数自動推定関数群を距離行列変更に対応させる------------
 #proposedMethodOnlyから変形
 #witness複体のランドマーク点を使用
 
@@ -371,7 +374,7 @@ pd_conv_stats2tda<-function(pd){
 }
 
 #------------------------------------------------
-#MPH(?)を計算する関数
+#MPH(?)を計算する関数----------------------------
 #ランドマーク点に関する要素において、元々の距離rを使って1-exp(-(x/a)^2)に置き換える
 #aはハイパラ
 #l_rate=ランドマーク点の割合
@@ -400,7 +403,7 @@ multiresolut_homology<-function(X, maxdim, l_rate=0.3, a=1){
 }
 
 #------------------------------------------------------
-#図中のx-y点間に直線を引く関数
+#図中のx-y点間に直線を引く関数-------------------------
 #lines関数を書き換えただけ
 draw_line<-function(x, y){
   
@@ -408,8 +411,9 @@ draw_line<-function(x, y){
   
 }
 
+
 #--------------------------------------------------------------
-#距離行列において指定したインデックスの値を変化させる
+#距離行列において指定したインデックスの値を変化させる----------
 #全体は正規化。変化はFRIによる
 #X_dist=距離行列, lands=ランドマーク点, eta=FRIのハイパラ
 dist_fri_change<-function(X_dist, lands, eta){
@@ -426,5 +430,50 @@ dist_fri_change<-function(X_dist, lands, eta){
   X_dist[X_dist < 0]<-0
   
   return(X_dist)
+  
+}
+
+
+#--------------------------------------------------------------
+#距離行列において指定したインデックスの値を変化させる
+#変化はもとの距離に1-exp(-(d_ij/eta)^2)を掛ける(d_ij=元の距離)
+#X_dist=距離行列, lands=ランドマーク点, eta=FRIのハイパラ
+
+dist_wvr_change<-function(X_dist, lands, eta){
+  
+  X_chng_dist<-X_dist
+  
+  for (i in lands) {
+    
+    X_chng_dist[i, ]<-X_dist[i, ]*(1-exp(-(X_dist[i, ]/eta)^2))
+    X_chng_dist[, i]<-X_dist[, i]*(1-exp(-(X_dist[, i]/eta)^2))
+    
+  }
+  
+  X_chng_dist[X_chng_dist < 0]<-0
+  
+  return(X_chng_dist)
+  
+}
+
+
+#------------------------------------------------
+#MPH(?)を計算する関数----------------------------
+#ランドマーク点に関する要素において、元々の距離dに1-exp(-(d/eta)^2)を掛ける
+#etaはハイパラ、l_rate=ランドマーク点の割合
+#PDとランドマーク点のインデックス、計算時間を返す
+
+weighted_homology<-function(X, maxdim, maxscale, extra_v=list(l_rate=0.3, eta=1)){
+  
+  X_dist<-dist(X) %>% as.matrix()
+  
+  #ランドマーク点を求める。l_idx=ランドマーク点のインデックス
+  l_idx<-landmark_points(X = X_dist, n_land = nrow(X)*extra_v$l_rate, d_mat = T)
+  
+  X_chng_dist<-dist_wvr_change(X_dist = X_dist, lands = l_idx, eta = extra_v$eta)
+  
+  time<-system.time(pd<-TDAstats::calculate_homology(mat = X_chng_dist, dim = maxdim, threshold = maxscale, format = "distmat"))
+  
+  return(list(pd=pd, l_idx=l_idx, time=time))
   
 }

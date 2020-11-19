@@ -5,6 +5,7 @@
 trs300_1_10_pd_time<-system.time(trs300_1_10_pd<-calculate_homology(mat = trs300_1_10_dist, dim = 2, threshold = 3, format = "distmat"))
 trs300_1_10_pdB<-pd_conv_stats2tda(trs300_1_10_pd)
 trs300_1_10_pl<-calc_landscape(diag = trs300_1_10_pd, maxscale = 3)
+plot_landscape(trs300_1_10_pl, 2, ylim = c(0, 0.2))
 
 #距離行列を[0, 1]に正規化。PH計算
 trs300_1_10_dist5<-trs300_1_10_dist/max(trs300_1_10_dist)
@@ -29,12 +30,12 @@ for (i in 1:length(land10F)) {
 }
 
 trs300_1_10_dist5B[trs300_1_10_dist5B < 0]<-0
-trs300_1_10_pd3<-calculate_homology(mat = trs300_1_10_dist5B, dim = 2, threshold = 1, format = "distmat")
-trs300_1_10_pl3<-calcLandscape(diag = trs300_1_10_pd3, maxscale = 1)
+trs300_1_10_pd3_time<-system.time( trs300_1_10_pd3<-calculate_homology(mat = trs300_1_10_dist5B, dim = 2, threshold = 1, format = "distmat") )
+trs300_1_10_pl3<-calc_landscape(diag = trs300_1_10_pd3, maxscale = 1)
 plot_landscape(land = trs300_1_10_pl3, dim = 2, xlim = c(0, 0.5), ylim = c(0, 0.02))
 
-#-------------------------------------
-#正規化後の距離行列において、ランドマーク点の距離を変化させる
+#----------------------------------------------------------------
+#正規化後の距離行列において、ランドマーク点の距離を変化させる----
 #1-exp(r_ij^2)。multiresolution PHを参考に
 #インデックスとしてland10G使用
 trs300_1_10_dist5C<-trs300_1_10_dist5
@@ -73,8 +74,9 @@ plot_landscape(trs300_1_10_pl5, 2, xlim = c(0, 0.5), ylim = c(0, 0.025))
 
 plot_landscape(trs300_1_10_pl5, 1, ylim = c(0, 0.3))
 
-#---------------------------------------------------------
-#正規化後の距離行列において、ランドマーク点の距離を変化させる
+
+#-----------------------------------------------------------------
+#正規化後の距離行列において、ランドマーク点の距離を変化させる-----
 #正規化後の距離を2乗する
 #インデックスとしてland10G使用
 trs300_1_10_dist5E<-trs300_1_10_dist/max(trs300_1_10_dist) 
@@ -85,12 +87,16 @@ trs300_1_10_pl6<-calc_landscape(diag = trs300_1_10_pd6, maxscale = 1)
 plot_landscape(trs300_1_10_pl6, 2, ylim = c(0, 0.01))
 plot_landscape(trs300_1_10_pl6, 1, ylim = c(0, 0.1))
 
-#------------------------------
-#スタンフォード・バニーでポリゴン描画の参考に
+
+
+#------------------------------------------------
+#スタンフォード・バニーでポリゴン描画の参考に----
 bny <- vcgPlyRead("./data/bun_zipper.ply")
 
+
+
 #-------------------------------------
-#500点3次元トーラスで同様に試す
+#500点3次元トーラスで同様に試す-------
 
 t3_land1<-landmark_points(X = t3orus3, n_land = nrow(t3orus3)*0.5)
 
@@ -138,6 +144,8 @@ abline(h=t3orus3_dpl9[["thresh"]]/2)
 
 #正規化した距離行列
 t3orus3_distD<-t3orus3_dist/max(t3orus3_dist)
+
+
 
 #--------------------------------------------
 #500点3次元トーラスで同様に試す
