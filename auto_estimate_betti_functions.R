@@ -84,7 +84,7 @@ fri_dist_changed_pl_peak_count <-function(X, maxdim, maxscale, const.band=0, max
 #ベッチ数自動推定関数群をWVRによる距離行列変更に対応させる----
 #proposedMethodOnlyから変形
 #witness複体のランドマーク点を使用
-#可変数引数によってPH計算、平滑化、ピークカウント関数を引数に指定するだけで任意のものを使えるように
+#可変数引数によってPH計算を引数に指定するだけで任意のものを使えるように
 #func=PH計算用関数、...=funcで使う変数
 calc_distance_change_betti <- function(X,maxdim,maxscale,samples, const.size=0, spar = seq(0,1,0.1), ph_func, ...){
   
