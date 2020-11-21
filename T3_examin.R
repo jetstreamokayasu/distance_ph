@@ -180,7 +180,7 @@ t3orus800_pd<-calculate_homology(mat = t3orus800, dim = 3, threshold = 6)
 t3orus800_pl<-calcLandscape(diag = t3orus800_pd, maxscale = 6)
 
 #------------------------------------------------------
-#600点3次元トーラスのPD計算
+#600点3次元トーラスのPD計算---------------------------
 t3orus600<-x3Dtorus_unif(n = 600, r = 1, R1 = 5, R2 = 2)
 t3orus600_time<-system.time(t3orus600_pd<-calculate_homology(mat = t3orus600, dim = 3, threshold = 6))
 t3orus600_pl<-calcLandscape(diag = t3orus600_pd, maxscale = 6)
@@ -195,7 +195,7 @@ t3orus600_dpl1<-calcLandscape(t3orus600_dpd1[[1]], 6)
 t3orus600_time_dpd2<-system.time(t3orus600_dpd2<-maxmin_dist_changed_pd(X = t3orus600, maxdim = 3, maxscale = 6, l_rate = 0.20, n_vic = 10))
 t3orus600_dpl2<-calcLandscape(t3orus600_dpd2[[1]], 6)
 
- #-----------------------------------------
+#-----------------------------------------
 t3orus2_pd3<-calculate_homology(mat = t3orus2, dim = 3)
 t3orus2_pl3<-calcLandscape(diag = t3orus2_pd3, maxscale = 5)
 
@@ -206,7 +206,7 @@ plot(t3orus2_pl3[["tseq"]], t3orus2_pl3[["2-land"]], type = "l", col=3, xlim = c
 abline(h=t3orus2_pl3[["thresh"]]/2)
 
 #---------------------------------------
-#500点3次元トーラスのPD計算
+#500点3次元トーラスのPD計算-------------
 #r=2, R1=8, R2=4
 t3orus3<-x3Dtorus_unif(n = 500, r = 2, R1 = 8, R2 = 4)
 t3orus3_time<-system.time(t3orus3_pd<-calculate_homology(mat = t3orus3, dim = 3, threshold = 9))
@@ -256,7 +256,7 @@ t3orus3_dpd7<-maxmin_dist_changed_pd(X = t3orus3, maxdim = 3, maxscale = 9, l_ra
 t3orus3_dpl7<-calcLandscape(diag = t3orus3_dpd7[["pd"]], maxscale = 9)
 
 #---------------------------------------------------------------
-#500点3次元トーラス距離行列変化実験
+#500点3次元トーラス距離行列変化実験----------------------------
 #サブサンプルで実験1回目
 #r=2, R1=8, R2=4
 #ランドマーク点50%、近傍点8
@@ -326,7 +326,7 @@ t3orus3_sub_dpd9<-maxmin_dist_changed_pd(X = t3orus3_sub, maxdim = 3, maxscale =
 t3orus3_sub_dpl9<-calcLandscape(diag = t3orus3_sub_dpd9[["pd"]], maxscale = 9)
 
 #------------------------------------------
-#T3で100個の推定を試す
+#T3で100個の推定を試す---------------------
 t3orus4_list<- lapply(1:100, function(i){
   nsample <- 500
   torus <- x3Dtorus_unif(n = nsample, r = 2, R1 = 8, R2 = 4)
@@ -335,8 +335,8 @@ t3orus4_list<- lapply(1:100, function(i){
 
 t3orus4_aggr<-maxmin_distance_change_method(X = t3orus4_list, maxdim = 3, maxscale = 9, samples = 10, l_rate = 0.65, n_vic = 8)
 
-#--------------------------------------------
-#maxmin_dist_changed_pl_peak_count()関数の修正後のテスト
+#---------------------------------------------------------------
+#maxmin_dist_changed_pl_peak_count()関数の修正後のテスト--------
 t3orus3_sublist<-seephacm:::bootstrapper(X = t3orus3, size = nrow(t3orus3)*0.8, samples = 2)
 t3orus3_subpeak<-maxmin_dist_changed_pl_peak_count(X = t3orus3_sublist, maxdim = 3, maxscale = 9, l_rate = 0.65, n_vic = 8)
 
@@ -354,8 +354,8 @@ t3orus3_sublist1_dpl10<-calcLandscape(diag = t3orus3_sublist1_dpd10[["pd"]], max
 t3orus3_sublist1_dpd11<-maxmin_dist_changed_pd(X = t3orus3_sublist[[2]], maxdim = 3, maxscale = 9, l_rate = 0.65, n_vic = 8)
 t3orus3_sublist1_dpl11<-calcLandscape(diag = t3orus3_sublist1_dpd11[["pd"]], maxscale = 9)
 
-#----------------------------------------------
-#正規化せず、ランドマーク点に関する距離に1-exp(-(d_ij/eta)^2)を掛けてみる
+#----------------------------------------------------------------------------
+#正規化せず、ランドマーク点に関する距離に1-exp(-(d_ij/eta)^2)を掛けてみる----
 #ランドマーク点としてt4_land1使用。eta=10
 #1回目
 t3orus4_distH<-t3orus4_dist
@@ -390,6 +390,8 @@ t3orus4_pdI_time<-system.time( t3orus4_pdI<-calculate_homology(mat = t3orus4_dis
 t3orus4_plI<-calc_landscape(t3orus4_pdI, maxscale = 9)
 calc.landscape.peak(X = t3orus4_plI[["2-land"]], dimension = 2, thresh = t3orus4_plI[["thresh"]]/2, tseq = t3orus4_plI[["tseq"]], show = T)
 calc.landscape.peak(X = t3orus4_plI[["3-land"]], dimension = 3, thresh = t3orus4_plI[["thresh"]]*(2*pi)/surface_nshpere(3), tseq = t3orus4_plI[["tseq"]], show = T)
+plot_landscape(land = t3orus4_plI, dim = 3, ylim = c(0, 1.0))
+plot_landscape(land = t3orus4_plI, dim = 2, ylim = c(0, 1.5))
 
 #正規化せず、ランドマーク点に関する距離に1-exp(-(d_ij/eta)^2)を掛けてみる----------
 #ランドマーク点100%。eta=５
@@ -422,12 +424,50 @@ calc.landscape.peak(X = t3orus4_plK[["3-land"]], dimension = 3, thresh = t3orus4
 t3orus4_time0B<-system.time(t3orus4_dpd0B<-calculate_homology(mat = t3orus4_dist, dim = 3, threshold = 9, format = "distmat"))
 t3orus4_dpl0B<-calc_landscape(diag = t3orus4_dpd0B, maxscale = 9)
 calc.landscape.peak(X = t3orus4_dpl0B[["2-land"]], dimension = 2, thresh = t3orus4_dpl0B[["thresh"]]/2, tseq = t3orus4_dpl0B[["tseq"]], show = T)
-plot_landscape(t3orus4_dpl0B, 3)
-plot_landscape(t3orus4_dpl0B, 2)
+plot_landscape(t3orus4_dpl0B, 3, ylim = c(0, 1.0))
+plot_landscape(t3orus4_dpl0B, 2, ylim = c(0, 1.5))
 
 #距離行列変化なしの3次元トーラスt3orus4のPD計算時間を求める
 #threshold=5
 t3orus4_time0C<-system.time(t3orus4_dpd0C<-calculate_homology(mat = t3orus4_dist, dim = 3, threshold = 5, format = "distmat"))
 t3orus4_dpl0C<-calc_landscape(diag = t3orus4_dpd0C, maxscale = 5)
 
-load("D:/okayasu/D_documents/R/distance_ph/vars/t3orus4_time0B.RData")
+#load("D:/okayasu/D_documents/R/distance_ph/vars/t3orus4_time0B.RData")
+
+
+
+#----------------------------------------------
+#3次元トーラスで成功率を求めてみる-------------
+#r = 2, R1 = 8, R2 = 4
+#全データセット数5、サブサンプル数5
+#eta=5, ランドマーク点30%
+
+t3orus4_list2<- lapply(1:5, function(i){
+  nsample <- 500
+  torus <- x3Dtorus_unif(n = nsample, r = 2, R1 = 8, R2 = 4)
+  return(list(nsample = nsample, noizyX = torus, diag = 0))
+})
+
+t3orus4_aggrs_time<-system.time( t3orus4_aggrs<-calc_distance_change_betti(X = t3orus4_list2[1:3], maxdim = 3, maxscale = 9, samples = 3, ph_func = weighted_homology, l_rate=0.5, eta=7) )
+
+t3ours4_list2_2_sub<-seephacm:::bootstrapper(X = t3orus4_list2[[2]][["noizyX"]], size = nrow(t3orus4_list2[[2]][["noizyX"]])*0.8, 1)
+
+t3ours4_list2_2_sub_pd<-weighted_homology(X = t3ours4_list2_2_sub[[1]], maxdim = 3, maxscale = 9, extra_v = list(l_rate=0.5, eta=6.5))
+t3ours4_list2_2_sub_pl<-calc_landscape(diag = t3ours4_list2_2_sub_pd[[1]], maxscale = 9)
+
+t3ours4_list2_2_sub_dist<-dist(t3ours4_list2_2_sub[[1]]) %>% as.matrix()
+
+t3ours4_list2_2_sub_normal_pd<-calculate_homology(mat = t3ours4_list2_2_sub_dist, dim = 3, threshold = 9, format = "distmat")
+t3ours4_list2_2_sub_normal_pl<-calc_landscape(diag = t3ours4_list2_2_sub_normal_pd, maxscale = 9)
+
+t3ours4_list2_2_sub_wvr_dist<-dist_wvr_change(X_dist = t3ours4_list2_2_sub_dist, lands = t3ours4_list2_2_sub_pd[["l_idx"]], eta = 7)
+
+t3ours4_list2_2_sub_lidx<-t3ours4_list2_2_sub_pd[["l_idx"]]
+t3ours4_list2_2_sub_wvr_dist2<-dist_wvr_change(X_dist = t3ours4_list2_2_sub_dist, lands = t3ours4_list2_2_sub_lidx, eta = 4)
+t3ours4_list2_2_sub_pd2<-calculate_homology(mat = t3ours4_list2_2_sub_wvr_dist2, dim = 3, threshold = 9, format = "distmat")
+t3ours4_list2_2_sub_pl2<-calc_landscape(diag = t3ours4_list2_2_sub_pd2, maxscale = 9)
+calc.landscape.peak(X = t3ours4_list2_2_sub_pl2[["3-land"]], dimension = 3, thresh = t3ours4_list2_2_sub_pl2[["thresh"]]*(2*pi)/surface_nshpere(3), tseq = t3ours4_list2_2_sub_pl2[["tseq"]], show = T)
+
+
+plot(t3ours4_list2_2_sub_dist[t3ours4_list2_2_sub_pd[["l_idx"]][1], ], t3ours4_list2_2_sub_dist[t3ours4_list2_2_sub_pd[["l_idx"]][1], ])
+points(t3ours4_list2_2_sub_dist[t3ours4_list2_2_sub_pd[["l_idx"]][1], ], t3ours4_list2_2_sub_wvr_dist[t3ours4_list2_2_sub_pd[["l_idx"]][1], ], col=2)

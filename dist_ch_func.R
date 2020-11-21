@@ -474,6 +474,11 @@ weighted_homology<-function(X, maxdim, maxscale, extra_v=list(l_rate=0.3, eta=1)
   
   time<-system.time(pd<-TDAstats::calculate_homology(mat = X_chng_dist, dim = maxdim, threshold = maxscale, format = "distmat"))
   
-  return(list(pd=pd, l_idx=l_idx, time=time))
+  pds<-list(pd=pd, l_idx=l_idx, time=time)
+  
+  attr(pds, "l_rate")<-extra_v$l_rate
+  attr(pds, "eta")<-extra_v$eta
+  
+  return(pds)
   
 }

@@ -163,5 +163,5 @@ trs300_colle1_wvr_time<-system.time( trs300_colle1_wvr_aggr<-calc_distance_chang
 #---------------------------------------
 search_load(a0, path="D:/okayasu/D_documents/R/distance_ph/vars")
 search_load(trs300_1_10_pd_time, path="D:/okayasu/D_documents/R/distance_ph/vars")
-path="D:/okayasu/D_documents/R/distance_ph/vars"
+var_path="D:/okayasu/D_documents/R/distance_ph/vars"
 
