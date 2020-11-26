@@ -39,7 +39,6 @@ clusterExport(cl, varlist = c("t3ours4_list2_2_sub", "para_set3"))
 stopCluster(cl)
 
 ##並列化を試す
-##350点トーラス
 
 t3ours4_list2_2_sub_para_test1_time<-system.time( t3ours4_list2_2_sub_para_test1<-parLapply(cl, 1:nrow(para_set3), function(i){
   
@@ -54,3 +53,95 @@ t3ours4_list2_2_sub_para_test1_time<-system.time( t3ours4_list2_2_sub_para_test1
   return(wpd)
   
 }) )
+
+#グリッドサーチ後の平滑化PLを計算、局所最大値を数える
+t3ours4_list2_2_sub_para_test1_pls<-lapply(t3ours4_list2_2_sub_para_test1, function(pd)calc_landscape(diag = pd[[1]], maxscale = 9, plot = F))
+t3ours4_list2_2_sub_para_test1_counts<-lapply(t3ours4_list2_2_sub_para_test1_pls, function(pl)calc.landscape.peak(X = pl[["2-land"]], dimension = 2, tseq = pl[["tseq"]], thresh = pl[["thresh"]]/2))
+t3ours4_list2_2_sub_para_test1_counts_dim3<-lapply(t3ours4_list2_2_sub_para_test1_pls, function(pl)calc.landscape.peak(X = pl[["3-land"]], dimension = 2, tseq = pl[["tseq"]], thresh = pl[["thresh"]]*(2*pi)/surface_nshpere(3)))
+
+par(mai=c(0.7, 0.7, 0.3, 0.3))
+par(mgp=c(2, 1, 0))
+plot(para_set3, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3, main = "T^3 H_2")
+text(para_set3$l_rate, para_set3$eta, labels = round(unlist(t3ours4_list2_2_sub_para_test1_counts), 2),
+     col = ifelse(unlist(t3ours4_list2_2_sub_para_test1_counts) >= 2.5 & unlist(t3ours4_list2_2_sub_para_test1_counts) < 3.5, 2, 4), cex=0.8)
+
+plot(para_set3, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3, main = "T^3 H_3")
+text(para_set3$l_rate, para_set3$eta, labels = round(unlist(t3ours4_list2_2_sub_para_test1_counts_dim3), 2),
+     col = ifelse(unlist(t3ours4_list2_2_sub_para_test1_counts_dim3) >= 0.5 & unlist(t3ours4_list2_2_sub_para_test1_counts_dim3) < 1.5, 2, 4), cex=0.8)
+
+h2_crect_idx<-range_index(unlist(t3ours4_list2_2_sub_para_test1_counts), 2.5, 3.5)
+h3_crect_idx<-range_index(unlist(t3ours4_list2_2_sub_para_test1_counts_dim3), 0.5, 1.5)
+h2h3_crect_idx<-intersect(h2_crect_idx, h3_crect_idx)
+
+plot_landscape(t3ours4_list2_2_sub_para_test1_pls[[703]], 2)
+plot_landscape(t3ours4_list2_2_sub_para_test1_pls[[703]], 3)
+
+#各パラメータごとにおける計算時間をプロット
+library(colorRamps)
+t3ours4_list2_2_sub_para_test1_t<-map_dbl(t3ours4_list2_2_sub_para_test1, ~{.[["time"]][3]})
+par(mai=c(0.7, 0.7, 0.3, 0.3))
+par(mgp=c(2, 1, 0))
+plot(para_set3, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(para_set3$l_rate, para_set3$eta, labels = round(t3ours4_list2_2_sub_para_test1_t), 
+     col = smoothPalette(x = t3ours4_list2_2_sub_para_test1_t-round(t3ours4_list2_2_sub_normal_time)[3], palfunc = blue2red), cex=0.8)
+
+#一部のパラメータについてPLを一覧表示
+para_part_set3<-expand.grid(c(0.2, 0.5, 0.8),rev(c(3.0, 5.0, 7.0)))
+colnames(para_part_set3)<-c("l_rate", "eta")
+
+
+#グラフ描画画面を分割
+par(mfrow=c(3, 3))
+par(mai = c(0.3, 0.3, 0.3, 0.3))
+
+#2次ランドスケープ
+for (p in 1:nrow(para_part_set3)){
+  
+  pl_idx<-which(para_set3$l_rate==para_part_set3$l_rate[p] & para_set3$eta==para_part_set3$eta[p])
+  plot(t3ours4_list2_2_sub_para_test1_pls[[pl_idx]][["tseq"]], t3ours4_list2_2_sub_para_test1_pls[[pl_idx]][["2-land"]], ylim = c(0, 1.5), col=3, type="l", main = paste0("rate=", para_part_set3$l_rate[p], " eta=", para_part_set3$eta[p]), xlab = "", ylab = "")
+  abline(h=t3ours4_list2_2_sub_para_test1_pls[[pl_idx]][["thresh"]]/2)
+  
+}
+
+#3次ランドスケープ
+for (p in 1:nrow(para_part_set3)){
+  
+  pl_idx<-which(para_set3$l_rate==para_part_set3$l_rate[p] & para_set3$eta==para_part_set3$eta[p])
+  plot(t3ours4_list2_2_sub_para_test1_pls[[pl_idx]][["tseq"]], t3ours4_list2_2_sub_para_test1_pls[[pl_idx]][["3-land"]], ylim = c(0, 0.4), col=4, type="l", main = paste0("rate=", para_part_set3$l_rate[p], " eta=", para_part_set3$eta[p]), xlab = "", ylab = "")
+  abline(h=t3ours4_list2_2_sub_para_test1_pls[[pl_idx]][["thresh"]]*(2*pi)/surface_nshpere(3))
+  
+}
+
+#グリッドサーチでH2もH3も正しい値だったハイパラセットのPLを描画
+
+par(mfrow=c(2, 5))
+par(mai = c(0.3, 0.3, 0.3, 0.3))
+
+for (i in h2h3_crect_idx){
+  
+  plot(t3ours4_list2_2_sub_para_test1_pls[[i]][["tseq"]], t3ours4_list2_2_sub_para_test1_pls[[i]][["3-land"]], ylim = c(0, 0.4), col=4, type="l", main = paste0("rate=", para_set3$l_rate[i], " eta=", para_set3$eta[i]), xlab = "", ylab = "")
+  abline(h=t3ours4_list2_2_sub_para_test1_pls[[i]][["thresh"]]*(2*pi)/surface_nshpere(3))
+  
+}
+
+for (i in h2h3_crect_idx){
+  
+  plot(t3ours4_list2_2_sub_para_test1_pls[[i]][["tseq"]], t3ours4_list2_2_sub_para_test1_pls[[i]][["2-land"]], ylim = c(0, 1.5), col=3, type="l", main = paste0("rate=", para_set3$l_rate[i], " eta=", para_set3$eta[i]), xlab = "", ylab = "")
+  abline(h=t3ours4_list2_2_sub_para_test1_pls[[i]][["thresh"]]/2)
+  
+}
+
+#----------------------------------------------------
+#3次元トーラスで成功率を求めてみる-------------
+#r = 2, R1 = 8, R2 = 4
+#全データセット数5、サブサンプル数5
+#eta=3.7, ランドマーク点65%
+t3orus4_test_aggrs_time<-system.time( t3orus4_test_aggrs<-calc_paral_distance_change_betti(X = t3orus4_list2[1:2], maxdim = 3, maxscale = 9, samples = 3, ph_func = weighted_homology, l_rate=0.65, eta=3.7) )
+
+t3orus4_list3<- lapply(1:100, function(i){
+  nsample <- 500
+  torus <- x3Dtorus_unif(n = nsample, r = 2, R1 = 8, R2 = 4)
+  return(list(nsample = nsample, noizyX = torus, diag = 0))
+})
+
+t3orus4_list3_1to50aggrs_time<-system.time( t3orus4_list3_1to50aggrs<-calc_paral_distance_change_betti(X = t3orus4_list3[1:50], maxdim = 3, maxscale = 9, samples = 10, ph_func = weighted_homology, l_rate=0.65, eta=3.7) )

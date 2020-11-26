@@ -18,6 +18,7 @@ land_rate_set<-seq(0.1, 0.8, by=0.05)
 eta_set<-seq(0.5, 2.5, by=0.1)
 
 para_set<-expand.grid(land_rate_set, eta_set)
+colnames(para_set)<-c("l_rate", "eta")
 
 trs300_1_10_para_test_time<-system.time( trs300_1_10_para_test<-lapply(1:nrow(para_set), function(i){
   
@@ -83,9 +84,17 @@ trs300_1_10_pdF_time<-system.time(trs300_1_10_pdF<-calculate_homology(mat = trs3
 trs300_1_10_plF<-calc_landscape(trs300_1_10_pdF, maxscale = 3)
 plot_landscape(land = trs300_1_10_plE, dim = 2, ylim = c(0, 0.3))
 
+#各パラメータごとにおける計算時間をプロット
+trs300_1_10_para_test_t<-map_dbl(trs300_1_10_para_test, ~{.[["time"]][3]})
+par(mai=c(0.7, 0.7, 0.3, 0.3))
+par(mgp=c(2, 1, 0))
+plot(para_set, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(para_set$l_rate, para_set$eta, labels = round(trs300_1_10_para_test_t, digits = 2), 
+     col = smoothPalette(x = round(trs300_1_10_para_test_t-trs300_1_10_pd_time[3], digits = 2), palfunc = blue2red), cex=0.8)
 
 
 
+#------------------------------------------------------------------------
 #グリッドサーチのようにランドマーク点割合とハイパラetaを試す-------------
 #2次元トーラス2回目
 #1-exp(-(d_ij/eta)^2)を掛けてみる
@@ -128,6 +137,7 @@ text(para_set2[, 1], para_set2[, 2], labels = round(unlist(trs300_1_10_para_test
 para_part_set2<-expand.grid(c(0.2, 0.5, 0.8), rev(c(1.5, 2.5, 3.0)))
 colnames(para_part_set2)<-c("l_rate", "eta")
 
+
 #グラフ描画画面を分割
 oldpar <- par(no.readonly = TRUE) 
 par(mfrow=c(3, 3))
@@ -151,17 +161,16 @@ library(tagcloud)
 par(mai=c(0.7, 0.7, 0.3, 0.3))
 par(mgp=c(2, 1, 0))
 plot(para_set2, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
-text(para_set2[, 1], para_set2[, 2], labels = round(trs300_1_10_para_test2_times, digits = 2), col = smoothPalette(x = trs300_1_10_para_test2_times, palfunc = blue2red))
+text(para_set2[, 1], para_set2[, 2], labels = round(trs300_1_10_para_test2_times, digits = 2), col = smoothPalette(x = trs300_1_10_para_test2_times-round(trs300_1_10_pd_time[3], digits = 2), palfunc = blue2red))
 
 #------------------------------------------------
 #2次元トーラス100セットをWVRで推定してみる-------
 
-trs300_colle1_aggr_test<-calc_distance_change_betti(X = torus300_colle_set[[1]][1:2], maxdim = 2, maxscale = 3, samples = 10, ph_func = weighted_homology, l_rate=0.8, eta=3)
+trs300_colle1_aggr_test<-calc_distance_change_betti(X = torus300_colle_set[[1]][1:2], maxdim = 2, maxscale = 3, samples = 5, ph_func = weighted_homology, l_rate=0.8, eta=3)
 
 trs300_colle1_wvr_time<-system.time( trs300_colle1_wvr_aggr<-calc_distance_change_betti(X = torus300_colle_set[[1]], maxdim = 2, maxscale = 3, samples = 10, ph_func = weighted_homology, l_rate=0.8, eta=3) )
 
 #---------------------------------------
-search_load(a0, path="D:/okayasu/D_documents/R/distance_ph/vars")
 search_load(trs300_1_10_pd_time, path="D:/okayasu/D_documents/R/distance_ph/vars")
 var_path="D:/okayasu/D_documents/R/distance_ph/vars"
 

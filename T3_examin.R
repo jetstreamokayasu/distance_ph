@@ -457,7 +457,7 @@ t3ours4_list2_2_sub_pl<-calc_landscape(diag = t3ours4_list2_2_sub_pd[[1]], maxsc
 
 t3ours4_list2_2_sub_dist<-dist(t3ours4_list2_2_sub[[1]]) %>% as.matrix()
 
-t3ours4_list2_2_sub_normal_pd<-calculate_homology(mat = t3ours4_list2_2_sub_dist, dim = 3, threshold = 9, format = "distmat")
+t3ours4_list2_2_sub_normal_time<-system.time( t3ours4_list2_2_sub_normal_pd<-calculate_homology(mat = t3ours4_list2_2_sub_dist, dim = 3, threshold = 9, format = "distmat") )
 t3ours4_list2_2_sub_normal_pl<-calc_landscape(diag = t3ours4_list2_2_sub_normal_pd, maxscale = 9)
 
 t3ours4_list2_2_sub_wvr_dist<-dist_wvr_change(X_dist = t3ours4_list2_2_sub_dist, lands = t3ours4_list2_2_sub_pd[["l_idx"]], eta = 7)

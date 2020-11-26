@@ -15,6 +15,8 @@ library(gtm)
 library(plotly)
 library(devtools)
 library(magrittr)
+library(tagcloud)
+library(colorRamps)
 
 #source('~/R/interpolation_test/interpo_func.R', encoding = 'UTF-8')
 # source('~/R/interpolation_test/interpo_func_2.R', encoding = 'UTF-8')

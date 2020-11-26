@@ -463,21 +463,24 @@ dist_wvr_change<-function(X_dist, lands, eta){
 #etaはハイパラ、l_rate=ランドマーク点の割合
 #PDとランドマーク点のインデックス、計算時間を返す
 
-weighted_homology<-function(X, maxdim, maxscale, extra_v=list(l_rate=0.3, eta=1)){
+weighted_homology<-function(X, maxdim, maxscale, l_rate, eta, extra_v=list(l_rate=0.3, eta=1)){
+  
+  if(missing(l_rate)){l_rate<-extra_v$l_rate}
+  if(missing(eta)){eta<-extra_v$eta}
   
   X_dist<-dist(X) %>% as.matrix()
   
   #ランドマーク点を求める。l_idx=ランドマーク点のインデックス
-  l_idx<-landmark_points(X = X_dist, n_land = nrow(X)*extra_v$l_rate, d_mat = T)
+  l_idx<-landmark_points(X = X_dist, n_land = nrow(X)*l_rate, d_mat = T)
   
-  X_chng_dist<-dist_wvr_change(X_dist = X_dist, lands = l_idx, eta = extra_v$eta)
+  X_chng_dist<-dist_wvr_change(X_dist = X_dist, lands = l_idx, eta = eta)
   
   time<-system.time(pd<-TDAstats::calculate_homology(mat = X_chng_dist, dim = maxdim, threshold = maxscale, format = "distmat"))
   
   pds<-list(pd=pd, l_idx=l_idx, time=time)
   
-  attr(pds, "l_rate")<-extra_v$l_rate
-  attr(pds, "eta")<-extra_v$eta
+  attr(pds, "l_rate")<-l_rate
+  attr(pds, "eta")<-eta
   
   return(pds)
   
