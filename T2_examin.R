@@ -170,6 +170,9 @@ trs300_colle1_aggr_test<-calc_distance_change_betti(X = torus300_colle_set[[1]][
 
 trs300_colle1_wvr_time<-system.time( trs300_colle1_wvr_aggr<-calc_distance_change_betti(X = torus300_colle_set[[1]], maxdim = 2, maxscale = 3, samples = 10, ph_func = weighted_homology, l_rate=0.8, eta=3) )
 
+trs300_colle1_wvr_aggr_test<-calc_paral_distance_change_betti(X = torus300_colle_set[[1]][1:2], 
+                                                        maxdim = 2, maxscale = 3, samples = 2, ph_func = weighted_homology, l_rate=0.8, eta=3)
+
 #---------------------------------------
 search_load(trs300_1_10_pd_time, path="D:/okayasu/D_documents/R/distance_ph/vars")
 var_path="D:/okayasu/D_documents/R/distance_ph/vars"

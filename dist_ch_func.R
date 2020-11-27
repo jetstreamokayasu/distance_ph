@@ -463,10 +463,15 @@ dist_wvr_change<-function(X_dist, lands, eta){
 #etaはハイパラ、l_rate=ランドマーク点の割合
 #PDとランドマーク点のインデックス、計算時間を返す
 
-weighted_homology<-function(X, maxdim, maxscale, l_rate, eta, extra_v=list(l_rate=0.3, eta=1)){
+weighted_homology<-function(X, maxdim, maxscale, l_rate, eta, ...){
+  
+  extra_v<-list(...)
   
   if(missing(l_rate)){l_rate<-extra_v$l_rate}
   if(missing(eta)){eta<-extra_v$eta}
+  
+  debugText(l_rate)
+  debugText(eta)
   
   X_dist<-dist(X) %>% as.matrix()
   
