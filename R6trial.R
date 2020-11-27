@@ -2,7 +2,7 @@
 
 library(R6)
 
-#1つのデータについて、変化後の距離行列、サブサンプル集をまとめたクラス
+#1つのデータについて、変化後の距離行列とサブサンプル集をまとめたクラス
 TDAdataset<-
   R6Class(classname = "TDAdataset",
           public = list(
@@ -11,6 +11,7 @@ TDAdataset<-
             n_points = 0, #データ点数
             distmat_c = NA, #DistmatPDクラスの距離行列
             alt_distmat = list(), #変化後の距離行列リスト。DistmatPDクラス
+            subsamples = list(), #サブサンプルのリスト。TDAdatasetクラス
             
             initialize = function(data){#点群データを代入して初期化
               self$data <- data       
@@ -18,15 +19,58 @@ TDAdataset<-
               self$n_points <- nrow(data)
             },
             
-            create_changed_distmat = function(l_rate, eta){
+            create_changed_distmat = function(l_rate, eta){#変化させた距離行列を作成
               
-              self$distmat_c$change_dist(l_rate = l_rate, eta = eta)
+              temp_dist <- DistmatPD$new(distmat = self$distmat_c$distmat)
               
-              alt_distmat <- append(alt_distmat, self$distmat_c$distmat)
+              temp_dist$change_dist(l_rate = l_rate, eta = eta)
+              
+              self$alt_distmat <- append(self$alt_distmat, temp_dist)
+              
+            },
+            
+            #サブサンプルを作成。TDAdatasetクラス
+            #sub_size=サブサンプルの点数、n_subs=サブサンプルの個数
+            create_subsample = function(sub_size, n_subs){
+              
+              self$subsamples <- map(1:n_subs, function(i){
+                
+                seephacm:::bootstrapper(X = self$data, size = sub_size, 1)[[1]] %>% 
+                              TDAdataset$new(data = .)
+                
+                })  %>% append(self$subsamples, .)
+              
+            },
+            
+            #サブサンプルの中で最大の閾値を求める
+            max_thresh = function(dim = 1){
+              
+              if(length(self$subsamples) < 1){stop("subsamples didn't created.")}
+              
+              map(self$subsamples, ~{
+                
+                if(length(.$distmat_c$get_pd()) <= 1){stop("pd didn't calculated.")}
+                  
+                })
+              
+              max_t <- map_dbl(self$subsamples, ~{.$distmat_c$get_thresh(dim)}) %>% max()
+              
+              return(max_t)
+              
+            },
+            
+            plot_data = function(...){#データのプロット
+              
+              if(ncol(self$data) <= 2){plot(self$data, ...)}
+              else{
+                
+                plot3d(self$data, ...)
+                aspect3d("iso")
+                
+                }
               
             }
             
-            #create_subsample = function(){}
             
           )#public閉じ括弧
   
@@ -52,6 +96,9 @@ DistmatPD<-
       
       change_dist = function(l_rate, eta){
         
+        self$l_rate <- l_rate
+        self$eta <- eta
+        
         self$l_idx <- landmark_points(X = self$distmat, n_land = nrow(self$distmat)*l_rate, d_mat = T)
         self$distmat <- dist_wvr_change(X_dist = self$distmat, lands = self$l_idx, eta = eta)
         
@@ -64,13 +111,16 @@ DistmatPD<-
         self$maxdim <- maxdim
         self$maxscale <- maxscale
         
+        self$peaks <- numeric(maxdim)
+        names(self$peaks) <- map_chr(1:maxdim, ~{paste0(., "dim")})
+        
         private$time<-system.time( private$pd <- calculate_homology(mat = self$distmat, dim = self$maxdim, threshold = self$maxscale, format = "distmat") )
         
       },
       
       plot_pd = function(){
         
-        if(length(private$pd)==1){stop("pd didn't calcutate.")}
+        if(length(private$pd)==1){stop("pd didn't calcutated.")}
         
         plot_persist(private$pd)
         
@@ -99,13 +149,13 @@ DistmatPD<-
       
       get_thresh = function(dim){#次元ごとの閾値を返す
         
-        return(private$pl[["thresh"]]*(2*pi)/surface_nshpere(dim))
+        return(seephacm:::persistence_weighted_mean(private$pd)*(2*pi)/surface_nshpere(dim))
         
       },
       
       pl_peak_count = function(dim, show = T){#平滑化したPLの局所最大値を数える
         
-        self$peaks <- calc.landscape.peak(X = private$pl[[paste0(dim, "-land")]], dimension = dim, 
+        self$peaks[dim] <- calc.landscape.peak(X = private$pl[[paste0(dim, "-land")]], dimension = dim, 
                             thresh = self$get_thresh(dim), tseq = private$pl[["tseq"]], show = show)
         
       },
