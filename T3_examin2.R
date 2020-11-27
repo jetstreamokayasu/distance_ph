@@ -144,4 +144,4 @@ t3orus4_list3<- lapply(1:100, function(i){
   return(list(nsample = nsample, noizyX = torus, diag = 0))
 })
 
-t3orus4_list3_1to50aggrs_time<-system.time( t3orus4_list3_1to50aggrs<-calc_paral_distance_change_betti(X = t3orus4_list3[1:50], maxdim = 3, maxscale = 9, samples = 10, ph_func = weighted_homology, l_rate=0.65, eta=3.7) )
+t3orus4_list3_1to50aggrs_time<-system.time( t3orus4_list3_1to50aggrs<-calc_paral_distance_change_betti(X = t3orus4_list3[1:50], maxdim = 3, maxscale = 9, samples = 10, ph_func = weighted_homology, l_rate=0.8, eta=4.7) )

@@ -1,11 +1,11 @@
-#距離行列を正規化(最大値1、最小値0)してPHを計算してみる
+#距離行列を正規化(最大値1、最小値0)してPHを計算してみる----
 #trs300_1_10_distを使う
 
 #オリジナルのPD
 trs300_1_10_pd_time<-system.time(trs300_1_10_pd<-calculate_homology(mat = trs300_1_10_dist, dim = 2, threshold = 3, format = "distmat"))
 trs300_1_10_pdB<-pd_conv_stats2tda(trs300_1_10_pd)
 trs300_1_10_pl<-calc_landscape(diag = trs300_1_10_pd, maxscale = 3)
-plot_landscape(trs300_1_10_pl, 2, ylim = c(0, 0.2))
+plot_landscape(trs300_1_10_pl, 2, ylim = c(0, 0.3))
 
 #距離行列を[0, 1]に正規化。PH計算
 trs300_1_10_dist5<-trs300_1_10_dist/max(trs300_1_10_dist)
@@ -14,7 +14,8 @@ trs300_1_10_pl2<-calc_landscape(diag = trs300_1_10_pd2, maxscale = 1)
 
 plot_landscape(trs300_1_10_pl2, 2, xlim = c(0, 0.5), ylim = c(0, 0.025))
 
-#正規化後の距離行列において、ランドマーク点の距離を変化させる
+#------------------------
+#正規化後の距離行列において、ランドマーク点の距離を変化させる----
 #1-exp(r_ij^2)。multiresolution PHを参考に
 #インデックスとしてland10F使用
 trs300_1_10_dist5B<-trs300_1_10_dist5
@@ -53,7 +54,8 @@ trs300_1_10_pd4<-calculate_homology(mat = trs300_1_10_dist5C, dim = 2, threshold
 trs300_1_10_pl4<-calcLandscape(diag = trs300_1_10_pd4, maxscale = 1)
 plot_landscape(trs300_1_10_pl4, dim = 2, xlim = c(0, 0.4), ylim = c(0, 0.02))
 
-#正規化後の距離行列において、ランドマーク点の距離を変化させる
+#--------------------------------------
+#正規化後の距離行列において、ランドマーク点の距離を変化させる----
 #2回目
 #1-exp(r_ij^2/0.4)。multiresolution PHを参考に
 #インデックスとしてland10H使用
@@ -160,7 +162,7 @@ t3orus4_dist<-dist(t3orus4) %>% as.matrix()
 t3orus4_time0<-system.time(t3orus4_dpd0<-calculate_homology(mat = t3orus4_dist, dim = 3, format = "distmat"))
 t3orus4_dpl0<-calcLandscape(diag = t3orus4_dpd0, maxscale = 9)
 plot_landscape(land = t3orus4_dpl0, dim = 3, xlim = c(0, 9))
-plot_landscape(land = t3orus4_dpl0, dim = 2, xlim = c(0, 9))
+plot_landscape(land = t3orus4_dpl0, dim = 2, xlim = c(0, 9), ylim = c(0, 2.0))
 plot_landscape(land = t3orus4_dpl0, dim = 1, xlim = c(0, 9))
 calc.landscape.peak(X = t3orus4_dpl0[["1-land"]], dimension = 1, thresh = t3orus4_dpl0[["thresh"]], tseq = t3orus4_dpl0[["tseq"]], show = T)
 
@@ -308,7 +310,7 @@ plot_landscape(land = t3orus4_dpl0A, dim = 3, ylim = c(0, 0.05))
 plot_landscape(land = t3orus4_dpl0A, dim = 2, ylim = c(0, 0.1))
 
 #----------------------------------------------
-#アニュラスデータでMPHを試す
+#アニュラスデータでMPHを試す------
 anu_land1<-landmark_points(X = anu, n_land = 10)
 
 anu_distB<-anu_dist/max(anu_dist)

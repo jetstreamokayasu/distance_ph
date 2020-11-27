@@ -271,5 +271,8 @@ distmat_changed_pl_peak_count_paral <-function(X, maxdim, maxscale, const.band=0
   bootstrap.summary <- append(bootstrap.summary,list(band=band))
   
   class(bootstrap.summary) <- "smoothPhom"
+  
+  stopCluster(cl)
+  
   return(bootstrap.summary)
 }
