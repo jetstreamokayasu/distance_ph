@@ -1,5 +1,36 @@
 #３次元トーラス推定用のハイパラグリッドサーチ
 
+#-------------------
+#並列化準備------
+#parallel使用
+library(parallel)
+
+cl <- makeCluster(4, outfile="")
+
+clusterEvalQ(cl,{
+  library(phacm)
+  library(tidyverse)
+  library(myfs)
+  library(seephacm)
+  library(TDAstats)
+  library(R6)
+})
+
+clusterEvalQ(cl, {
+  source('~/R/distance_ph/auto_estimate_betti_functions.R', encoding = 'UTF-8')
+  source('~/R/distance_ph/dist_ch_func.R', encoding = 'UTF-8')
+  source('~/R/distance_ph/R6trial.R', encoding = 'UTF-8')
+  source('~/R/ph_jikken2/new-okayasu/BootstrapHomology-mk1.R', encoding = 'UTF-8')
+}
+)
+
+#parallelで並列計算時に使うオジェクト読み込み
+#clusterExport(cl, varlist = c("t3ours4_list2_2_sub", "para_set3"))
+clusterExport(cl, varlist = "t3orus4_list3_5")
+
+stopCluster(cl)
+
+#-----------------------------
 #グリッドサーチのようにランドマーク点割合とハイパラetaを試す-------------
 #3次元トーラス1回目
 #サブサンプルt3ours4_list2_2_sub使用
@@ -11,32 +42,6 @@ eta_set3<-seq(3, 7, by=0.1)
 
 para_set3<-expand.grid(land_rate_set2, eta_set3)
 colnames(para_set3)<-c("l_rate", "eta")
-
-#並列化準備
-#parallel使用
-library(parallel)
-
-cl <- makeCluster(4, outfile="")
-
-clusterEvalQ(cl,{
-  library(phacm)
-  library(tidyverse)
-  library(myfs)
-  library(seephacm)
-  
-})
-
-clusterEvalQ(cl, {
-  source('~/R/distance_ph/auto_estimate_betti_functions.R', encoding = 'UTF-8')
-  source('~/R/distance_ph/dist_ch_func.R', encoding = 'UTF-8')
-  source('~/R/ph_jikken2/new-okayasu/BootstrapHomology-mk1.R', encoding = 'UTF-8')
-}
-)
-
-#parallelで並列計算時に使うオジェクト読み込み
-clusterExport(cl, varlist = c("t3ours4_list2_2_sub", "para_set3"))
-
-stopCluster(cl)
 
 ##並列化を試す
 
@@ -155,3 +160,31 @@ t3orus4_list3_1to50aggrs_time<-system.time( t3orus4_list3_1to50aggrs<-calc_paral
 t3orus4_list3_1to30aggrs_time<-system.time(
   t3orus4_list3_1to30aggrs<-calc_distance_change_betti_paral(X = t3orus4_list3[1:30], maxdim = 3, maxscale = 9, samples = 10, 
                                                              ph_func = weighted_homology, l_rate=0.5, eta=3.8) )
+#------------------------------
+#サブサンプルのPLを観察する----
+t3orus4_list3_5<-TDAdataset$new(data = t3orus4_list3[[5]][["noizyX"]])
+
+#サブサンプル作成
+t3orus4_list3_5$create_subsample(sub_size = t3orus4_list3_5$n_points*0.8, n_subs = 10)
+
+#距離行列変化
+tmp<-lapply(t3orus4_list3_5$subsamples, 
+            function(X){X$distmat_c$change_dist(l_rate=0.5, eta=3.8)})
+
+#parallel用いてPD計算
+t3orus4_list3_5_subs_pd<-parLapply(cl, t3orus4_list3_5$subsamples, function(X){
+  
+  X$distmat_c$calc_pd(maxdim=3, maxscale=9)
+  
+  #parallelフォルダにtxtを出力
+  sink(paste0("./parallel/", "l_rate", gsub("\\.", "", X$distmat_c$l_rate), "eta", gsub("\\.", "", X$distmat_c$eta), "_", format(Sys.time(), "%m%d_%H%M"), ".txt"))
+  print(paste0("l_rate=", X$distmat_c$l_rate))
+  print(paste0("eta=", X$distmat_c$eta))
+  print(paste0("time=", X$distmat_c$get_time()[3]))
+  sink()
+  
+  return(X$distmat_c$get_pd())
+  
+  })
+
+t3orus4_list3_5_subs_pl<-lapply(t3orus4_list3_5_subs_pd, function(pd)calc_landscape(diag = pd, maxscale = 9))

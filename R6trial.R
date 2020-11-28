@@ -5,25 +5,31 @@ library(R6)
 #1つのデータについて、変化後の距離行列とサブサンプル集をまとめたクラス
 TDAdataset<-
   R6Class(classname = "TDAdataset",
+          
+          inherit = DistmatPD,
+          
           public = list(
             
             data = NA, #任意の点群データ
             n_points = 0, #データ点数
-            distmat_c = NA, #DistmatPDクラスの距離行列
             alt_distmat = list(), #変化後の距離行列リスト。DistmatPDクラス
             subsamples = list(), #サブサンプルのリスト。TDAdatasetクラス
+            mat_pds = list(), #alt_distmatの距離行列群から求められたPDのリスト
+            mat_pls = list(), #alt_distmatの距離行列群から求められたPLのリスト
+            sub_pds = list(), #subsampesのサブサンプル群から求められたPDのリスト
+            sub_pls = list(), #subsampesのサブサンプル群から求められたPLのリスト
             
             initialize = function(data){#点群データを代入して初期化
               self$data <- data       
-              self$distmat_c <- dist(data) %>% as.matrix() %>% DistmatPD$new(distmat = .)
+              super$initialize( distmat = as.matrix(dist(data)) )
               self$n_points <- nrow(data)
             },
             
-            create_changed_distmat = function(l_rate, eta){#変化させた距離行列を作成
+            create_changed_distmat = function(l_rate, eta, l_idx=NULL){#変化させた距離行列を作成
               
-              temp_dist <- DistmatPD$new(distmat = self$distmat_c$distmat)
+              temp_dist <- DistmatPD$new(distmat = self$distmat)
               
-              temp_dist$change_dist(l_rate = l_rate, eta = eta)
+              temp_dist$change_dist(l_rate = l_rate, eta = eta, l_idx = l_idx)
               
               self$alt_distmat <- append(self$alt_distmat, temp_dist)
               
@@ -49,13 +55,73 @@ TDAdataset<-
               
               map(self$subsamples, ~{
                 
-                if(length(.$distmat_c$get_pd()) <= 1){stop("pd didn't calculated.")}
+                if(length(.$get_pd()) <= 1){stop("pd didn't calculated.")}
                   
                 })
               
-              max_t <- map_dbl(self$subsamples, ~{.$distmat_c$get_thresh(dim)}) %>% max()
+              max_t <- map_dbl(self$subsamples, ~{.$get_thresh(dim)}) %>% max()
               
               return(max_t)
+              
+            },
+            
+            #alt_distmatの距離行列群から求められたPDをリストにまとめる
+            bind_mat_pds = function(){
+              
+              if(length(self$alt_distmat) < 1){stop("alt_distmat didn't created.")}
+              
+              self$mat_pds<-lapply(self$alt_distmat, function(X){
+                
+                if(length(X$get_pd()) <= 1){stop("pd didn't calculated.")}
+                
+                return(X$get_pd())
+                
+              })
+              
+            },
+            
+            #alt_distmatの距離行列群から求められたPLをリストにまとめる
+            bind_mat_pls = function(){
+              
+              if(length(self$alt_distmat) < 1){stop("alt_distmat didn't created.")}
+              
+              self$mat_pls<-lapply(self$alt_distmat, function(X){
+                
+                if(length(X$get_pl()) <= 1){stop("pl didn't calculated.")}
+                
+                return(X$get_pl())
+                
+              })
+              
+            },
+            
+            #subsamplesのサブサンプル群から求められたPDをリストにまとめる
+            bind_sub_pds = function(){
+              
+              if(length(self$subsamples) < 1){stop("subsamples didn't created.")}
+              
+              self$sub_pds<-lapply(self$subsamples, function(X){
+                
+                if(length(X$get_pd()) <= 1){stop("pd didn't calculated.")}
+                
+                return(X$get_pd())
+                
+              })
+              
+            },
+            
+            #subsamplesのサブサンプル群から求められたPLをリストにまとめる
+            bind_sub_pls = function(){
+              
+              if(length(self$subsamples) < 1){stop("subsamples didn't created.")}
+              
+              self$sub_pls<-lapply(self$subsamples, function(X){
+                
+                if(length(X$get_pl()) <= 1){stop("pl didn't calculated.")}
+                
+                return(X$get_pl())
+                
+              })
               
             },
             
@@ -85,9 +151,6 @@ DistmatPD<-
     public = list(
       
       distmat = NA, #距離行列
-      l_rate = 0, #ランドマーク点割合
-      eta = 1, #1-exp{-(d_ij/eta)^2}のハイパラ
-      l_idx = NA, #ランドマーク点のインデックス
       maxdim = NULL, #計算する位相特徴の最大次元
       maxscale = NULL, #フィルトレーションの最大値
       peaks = 0, #平滑化後のPLの局所最大値の数
@@ -96,14 +159,14 @@ DistmatPD<-
       
       change_dist = function(l_rate, eta, l_idx){
         
-        self$l_rate <- l_rate
-        self$eta <- eta
+        private$l_rate <- l_rate
+        private$eta <- eta
         
         if(missing(l_idx)){
-        self$l_idx <- landmark_points(X = self$distmat, n_land = nrow(self$distmat)*l_rate, d_mat = T)
-        }else{self$l_idx <- l_idx}
+        private$l_idx <- landmark_points(X = self$distmat, n_land = nrow(self$distmat)*l_rate, d_mat = T)
+        }else{private$l_idx <- l_idx}
         
-        self$distmat <- dist_wvr_change(X_dist = self$distmat, lands = self$l_idx, eta = eta)
+        self$distmat <- dist_wvr_change(X_dist = self$distmat, lands = private$l_idx, eta = eta)
         
         private$changed = TRUE
         
@@ -167,7 +230,17 @@ DistmatPD<-
       
       get_time = function(){return(private$time)}, #PDの計算時間を呼び出し
       
-      is_changed = function(){return(private$changed)} #距離行列を変化させたか否かを呼び出す
+      is_changed = function(){return(private$changed)}, #距離行列を変化させたか否かを呼び出す
+      
+      #l_rate(ランドマーク点割合), eta, l_idx(ランドマーク点のインデックス)呼び出し。
+      #距離行列が変化していない場合はハイパラを呼び出せない
+      get_param = function(){
+        
+        if(!self$is_changed()){stop("Distance matrix didn't changed. Parameters aren't set.")}
+        
+        return(list(l_rate=private$l_rate, eta=private$eta, l_idx=private$l_idx))
+        
+        }
       
     ),#public閉じ括弧
     
@@ -175,6 +248,9 @@ DistmatPD<-
       pd = NA, #TDAstatsのPD
       pl = NA, #パーシステントランドスケープ
       time = 0, #PDの計算時間
+      l_rate = 0, #ランドマーク点割合
+      eta = 1, #1-exp{-(d_ij/eta)^2}のハイパラ
+      l_idx = NA, #ランドマーク点のインデックス
       changed = FALSE #距離行列を変化させたか否か
     )
   

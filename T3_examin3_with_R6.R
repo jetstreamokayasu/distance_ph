@@ -15,3 +15,10 @@ trs300_1_10_subs<-trs300_1_10$subsamples
 tmp<-map(trs300_1_10$subsamples, ~{.$distmat_c$calc_pd(maxdim=2, maxscale=3)})
 
 tmp2<-map_dbl(trs300_1_10$subsamples, ~{.$distmat_c$get_thresh(1)}) %>% max()
+
+
+test_mat<-matrix(0, 2, 2)
+
+names(test_mat)<-"test"
+
+attr(test_mat, "distmat")<-"changed"
