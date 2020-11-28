@@ -86,6 +86,7 @@ fri_dist_changed_pl_peak_count <-function(X, maxdim, maxscale, const.band=0, max
 #witness複体のランドマーク点を使用
 #可変数引数によってPH計算を引数に指定するだけで任意のものを使えるように
 #func=PH計算用関数、...=funcで使う変数
+#noizyX, nsampleを使わない
 calc_distance_change_betti <- function(X,maxdim,maxscale,samples, const.size=0, spar = seq(0,1,0.1), ph_func, ...){
   
   aggrs<-lapply(1:maxdim, function(k){
@@ -100,9 +101,9 @@ calc_distance_change_betti <- function(X,maxdim,maxscale,samples, const.size=0, 
   for(t in 1:length(X)){
     
     cat("data set", t, "calculating\n")
-    if(const.size==0){size<-X[[t]]$nsample*(4/5)}else{size<-const.size}
+    if(const.size==0){size<-nrow(X[[t]])*0.8}else{size<-const.size}
     
-    B <- seephacm:::bootstrapper(X[[t]]$noizyX,size,samples)
+    B <- seephacm:::bootstrapper(X[[t]],size,samples)
     speak <- distmat_changed_pl_peak_count(X = B, maxdim = maxdim, maxscale = maxscale, spar = spar, ph_func = ph_func, ...)
     m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]])
     
@@ -114,7 +115,7 @@ calc_distance_change_betti <- function(X,maxdim,maxscale,samples, const.size=0, 
     
   }
   
-  aggrs <- append(aggrs,list(Xsize=sapply(1:length(X), function(l)nrow(X[[l]][["noizyX"]])),Xsamples=length(X),
+  aggrs <- append(aggrs,list(Xsize=sapply(1:length(X), function(l)nrow(X[[l]])),Xsamples=length(X),
                              Bsize=size,Bsamples=samples,
                              maxdim=maxdim,maxscale=maxscale))
   class(aggrs) <- "bettiComp"
@@ -174,6 +175,7 @@ distmat_changed_pl_peak_count <-function(X, maxdim, maxscale, const.band=0, maxi
 #witness複体のランドマーク点を使用
 #可変数引数によってPH計算を引数に指定するだけで任意のものを使えるように
 #func=PH計算用関数、...=funcで使う変数
+#noizyX, nsampleを使わない
 calc_distance_change_betti_paral <- function(X,maxdim,maxscale,samples, const.size=0, spar = seq(0,1,0.1), ph_func, ...){
   
   aggrs<-lapply(1:maxdim, function(k){
@@ -188,9 +190,9 @@ calc_distance_change_betti_paral <- function(X,maxdim,maxscale,samples, const.si
   for(t in 1:length(X)){
     
     cat("data set", t, "calculating\n")
-    if(const.size==0){size<-X[[t]]$nsample*(4/5)}else{size<-const.size}
+    if(const.size==0){size<-nrow(X[[t]])*0.8}else{size<-const.size}
     
-    B <- seephacm:::bootstrapper(X[[t]]$noizyX,size,samples)
+    B <- seephacm:::bootstrapper(X[[t]],size,samples)
     speak <- distmat_changed_pl_peak_count_paral(X = B, maxdim = maxdim, maxscale = maxscale, spar = spar, ph_func = ph_func, ...)
     m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]])
     
@@ -202,7 +204,7 @@ calc_distance_change_betti_paral <- function(X,maxdim,maxscale,samples, const.si
     
   }
   
-  aggrs <- append(aggrs,list(Xsize=sapply(1:length(X), function(l)nrow(X[[l]][["noizyX"]])),Xsamples=length(X),
+  aggrs <- append(aggrs,list(Xsize=sapply(1:length(X), function(l)nrow(X[[l]])),Xsamples=length(X),
                              Bsize=size,Bsamples=samples,
                              maxdim=maxdim,maxscale=maxscale))
   class(aggrs) <- "bettiComp"

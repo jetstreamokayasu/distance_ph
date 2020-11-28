@@ -470,9 +470,6 @@ weighted_homology<-function(X, maxdim, maxscale, l_rate, eta, ...){
   if(missing(l_rate)){l_rate<-extra_v$l_rate}
   if(missing(eta)){eta<-extra_v$eta}
   
-  debugText(l_rate)
-  debugText(eta)
-  
   X_dist<-dist(X) %>% as.matrix()
   
   #ランドマーク点を求める。l_idx=ランドマーク点のインデックス

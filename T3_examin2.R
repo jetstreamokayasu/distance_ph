@@ -146,7 +146,12 @@ t3orus4_list3<- lapply(1:100, function(i){
 
 t3orus4_list3_1to50aggrs_time<-system.time( t3orus4_list3_1to50aggrs<-calc_paral_distance_change_betti(X = t3orus4_list3[1:50], maxdim = 3, maxscale = 9, samples = 10, ph_func = weighted_homology, l_rate=0.8, eta=4.7) )
 
+#-------------------------------
+#3次元トーラスで成功率を求めてみる----
+#H3の推定がうまくいかないので試す
+#r = 2, R1 = 8, R2 = 4
+#全データセット数30、サブサンプル数10
+#eta=3.8, ランドマーク点50%
 t3orus4_list3_1to30aggrs_time<-system.time(
-  t3orus4_list3_1to30aggrs<-calc_paral_distance_change_betti(X = t3orus4_list3[1:30], maxdim = 3, maxscale = 9, samples = 10, 
-                                                             ph_func = weighted_homology, l_rate=0.5, eta=3.8) 
-  )
+  t3orus4_list3_1to30aggrs<-calc_distance_change_betti_paral(X = t3orus4_list3[1:30], maxdim = 3, maxscale = 9, samples = 10, 
+                                                             ph_func = weighted_homology, l_rate=0.5, eta=3.8) )

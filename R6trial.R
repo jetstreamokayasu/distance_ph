@@ -94,12 +94,15 @@ DistmatPD<-
       
       initialize = function(distmat){self$distmat <- distmat},
       
-      change_dist = function(l_rate, eta){
+      change_dist = function(l_rate, eta, l_idx){
         
         self$l_rate <- l_rate
         self$eta <- eta
         
+        if(missing(l_idx)){
         self$l_idx <- landmark_points(X = self$distmat, n_land = nrow(self$distmat)*l_rate, d_mat = T)
+        }else{self$l_idx <- l_idx}
+        
         self$distmat <- dist_wvr_change(X_dist = self$distmat, lands = self$l_idx, eta = eta)
         
         private$changed = TRUE
@@ -110,9 +113,6 @@ DistmatPD<-
         
         self$maxdim <- maxdim
         self$maxscale <- maxscale
-        
-        self$peaks <- numeric(maxdim)
-        names(self$peaks) <- map_chr(1:maxdim, ~{paste0(., "dim")})
         
         private$time<-system.time( private$pd <- calculate_homology(mat = self$distmat, dim = self$maxdim, threshold = self$maxscale, format = "distmat") )
         
@@ -153,10 +153,13 @@ DistmatPD<-
         
       },
       
-      pl_peak_count = function(dim, show = T){#平滑化したPLの局所最大値を数える
+      pl_peak_count = function(show = T){#平滑化したPLの局所最大値を数える
         
-        self$peaks[dim] <- calc.landscape.peak(X = private$pl[[paste0(dim, "-land")]], dimension = dim, 
-                            thresh = self$get_thresh(dim), tseq = private$pl[["tseq"]], show = show)
+        self$peaks <- 
+          sapply(1:self$maxdim, function(d){calc.landscape.peak(X = private$pl[[paste0(d, "-land")]], dimension = d, 
+                                                                thresh = self$get_thresh(d), tseq = private$pl[["tseq"]], show = show)})
+        
+        names(self$peaks) <- sapply(1:self$maxdim, function(i){paste0(i, "dim")})
         
       },
       
