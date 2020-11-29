@@ -5,7 +5,7 @@
 trs300_1_10_pd_time<-system.time(trs300_1_10_pd<-calculate_homology(mat = trs300_1_10_dist, dim = 2, threshold = 3, format = "distmat"))
 trs300_1_10_pdB<-pd_conv_stats2tda(trs300_1_10_pd)
 trs300_1_10_pl<-calc_landscape(diag = trs300_1_10_pd, maxscale = 3)
-plot_landscape(trs300_1_10_pl, 2, ylim = c(0, 0.3))
+plot_landscape(trs300_1_120_pl, 2, ylim = c(0, 0.3))
 
 #距離行列を[0, 1]に正規化。PH計算
 trs300_1_10_dist5<-trs300_1_10_dist/max(trs300_1_10_dist)

@@ -143,7 +143,7 @@ TDAdataset<-
 ) #TDAdataset Class閉じ括弧
 
 #------------------------------------------
-#距離関数にたいしてPH関連関数をまとめた
+#距離関数に対してPH関連関数をまとめた
 
 DistmatPD<-
   R6Class(classname = "DistmatPD",
@@ -151,8 +151,8 @@ DistmatPD<-
     public = list(
       
       distmat = NA, #距離行列
-      maxdim = NULL, #計算する位相特徴の最大次元
-      maxscale = NULL, #フィルトレーションの最大値
+      maxdim = NA, #計算する位相特徴の最大次元
+      maxscale = NA, #フィルトレーションの最大値
       peaks = 0, #平滑化後のPLの局所最大値の数
       
       initialize = function(distmat){self$distmat <- distmat},
@@ -199,11 +199,24 @@ DistmatPD<-
       
       get_pd = function(){return(private$pd)},#PDを呼び出し
       
+      #pdを外部から代入。すでに計算されている場合はstop
+      input_pd = function(pd){
+        
+        if( is.matrix(private$pd) && "dimension" %in% colnames(private$pd) ){
+          stop("pd is already calculated.")
+        }
+        
+        private$pd<-pd
+        self$maxdim<-max(pd[, 1])
+        self$maxscale<-round(max(pd[, 3])+0.5)
+        
+      },
+      
       calc_pl = function(plot = T){
         private$pl <- calc_landscape(diag = private$pd, maxscale = self$maxscale, plot = plot)
         },
       
-      plot_pl = function(dim, xlim = NULL, ylim = NULL){
+      plot_pl = function(dim, xlim, ylim){
         if(length(private$pl)==1){self$calc_pl()}
         
         plot_landscape(land = private$pl, dim = dim, xlim = xlim, ylim = ylim)
@@ -228,6 +241,16 @@ DistmatPD<-
       
       get_pl = function(){return(private$pl)}, #PLを呼び出し
       
+      input_pl = function(pl){
+        
+        if( is.list(private$pl) && "tseq" %in% names(private$pl) ){
+          stop("pl is already calculated.")
+        }
+        
+        private$pl<-pl
+        
+      },
+      
       get_time = function(){return(private$time)}, #PDの計算時間を呼び出し
       
       is_changed = function(){return(private$changed)}, #距離行列を変化させたか否かを呼び出す
@@ -247,7 +270,7 @@ DistmatPD<-
     private = list(
       pd = NA, #TDAstatsのPD
       pl = NA, #パーシステントランドスケープ
-      time = 0, #PDの計算時間
+      time = NA, #PDの計算時間
       l_rate = 0, #ランドマーク点割合
       eta = 1, #1-exp{-(d_ij/eta)^2}のハイパラ
       l_idx = NA, #ランドマーク点のインデックス

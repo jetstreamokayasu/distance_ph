@@ -26,7 +26,7 @@ clusterEvalQ(cl, {
 
 #parallelで並列計算時に使うオジェクト読み込み
 #clusterExport(cl, varlist = c("t3ours4_list2_2_sub", "para_set3"))
-clusterExport(cl, varlist = "t3orus4_list3_5")
+#clusterExport(cl, varlist = "t3orus4_list3_5")
 
 stopCluster(cl)
 
@@ -188,3 +188,31 @@ t3orus4_list3_5_subs_pd<-parLapply(cl, t3orus4_list3_5$subsamples, function(X){
   })
 
 t3orus4_list3_5_subs_pl<-lapply(t3orus4_list3_5_subs_pd, function(pd)calc_landscape(diag = pd, maxscale = 9))
+
+#----------------------------------------
+#サブサンプルでハイパラグリッドサーチ----
+
+eta_set4<-seq(5, 8, by=0.2)
+land_rate_set3<-seq(0.1, 0.8, by=0.1)
+para_set4<-expand.grid(land_rate_set3, eta_set4)
+colnames(para_set4)<-c("l_rate", "eta")
+
+t3orus4_list3_5_subs<-map(t3orus4_list3_5$subsamples, ~{.$data})
+
+#parallelで並列計算時に使うオジェクト読み込み
+clusterExport(cl, varlist = c("t3orus4_list3_5_subs", "para_set4"))
+
+t3ours4_list3_5_sub_gs1_time<-system.time( t3ours4_list3_5_sub_gs1<-parLapply(cl, 1:nrow(para_set4), function(p){
+  
+  wpd<-weighted_homology(X = t3orus4_list3_5_subs[[1]], maxdim = 3, maxscale = 9, l_rate = para_set4$l_rate[p], eta = para_set4$eta[p])
+  
+  #parallelフォルダにtxtを出力
+  sink(paste0("./parallel/", "l_rate", gsub("\\.", "", para_set4$l_rate[p]), "eta", gsub("\\.", "", para_set4$eta[p]), "_", format(Sys.time(), "%m%d_%H%M"), ".txt"))
+  print(paste0("l_rate=", para_set4$l_rate[p]))
+  print(paste0("eta=", para_set4$eta[p]))
+  print(paste0("time=", wpd[["time"]][3]))
+  sink()
+  
+  return(wpd)
+  
+}) )
