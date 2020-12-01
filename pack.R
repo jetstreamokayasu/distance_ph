@@ -1,3 +1,4 @@
+library(R6)
 library(TDA)
 library(myfs)
 library(rgl)
@@ -17,7 +18,6 @@ library(devtools)
 library(magrittr)
 library(tagcloud)
 library(colorRamps)
-library(R6)
 
 #source('~/R/interpolation_test/interpo_func.R', encoding = 'UTF-8')
 # source('~/R/interpolation_test/interpo_func_2.R', encoding = 'UTF-8')

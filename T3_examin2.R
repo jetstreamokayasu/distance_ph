@@ -202,6 +202,7 @@ t3orus4_list3_5_subs<-map(t3orus4_list3_5$subsamples, ~{.$data})
 #parallelで並列計算時に使うオジェクト読み込み
 clusterExport(cl, varlist = c("t3orus4_list3_5_subs", "para_set4"))
 
+#サブセット1をグリッドサーチ
 t3ours4_list3_5_sub_gs1_time<-system.time( t3ours4_list3_5_sub_gs1<-parLapply(cl, 1:nrow(para_set4), function(p){
   
   wpd<-weighted_homology(X = t3orus4_list3_5_subs[[1]], maxdim = 3, maxscale = 9, l_rate = para_set4$l_rate[p], eta = para_set4$eta[p])
@@ -216,3 +217,145 @@ t3ours4_list3_5_sub_gs1_time<-system.time( t3ours4_list3_5_sub_gs1<-parLapply(cl
   return(wpd)
   
 }) )
+
+#サブセット2~5をグリッドサーチ
+t3ours4_list3_5_sub_gs2to5_time<-system.time( 
+  
+  t3ours4_list3_5_sub_gs2to5<-lapply(2:5, function(i){
+    
+    sub_gs<-parLapply(cl, 1:nrow(para_set4), function(p){
+      
+      wpd<-weighted_homology(X = t3orus4_list3_5_subs[[i]], maxdim = 3, maxscale = 9, l_rate = para_set4$l_rate[p], eta = para_set4$eta[p])
+      
+      #parallelフォルダにtxtを出力
+      sink(paste0("./parallel/", "data", i, "_", "lrate", gsub("\\.", "", para_set4$l_rate[p]), "eta", gsub("\\.", "", para_set4$eta[p]), "_", format(Sys.time(), "%m%d_%H%M"), ".txt"))
+      print(paste0("l_rate=", para_set4$l_rate[p]))
+      print(paste0("eta=", para_set4$eta[p]))
+      print(paste0("time=", wpd[["time"]][3]))
+      sink()
+      
+      return(wpd)
+      
+    })
+    
+    return(sub_gs)
+    
+  })
+  
+  )
+
+#サブセット6~10をグリッドサーチ
+t3ours4_list3_5_sub_gs6to10_time<-system.time( 
+  
+  t3ours4_list3_5_sub_gs6to10<-lapply(6:10, function(i){
+    
+    sub_gs<-parLapply(cl, 1:nrow(para_set4), function(p){
+      
+      wpd<-weighted_homology(X = t3orus4_list3_5_subs[[i]], maxdim = 3, maxscale = 9, l_rate = para_set4$l_rate[p], eta = para_set4$eta[p])
+      
+      #parallelフォルダにtxtを出力
+      sink(paste0("./parallel/", "data", i, "_", "lrate", gsub("\\.", "", para_set4$l_rate[p]), "eta", gsub("\\.", "", para_set4$eta[p]), "_", format(Sys.time(), "%m%d_%H%M"), ".txt"))
+      print(paste0("l_rate=", para_set4$l_rate[p]))
+      print(paste0("eta=", para_set4$eta[p]))
+      print(paste0("time=", wpd[["time"]][3]))
+      sink()
+      
+      return(wpd)
+      
+    })
+    
+    return(sub_gs)
+    
+  })
+  
+)
+
+
+#------------------------------------
+#グリッドサーチ計算結果まとめ
+
+#サブサンプル2~5のPLをまとめる
+t3ours4_list3_5_sub_gs2to5_pls<-lapply(t3ours4_list3_5_sub_gs2to5, function(X){
+  
+  sub_pls<-lapply(X, function(Y){calc_landscape(diag = Y[["pd"]], maxscale = 9, plot = F)})
+  
+})
+
+#サブサンプル2~5のPLの局所最大値をまとめる
+t3ours4_list3_5_sub_gs2to5_peaks_H3<-lapply(t3ours4_list3_5_sub_gs2to5_pls, function(X){
+  
+  sub_pls<-sapply(X, function(Y){calc.landscape.peak(X = Y[["3-land"]], dimension = 3, thresh = Y[["thresh"]]*(2*pi)/surface_nshpere(3), tseq = Y[["tseq"]])})
+  
+})
+
+#局所最大値の数をパラメータごとにプロット
+par(mai=c(0.7, 0.7, 0.3, 0.3))
+par(mgp=c(2, 1, 0))
+#サブサンプル2
+plot(para_set4, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(para_set4$l_rate, para_set4$eta, labels = round(unlist(t3ours4_list3_5_sub_gs2to5_peaks_H3[[1]]), 2),
+     col = ifelse(t3ours4_list3_5_sub_gs2to5_peaks_H3[[1]] >= 0.5 & t3ours4_list3_5_sub_gs2to5_peaks_H3[[1]] < 1.5, 2, 4))
+
+#サブサンプル3
+plot(para_set4, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(para_set4$l_rate, para_set4$eta, labels = round(unlist(t3ours4_list3_5_sub_gs2to5_peaks_H3[[3]]), 2),
+     col = ifelse(t3ours4_list3_5_sub_gs2to5_peaks_H3[[3]] >= 0.5 & t3ours4_list3_5_sub_gs2to5_peaks_H3[[3]] < 1.5, 2, 4))
+
+#サブサンプル1
+plot(para_set4, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(para_set4$l_rate, para_set4$eta, labels = round(unlist(t3ours4_list3_5_sub_gs1_6to10_peaks_H3[[1]]), 2),
+     col = ifelse(t3ours4_list3_5_sub_gs1_6to10_peaks_H3[[1]] >= 0.5 & t3ours4_list3_5_sub_gs1_6to10_peaks_H3[[1]] < 1.5, 2, 4))
+
+
+#サブサンプル2~5のPLの局所最大値の平均
+t3ours4_list3_5_sub_gs2to5_peaks_ave_H3<-sapply(1:length(t3ours4_list3_5_sub_gs2to5_peaks_H3[[1]]), function(i){
+  mpeaks<-sapply(t3ours4_list3_5_sub_gs2to5_peaks_H3, function(PL){PL[[i]]}) %>% mean()
+})
+
+#局所最大値の数をパラメータごとにプロット
+#サブサンプル2~5平均
+plot(para_set4, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(para_set4$l_rate, para_set4$eta, labels = round(t3ours4_list3_5_sub_gs2to5_peaks_ave_H3, 2),
+     col = ifelse(t3ours4_list3_5_sub_gs2to5_peaks_ave_H3 >= 0.5 & t3ours4_list3_5_sub_gs2to5_peaks_ave_H3 < 1.5, 2, 4))
+
+#サブサンプルのGS結果をまとめる
+t3ours4_list3_5_sub_gs<-c(list(t3ours4_list3_5_sub_gs1), t3ours4_list3_5_sub_gs2to5, t3ours4_list3_5_sub_gs6to10)
+
+#サブサンプル1, 6~10のPLをまとめる
+t3ours4_list3_5_sub_gs1_6to10_pls<-lapply(t3ours4_list3_5_sub_gs[c(1, 6:10)], function(X){
+  
+  sub_pls<-lapply(X, function(Y){calc_landscape(diag = Y[["pd"]], maxscale = 9, plot = F)})
+  
+})
+
+#サブサンプル1, 6~10のPLの局所最大値をまとめる
+t3ours4_list3_5_sub_gs1_6to10_peaks_H3<-lapply(t3ours4_list3_5_sub_gs1_6to10_pls, function(X){
+  
+  sub_pls<-sapply(X, function(Y){calc.landscape.peak(X = Y[["3-land"]], dimension = 3, thresh = Y[["thresh"]]*(2*pi)/surface_nshpere(3), tseq = Y[["tseq"]])})
+  
+})
+
+#サブサンプル1~10のPLの局所最大値をまとめる
+t3ours4_list3_5_sub_gs_peaks_H3<-c(t3ours4_list3_5_sub_gs1_6to10_peaks_H3[1], t3ours4_list3_5_sub_gs2to5_peaks_H3, t3ours4_list3_5_sub_gs1_6to10_peaks_H3[2:6])
+
+#サブサンプル1~10のPLの局所最大値の平均
+t3ours4_list3_5_sub_gs_peaks_H3_ave<-sapply(1:length(t3ours4_list3_5_sub_gs_peaks_H3[[1]]), function(i){
+  mpeaks<-sapply(t3ours4_list3_5_sub_gs_peaks_H3, function(PL){PL[[i]]}) %>% mean()
+})
+
+#局所最大値の数をパラメータごとにプロット
+#サブサンプル1~10平均
+plot(para_set4, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(para_set4$l_rate, para_set4$eta, labels = round(t3ours4_list3_5_sub_gs_peaks_H3_ave, 2),
+     col = ifelse(t3ours4_list3_5_sub_gs_peaks_H3_ave >= 0.5 & t3ours4_list3_5_sub_gs_peaks_H3_ave < 1.5, 2, 4))
+
+
+#----------------------------
+#距離の分布をプロット--------
+t3orus4_list3_5_subs2_dist<-t3orus4_list3_5$subsamples[[2]]$distmat_c$distmat
+t3orus4_list3_5_subs2_altdist<-dist_wvr_change(X_dist = t3orus4_list3_5_subs2_dist, lands = t3ours4_list3_5_sub_gs2to5[[1]][[125]][["l_idx"]], eta = 8.0)
+
+t3orus4_list_3_5_sub2_plt1<-ggplot() + geom_point(aes(x = t3orus4_list3_5_subs2_dist[51, ], y = t3orus4_list3_5_subs2_dist[51, ]), size=3, shape = 1)
+t3orus4_list_3_5_sub2_plt2<-t3orus4_list_3_5_sub2_plt1 + theme(axis.text=element_text(size=14))
+t3orus4_list_3_5_sub2_plt3<-t3orus4_list_3_5_sub2_plt2 + geom_point(aes(x = t3orus4_list3_5_subs2_dist[51, ], y = t3orus4_list3_5_subs2_altdist[51, ]), size=3, shape = 1, color = 2)
+
