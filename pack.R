@@ -18,15 +18,15 @@ library(devtools)
 library(magrittr)
 library(tagcloud)
 library(colorRamps)
+library(TDAstats)
+library(abind)
+library(parallel)
 
 #source('~/R/interpolation_test/interpo_func.R', encoding = 'UTF-8')
 # source('~/R/interpolation_test/interpo_func_2.R', encoding = 'UTF-8')
 # source('~/R/interpolation_test/interpo_func.R', encoding = 'UTF-8')
 # source('~/R/p_reduce/reduce_func.R', encoding = 'UTF-8')
 # source('~/R/interpolation_test/reduce_func2.R', encoding = 'UTF-8')
-
-library(TDAstats)
-library(abind)
 
 source('~/R/ph_jikken2/new-okayasu/BootstrapHomology-mk1.R', encoding = 'UTF-8')
 source('~/R/ph_jikken2/new-okayasu/m1_main-mk1.R', encoding = 'UTF-8')

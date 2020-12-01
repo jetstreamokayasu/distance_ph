@@ -220,7 +220,7 @@ calc_distance_change_betti_paral <- function(X,maxdim,maxscale,samples, const.si
 #calc.landscape.peak(BootstrapHomology-mk1.R)をパッケージ化して置き換えるべし
 #seephacm:::persistence_weighted_mean(diag)使用
 #funcで指定して任意のPH計算関数が使えるように。extra_vはfuncで使う変数リスト
-distmat_changed_pl_peak_count_paral <-function(X, maxdim, maxscale, const.band=0, maximum.thresh = F, spar = seq(0,1,0.1), ph_func, ...){
+distmat_changed_pl_peak_count_paral<-function(X, maxdim, maxscale, const.band=0, maximum.thresh = F, spar = seq(0,1,0.1), ph_func, ...){
   require(TDA)
   
   if(!("bootsSamples" %in% class(X))) stop("input must be bootsSamples")
@@ -233,6 +233,7 @@ distmat_changed_pl_peak_count_paral <-function(X, maxdim, maxscale, const.band=0
     library(tidyverse)
     library(myfs)
     library(seephacm)
+    library(TDAstats)
   })
   
   clusterEvalQ(cl, {
