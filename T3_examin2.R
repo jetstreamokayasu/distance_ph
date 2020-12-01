@@ -349,6 +349,23 @@ plot(para_set4, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
 text(para_set4$l_rate, para_set4$eta, labels = round(t3ours4_list3_5_sub_gs_peaks_H3_ave, 2),
      col = ifelse(t3ours4_list3_5_sub_gs_peaks_H3_ave >= 0.5 & t3ours4_list3_5_sub_gs_peaks_H3_ave < 1.5, 2, 4))
 
+#-------------------
+#サブサンプル1~10の計算時間をまとめる------
+t3ours4_list3_5_sub_gs_times<-lapply(t3ours4_list3_5_sub_gs, function(X){
+  
+  sub_pls<-sapply(X, function(Y){Y$time[3]})
+  
+})
+
+#サブサンプル1~10の計算時間平均
+t3ours4_list3_5_sub_gs_times_ave<-sapply(1:length(t3ours4_list3_5_sub_gs_times[[1]]), function(i){
+  mtimes<-sapply(t3ours4_list3_5_sub_gs_times, function(PL){PL[[i]]}) %>% mean()
+})
+
+#計算時間プロット
+plot(para_set4, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(para_set4$l_rate, para_set4$eta, labels = round(t3ours4_list3_5_sub_gs_times_ave), col = smoothPalette(x = t3ours4_list3_5_sub_gs_times_ave, palfunc = blue2red))
+
 
 #----------------------------
 #距離の分布をプロット--------
