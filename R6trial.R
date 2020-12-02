@@ -40,7 +40,7 @@ TDAdataset<-
             create_subsample = function(sub_size, n_subs){
               
               self$subsamples <- seephacm:::bootstrapper(X = self$data, size = sub_size, samples = n_subs) %>% 
-                lapply(., function(x)TDAdataset$new(data = x)) %>% append(torus1_subs, .)
+                lapply(., function(x)TDAdataset$new(data = x)) %>% append(self$subsamples, .)
               
             },
             
