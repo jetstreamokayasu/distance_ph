@@ -61,7 +61,10 @@ uniDisMake<-function(N, R){
 
 #-----------------------------------------------
 #3Dトーラスの角度一様分布
-rad_distribute<-function(r, R1, R2, theta, phi){
+rad_distribute<-function(rad, r, R1, R2){
+  
+  theta<-rad[1]
+  phi<-rad[2]
   
   g<-1/R1*(1 + (r/R2)*sin(theta))*(1/R2 + (1/R1)*sin(phi)*(1 + (r/R2)*sin(theta)))
   
@@ -78,18 +81,11 @@ x3Dtorus_unif<-function(n, r, R1, R2){
   theta<-c()
   phi<-c()
   
-  tp<-expand.grid(seq(0, 2*pi, length=100), seq(0, 2*pi, length=100))
+  max_g<-rad_distribute(rad = c(pi/2, pi/2), r, R1, R2)
   
-  g<-apply(tp, 1, function(i){
-    
-    g0<-rad_distribute(r, R1, R2, i[1], i[2])
-    
-    return(g0)
-    
-  })
-  
-  max_g<-rad_distribute(r, R1, R2, pi/2, pi/2)
-  min_g<-min(g)
+  #関数の最適化により最小値を求める
+  #par=初期パラメータ
+  min_g<-optim(par = c(0, 0), fn = rad_distribute, r = r, R1 = R1, R2 = R2)$value
   
   while(length(theta) < n){
     
@@ -97,7 +93,7 @@ x3Dtorus_unif<-function(n, r, R1, R2){
     yvec<-runif(1, 0, 2*pi)
     zvec<-runif(1, min_g, max_g)
     
-    fxy<-rad_distribute(r, R1, R2, xvec, yvec)
+    fxy<-rad_distribute(rad = c(xvec, yvec), r, R1, R2)
     
     if(zvec <= fxy){
       theta<-c(theta, xvec)
@@ -114,6 +110,9 @@ x3Dtorus_unif<-function(n, r, R1, R2){
   w<-r*cos(theta)
   
   out<-cbind(x, y, z, w)
+  
+  attr(out, "max_g")<-max_g
+  attr(out, "min_g")<-min_g
   
   return(out)
   

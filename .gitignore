@@ -25,3 +25,6 @@ video_data/
 *.mp4
 
 *.txt
+
+*.html
+*.Rmd

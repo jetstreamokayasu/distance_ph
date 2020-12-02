@@ -25,7 +25,7 @@ TDAdataset<-
               self$n_points <- nrow(data)
             },
             
-            create_changed_distmat = function(l_rate, eta, l_idx=NULL){#変化させた距離行列を作成
+            create_changed_distmat = function(l_rate, eta, l_idx){#変化させた距離行列を作成
               
               temp_dist <- DistmatPD$new(distmat = self$distmat)
               
@@ -39,12 +39,8 @@ TDAdataset<-
             #sub_size=サブサンプルの点数、n_subs=サブサンプルの個数
             create_subsample = function(sub_size, n_subs){
               
-              self$subsamples <- map(1:n_subs, function(i){
-                
-                seephacm:::bootstrapper(X = self$data, size = sub_size, 1)[[1]] %>% 
-                              TDAdataset$new(data = .)
-                
-                })  %>% append(self$subsamples, .)
+              self$subsamples <- seephacm:::bootstrapper(X = self$data, size = sub_size, samples = n_subs) %>% 
+                lapply(., function(x)TDAdataset$new(data = x)) %>% append(torus1_subs, .)
               
             },
             
