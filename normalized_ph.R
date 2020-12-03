@@ -213,8 +213,8 @@ abline(h=t3orus4_dpl2[["thresh"]]*(2*pi)/surface_nshpere(3))
 
 plot(t3orus4_dpl1[["tseq"]], t3orus4_dpl1[["2-land"]], type = "l", col=3, ylim = c(0, 0.03))
 abline(h=t3orus4_dpl1[["thresh"]]/2)
-
-#500点3次元トーラスで試す
+#---------------
+#500点3次元トーラスで試す。1-exp(r_ij^2)を元の距離で代入5回目-----
 #1-exp(r_ij^2)を元の距離で代入
 #5回目
 
@@ -237,9 +237,9 @@ plot_landscape(t3orus4_dpl3, 3, xlim = c(0, 1), ylim = c(0, 0.02))
 
 plot_landscape(t3orus4_dpl3, 2, xlim = c(0, 1), ylim = c(0, 0.1))
 
-#500点3次元トーラスで試す
-#1-exp(r_ij^2)を元の距離で代入
-#6回目
+#-------------------
+#500点3次元トーラスで試す。1-exp(r_ij^2)を元の距離で代入6回目-----
+
 
 t3orus4_dist<-dist(t3orus4) %>% as.matrix()
 t3orus4_distD<-t3orus4_dist/max(t3orus4_dist)
@@ -260,7 +260,8 @@ plot_landscape(land = t3orus4_dpl6, dim = 3, ylim = c(0, 0.05))
 plot_landscape(land = t3orus4_dpl6, dim = 2, ylim = c(0, 0.1))
 calc.landscape.peak(X = t3orus4_dpl6[["2-land"]], dimension = 2, thresh = t3orus4_dpl6[["thresh"]]/2, tseq = t3orus4_dpl6[["tseq"]], show = T)
 
-#500点3次元トーラスで試す
+#------------------
+#500点3次元トーラスで試す。1-exp(r_ij^2)を元の距離で代入7回目------
 #1-exp(r_ij^2)を元の距離で代入
 #7回目
 #ランドマーク点を逆にする
@@ -286,7 +287,7 @@ plot_landscape(land = t3orus4_dpl7, dim = 2, ylim = c(0, 0.1))
 calc.landscape.peak(X = t3orus4_dpl7[["3-land"]], dimension = 3, thresh = t3orus4_dpl7[["thresh"]]*(2*pi)/surface_nshpere(3), tseq = t3orus4_dpl7[["tseq"]], show = T)
 
 #-------------------------------------
-#500点3次元トーラスで試す
+#500点3次元トーラスで試す。1-exp(r_ij^2)を元の距離で代入8回目-------
 #1-exp(r_ij^2)を元の距離で代入
 #8回目
 

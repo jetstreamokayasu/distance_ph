@@ -60,4 +60,25 @@ t3orus5<-x3Dtorus_unif(n = 500, r = 1, R1 = 5, R2 = 2)
 
 t3orus5_cls<-TDAdataset$new(t3orus5)
 
-calculate_homology(mat = t3orus5_cls$data, dim = 3) %>% t3orus5_cls$input_pd()
+t3orus5_cls$calc_pd(maxdim = 3, maxscale = 6)
+#calculate_homology(mat = t3orus5_cls$data, dim = 3) %>% t3orus5_cls$input_pd()
+
+#------------------
+#計算時間調べ
+t3orus_tst<-x3Dtorus_unif(n = 500, r = 2, R1 = 8, R2 = 4)
+t3orus_tst_inst<-TDAdataset$new(t3orus_tst)
+
+t3orus4_list3B_7_inst<-TDAdataset$new(t3orus4_list3B[[7]])
+{
+start_ph<-Sys.time()
+t3orus4_list3B_7_pd<-calculate_homology(mat = t3orus4_list3B[[7]], dim = 3, threshold = 9)
+end_ph<-Sys.time()
+}
+
+{
+  start_ph2<-Sys.time()
+  t3orus4_list3B_7_subs_pd<-calculate_homology(mat = t3orus4_list3B_7_inst$subsamples[[1]]$data, dim = 3, threshold = 9)
+  end_ph2<-Sys.time()
+}
+
+t3ours4_list2_2_sub_normal_time2<-system.time( t3ours4_list2_2_sub_normal_pd2<-calculate_homology(mat = t3ours4_list2_2_sub_dist, dim = 3, threshold = 9, format = "distmat") )

@@ -393,6 +393,7 @@ calc.landscape.peak(X = t3orus4_plI[["3-land"]], dimension = 3, thresh = t3orus4
 plot_landscape(land = t3orus4_plI, dim = 3, ylim = c(0, 1.0))
 plot_landscape(land = t3orus4_plI, dim = 2, ylim = c(0, 1.5))
 
+#---------------------
 #正規化せず、ランドマーク点に関する距離に1-exp(-(d_ij/eta)^2)を掛けてみる----------
 #ランドマーク点100%。eta=５
 #3回目
@@ -405,6 +406,7 @@ t3orus4_plJ<-calc_landscape(t3orus4_pdJ, maxscale = 9)
 calc.landscape.peak(X = t3orus4_plJ[["2-land"]], dimension = 2, thresh = t3orus4_plJ[["thresh"]]/2, tseq = t3orus4_plJ[["tseq"]], show = T)
 calc.landscape.peak(X = t3orus4_plJ[["3-land"]], dimension = 3, thresh = t3orus4_plJ[["thresh"]]*(2*pi)/surface_nshpere(3), tseq = t3orus4_plJ[["tseq"]], show = T)
 
+#---------------------
 #正規化せず、ランドマーク点に関する距離に1-exp(-(d_ij/eta)^2)を掛けてみる----------
 #ランドマーク点100%。eta=3
 #4回目
@@ -421,13 +423,15 @@ calc.landscape.peak(X = t3orus4_plK[["3-land"]], dimension = 3, thresh = t3orus4
 
 #距離行列変化なしの3次元トーラスt3orus4のPD計算時間を求める----
 #threshold=9
+#maxscaleは9必要
 t3orus4_time0B<-system.time(t3orus4_dpd0B<-calculate_homology(mat = t3orus4_dist, dim = 3, threshold = 9, format = "distmat"))
 t3orus4_dpl0B<-calc_landscape(diag = t3orus4_dpd0B, maxscale = 9)
 calc.landscape.peak(X = t3orus4_dpl0B[["2-land"]], dimension = 2, thresh = t3orus4_dpl0B[["thresh"]]/2, tseq = t3orus4_dpl0B[["tseq"]], show = T)
 plot_landscape(t3orus4_dpl0B, 3, ylim = c(0, 1.0))
 plot_landscape(t3orus4_dpl0B, 2, ylim = c(0, 1.5))
 
-#距離行列変化なしの3次元トーラスt3orus4のPD計算時間を求める
+#-----------------
+#距離行列変化なしの3次元トーラスt3orus4のPD計算時間を求める-----
 #threshold=5
 t3orus4_time0C<-system.time(t3orus4_dpd0C<-calculate_homology(mat = t3orus4_dist, dim = 3, threshold = 5, format = "distmat"))
 t3orus4_dpl0C<-calc_landscape(diag = t3orus4_dpd0C, maxscale = 5)

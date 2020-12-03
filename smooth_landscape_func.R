@@ -113,50 +113,8 @@ persistence_weighted_mean<-function(diag){
 #TDAstasを使ってCTIC2019手法を書き換え
 #次元の数を2に限定しない形に書き換え
 #parallel使用
+#cluster設定をこちらで行うようにした
 smooth_landscape_method_paral<-function(X,maxdim,maxscale,samples, const.size=0, spar=seq(0, 1, 0.1)){
-  
-  aggrs<-lapply(1:maxdim, function(k){
-    
-    aggr<-matrix(0,length(X),1)
-    dimnames(aggr) <- list(paste0("data-set", 1:length(X)), "proposed")
-    
-    return(aggr)
-    
-  })
-  
-  for(t in 1:length(X)){
-    
-    cat("data set", t, "calculating\n")
-    if(const.size==0){size<-nrow(X[[t]])*(0.8)}
-    else{size<-const.size}
-    
-    B <- seephacm:::bootstrapper(X[[t]],size,samples)
-    speak <- smoothed_landscape_homology_paral(X = B, maxdim = maxdim, maxscale = maxscale, spar = spar)
-    m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]])
-    
-    for (i in 1:maxdim) {
-      
-      aggrs[[i]][t,1]<-m5[i]
-      
-    }
-    
-  }
-  
-  aggrs <- append(aggrs,list(Xsize=sapply(1:length(X), function(l)nrow(X[[l]])),Xsamples=length(X),
-                             Bsize=size,Bsamples=samples,
-                             maxdim=maxdim,maxscale=maxscale))
-  class(aggrs) <- "bettiComp"
-  
-  return(aggrs)
-}
-
-#--------------------------------------------------------
-#bootstrap.homology.mk2をTDAstatsを使う形に書き換え
-#parallel使用
-smoothed_landscape_homology_paral<-function(X,maxdim,maxscale,const.band=0,maximum.thresh = F, spar=seq(0, 1, 0.1)){
-  
-  if(!("bootsSamples" %in% class(X))) stop("input must be bootsSamples")
-  peak <- matrix(0,maxdim,length(X))
   
   cl <- makeCluster(4, outfile="")
   
@@ -169,11 +127,65 @@ smoothed_landscape_homology_paral<-function(X,maxdim,maxscale,const.band=0,maxim
   })
   
   clusterEvalQ(cl, {
-    source('~/R/distance_ph/auto_estimate_betti_functions.R', encoding = 'UTF-8')
-    source('~/R/distance_ph/dist_ch_func.R', encoding = 'UTF-8')
     source('~/R/distance_ph/smooth_landscape_func.R', encoding = 'UTF-8')
     source('~/R/ph_jikken2/new-okayasu/BootstrapHomology-mk1.R', encoding = 'UTF-8')
   })
+  
+  aggrs<-lapply(1:maxdim, function(k){
+    
+    aggr<-matrix(0,length(X),1)
+    dimnames(aggr) <- list(paste0("data-set", 1:length(X)), "proposed")
+    
+    return(aggr)
+    
+  })
+  
+  Bsize<-numeric(length(X))#サブサンプル点数
+  times<-numeric(length(X))#計算時間
+  
+  for(t in 1:length(X)){
+    
+    cat("data set", t, "calculating\n")
+    if(const.size==0){size<-nrow(X[[t]])*(0.8)}
+    else{size<-const.size}
+    
+    B <- seephacm:::bootstrapper(X[[t]],size,samples)
+    
+    times[t]<-system.time(
+      speak <- smoothed_landscape_homology_paral(cl = cl, X = B, maxdim = maxdim, maxscale = maxscale, spar = spar)
+    )[3]
+    
+    m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]])
+    
+    for (i in 1:maxdim) {
+      
+      aggrs[[i]][t,1]<-m5[i]
+      
+    }
+    
+    Bsize[t]<-size
+    cat("calc time =", times[t], "\n")
+    
+  }
+  
+  aggrs <- append(aggrs,list(Xsize=sapply(1:length(X), function(l)nrow(X[[l]])), Xsamples=length(X), 
+                             Bsize=Bsize, Bsamples=samples, times=times, 
+                             maxdim=maxdim,maxscale=maxscale))
+  
+  class(aggrs) <- "bettiComp"
+  
+  stopCluster(cl)
+  
+  return(aggrs)
+}
+
+#--------------------------------------------------------
+#bootstrap.homology.mk2をTDAstatsを使う形に書き換え
+#parallel使用
+smoothed_landscape_homology_paral<-function(cl, X,maxdim,maxscale,const.band=0,maximum.thresh = F, spar=seq(0, 1, 0.1)){
+  
+  if(!("bootsSamples" %in% class(X))) stop("input must be bootsSamples")
+  peak <- matrix(0,maxdim,length(X))
   
   tseq <- seq(0,maxscale,length.out = 1000)
   diags <- parLapply(cl, X, function(x)TDAstats::calculate_homology(mat = x, dim = maxdim, threshold = maxscale))
@@ -201,8 +213,6 @@ smoothed_landscape_homology_paral<-function(X,maxdim,maxscale,const.band=0,maxim
   
   bootstrap.summary <- append(bootstrap.summary,list(band=band))
   class(bootstrap.summary) <- "smoothPhom"
-  
-  stopCluster(cl)
   
   return(bootstrap.summary)
 }
