@@ -16,7 +16,7 @@ ellip3<-xEllip_unif(n = 50, a = 2.5, b = 1, c = 1)
 ellip3_time1<-system.time(ellip3_pd1<-calculate_homology(mat = ellip3, dim = 2, threshold = 3))
 ellip3_pl1<-calcLandscape(diag = ellip3_pd1, maxscale = 3)
 
-#楕円体4回目。100点。a = 5, b = 1, c = 1
+#楕円体4回目。80点。a = 5, b = 1, c = 1
 ellip4<-xEllip_unif(n = 80, a = 5, b = 1, c = 1)
 ellip4_time1<-system.time(ellip4_pd1<-calculate_homology(mat = ellip4, dim = 2))
 ellip4_pl1<-calcLandscape(diag = ellip4_pd1, maxscale = 2)
@@ -28,7 +28,8 @@ ellip4_normed_time1<-system.time( ellip4_normed_pd1<-calculate_homology(mat = el
 ellip4_normed_pl1<-calc_landscape(diag = ellip4_normed_pd1, maxscale = 1)
 plot_landscape(land = ellip4_normed_pl1, dim = 2, xlim = c(0, 0.8), ylim = c(0, 0.04))
 
-#ellip4にMPH適用
+#-----------------------
+#ellip4にMPH適用--------
 #1回目
 #ランドマーク点、距離行列
 e4_land1<-landmark_points(X = ellip4, n_land = 15)
@@ -163,3 +164,35 @@ plot_landscape(land = ellip4_pl7, dim = 2, xlim = c(0, 0.8), ylim = c(0, 0.04))
 calc.landscape.peak(X = ellip4_pl7[["2-land"]], dimension = 2, thresh = ellip4_pl7[["thresh"]]/2, tseq = ellip4_pl7[["tseq"]], show = T)
 
 plot(sort(ellip4_dist0[e4_land1, ]), 1-exp(-(sort(ellip4_dist0[e4_land1, ])/3)^2))
+
+#--------------------
+#ellip4にWVRを適用---
+
+ellip4_inst<-TDAdataset$new(ellip4)
+ellip4_inst$calc_pd(maxdim = 2, maxscale = 3)
+
+ellip4_inst$create_changed_distmat(l_rate = 0.5, eta = 3)
+
+plot(ellip4_inst$distmat[52, ], ellip4_inst$distmat[52, ])
+points(ellip4_inst$distmat[52, ], ellip4_inst$alt_distmat[[1]]$distmat[52,], col=2)
+
+ellip4_inst$alt_distmat[[1]]$calc_pd(maxdim = 2, maxscale = 3)
+
+ellip4_inst$create_changed_distmat(l_rate = 0.8, eta = 3)
+ellip4_inst$alt_distmat[[2]]$calc_pd(maxdim = 2, maxscale = 3)
+
+ellip4_inst$create_changed_distmat(l_rate = 0.5, eta = 2)
+ellip4_inst$alt_distmat[[3]]$calc_pd(maxdim = 2, maxscale = 3)
+
+ellip4_inst$create_changed_distmat(l_rate = 0.6, eta = 2)
+ellip4_inst$alt_distmat[[4]]$calc_pd(maxdim = 2, maxscale = 3)
+
+ellip4_inst$create_changed_distmat(l_rate = 0.6, eta = 3)
+ellip4_inst$alt_distmat[[5]]$calc_pd(maxdim = 2, maxscale = 3)
+
+#----------------
+#楕円体の密度が高い場合をやってみる
+#ellip5, 200点。パラメータはellip4と同じ
+ellip5<-xEllip_unif(n = 200, a = 5, b = 1, c = 1)
+
+ellip5_inst<-TDAdataset$new(ellip5)

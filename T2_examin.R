@@ -11,7 +11,7 @@ trs300_1_fri_aggr_time<-system.time( trs300_1_fri_aggr<-fri_distance_change_meth
 trs300_1_fri_aggr2_time<-system.time( trs300_1_fri_aggr2<-fri_distance_change_method(torus300_colle_set[[1]], maxdim = 2, maxscale = 3, samples = 10, l_rate = 0.45, eta = 1) )
 
 
-
+#-----------------------
 #グリッドサーチのようにランドマーク点割合とハイパラetaを試す------------
 
 land_rate_set<-seq(0.1, 0.8, by=0.05)
@@ -59,8 +59,17 @@ for (p in 1:nrow(para_part_set)){
 
 plot(trs300_1_10_para_test_pls[[3]][["tseq"]], trs300_1_10_para_test_pls[[3]][["2-land"]], ylim = c(0, 0.1), col=3, type="l", xlab = "")
 
+#各パラメータごとにおける計算時間をプロット
+trs300_1_10_para_test_t<-map_dbl(trs300_1_10_para_test, ~{.[["time"]][3]})
+par(mai=c(0.7, 0.7, 0.3, 0.3))
+par(mgp=c(2, 1, 0))
+plot(para_set, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(para_set$l_rate, para_set$eta, labels = round(trs300_1_10_para_test_t, digits = 2), 
+     col = smoothPalette(x = round(trs300_1_10_para_test_t-trs300_1_10_pd_time[3], digits = 2), palfunc = blue2red), cex=0.8)
 
 
+
+#-----------------------
 #正規化せず、ランドマーク点に関する距離に1-exp(-(d_ij/eta)^2)を掛けてみる------------
 #ランドマーク点30%
 trs300_1_10_distE<-trs300_1_10_dist
@@ -83,14 +92,6 @@ trs300_1_10_distF<-trs300_1_10_dist*(1-exp(-(trs300_1_10_dist/3)^2))
 trs300_1_10_pdF_time<-system.time(trs300_1_10_pdF<-calculate_homology(mat = trs300_1_10_distF, dim = 2, threshold = 3, format = "distmat"))
 trs300_1_10_plF<-calc_landscape(trs300_1_10_pdF, maxscale = 3)
 plot_landscape(land = trs300_1_10_plE, dim = 2, ylim = c(0, 0.3))
-
-#各パラメータごとにおける計算時間をプロット
-trs300_1_10_para_test_t<-map_dbl(trs300_1_10_para_test, ~{.[["time"]][3]})
-par(mai=c(0.7, 0.7, 0.3, 0.3))
-par(mgp=c(2, 1, 0))
-plot(para_set, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
-text(para_set$l_rate, para_set$eta, labels = round(trs300_1_10_para_test_t, digits = 2), 
-     col = smoothPalette(x = round(trs300_1_10_para_test_t-trs300_1_10_pd_time[3], digits = 2), palfunc = blue2red), cex=0.8)
 
 
 
@@ -162,13 +163,6 @@ par(mai=c(0.7, 0.7, 0.3, 0.3))
 par(mgp=c(2, 1, 0))
 plot(para_set2, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
 text(para_set2[, 1], para_set2[, 2], labels = round(trs300_1_10_para_test2_times, digits = 2), col = smoothPalette(x = trs300_1_10_para_test2_times-round(trs300_1_10_pd_time[3], digits = 2), palfunc = blue2red))
-
-#------------------------------------------------
-#2次元トーラス100セットをWVRで推定してみる-------
-
-trs300_colle1_aggr_test<-calc_distance_change_betti(X = torus300_colle_set[[1]][1:2], maxdim = 2, maxscale = 3, samples = 5, ph_func = weighted_homology, l_rate=0.8, eta=3)
-
-trs300_colle1_wvr_time<-system.time( trs300_colle1_wvr_aggr<-calc_distance_change_betti(X = torus300_colle_set[[1]], maxdim = 2, maxscale = 3, samples = 10, ph_func = weighted_homology, l_rate=0.8, eta=3) )
 
 #----------------------------
 #改良したベッチ数推定関数を試す
