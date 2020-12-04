@@ -118,7 +118,7 @@ calc_distance_change_betti <- function(X,maxdim,maxscale,samples, const.size=0, 
   aggrs <- append(aggrs,list(Xsize=sapply(1:length(X), function(l)nrow(X[[l]])),Xsamples=length(X),
                              Bsize=size,Bsamples=samples,
                              maxdim=maxdim,maxscale=maxscale))
-  class(aggrs) <- "bettiComp"
+  class(aggrs) <- "dist_changed"
   
   return(aggrs)
   
@@ -133,6 +133,8 @@ calc_distance_change_betti <- function(X,maxdim,maxscale,samples, const.size=0, 
 #funcで指定して任意のPH計算関数が使えるように。extra_vはfuncで使う変数リスト
 distmat_changed_pl_peak_count <-function(X, maxdim, maxscale, const.band=0, maximum.thresh = F, spar = seq(0,1,0.1), ph_func, ...){
   require(TDA)
+  
+  start_t<-Sys.time()
   
   if(!("bootsSamples" %in% class(X))) stop("input must be bootsSamples")
   peak <- matrix(0,maxdim,length(X))
@@ -162,7 +164,9 @@ distmat_changed_pl_peak_count <-function(X, maxdim, maxscale, const.band=0, maxi
     print(paste0("dimension ",d,", ",round(mhole,digits = 2)," mean hole"))
   }
   
-  bootstrap.summary <- append(bootstrap.summary,list(band=band))
+  end_t<-Sys.time()
+  
+  bootstrap.summary <- append(bootstrap.summary,list(band=band, time=difftime(end_t, start_t, units = "secs")))
   
   class(bootstrap.summary) <- "smoothPhom"
   return(bootstrap.summary)
@@ -178,6 +182,7 @@ distmat_changed_pl_peak_count <-function(X, maxdim, maxscale, const.band=0, maxi
 #noizyX, nsampleを使わない
 #parallel使用
 #cluster設定をこちらで行うようにした
+#この関数でparLapplyによりdistmat_changed_pl_peak_countを実行するようにした
 calc_distance_change_betti_paral <- function(X,maxdim,maxscale,samples, const.size=0, spar = seq(0,1,0.1), ph_func, ...){
   
   cl <- makeCluster(4, outfile="")
@@ -188,12 +193,14 @@ calc_distance_change_betti_paral <- function(X,maxdim,maxscale,samples, const.si
     library(myfs)
     library(seephacm)
     library(TDAstats)
+    library(TDA)
   })
   
   clusterEvalQ(cl, {
     source('~/R/distance_ph/auto_estimate_betti_functions.R', encoding = 'UTF-8')
     source('~/R/distance_ph/dist_ch_func.R', encoding = 'UTF-8')
     source('~/R/ph_jikken2/new-okayasu/BootstrapHomology-mk1.R', encoding = 'UTF-8')
+    source('~/R/distance_ph/smooth_landscape_func.R', encoding = 'UTF-8')
   })
   
   aggrs<-lapply(1:maxdim, function(k){
@@ -205,38 +212,60 @@ calc_distance_change_betti_paral <- function(X,maxdim,maxscale,samples, const.si
     
   })
   
-  Bsize<-numeric(length(X))#サブサンプル点数
-  times<-numeric(length(X))#計算時間
+  #サブサンプルリスト作成
+  B_list <- lapply(X, function(Y){
+    
+    if(const.size==0){size<-nrow(Y)*(0.8)}
+    else{size<-const.size}
+    
+    B<-seephacm:::bootstrapper(Y,size,samples)
+    
+    return(B)
+    
+  })
+  
+  speak_list<-parLapply(cl, B_list, function(B){
+    
+    speak<-distmat_changed_pl_peak_count(X = B, maxdim = maxdim, maxscale = maxscale, spar = spar, ph_func = ph_func, ...)
+    
+    m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]]) 
+    
+    o_mat<-matrix(0, 1, maxdim+1)
+    colnames(o_mat)<-c(paste0("H", 1:maxdim), "time")
+    o_mat[1, ]<-c(m5, speak[["time"]])
+    
+    #parallelフォルダにcsvを出力
+    write.csv(as.data.frame(o_mat), file = paste0("./parallel/", "H", maxdim, "_", 
+                                                  gsub("\\.", "", round(speak[[paste0("dim", maxdim, "mhole")]], digits = 2)), 
+                                                  "_", format(Sys.time(), "%m%d_%H%M"), ".csv"))
+    
+    return(speak)
+    
+  })
   
   for(t in 1:length(X)){
     
-    cat("data set", t, "calculating\n")
-    if(const.size==0){size<-nrow(X[[t]])*0.8}else{size<-const.size}
-    
-    B <- seephacm:::bootstrapper(X[[t]],size,samples)
-    
-    times[t]<-system.time(
-      speak <- distmat_changed_pl_peak_count_paral(cl = cl, X = B, maxdim = maxdim, maxscale = maxscale, spar = spar, ph_func = ph_func, ...)
-    )[3]
-    
-    m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]])
+    m5 <- sapply(1:maxdim,function(d)speak_list[[t]][[paste0("dim",d,"mhole")]])
     
     for (i in 1:maxdim) {
       
       aggrs[[i]][t,1]<-m5[i]
       
     }
-    
-    Bsize[t]<-size
-    cat("calc time =", times[t], "\n")
-    
+
   }
+  
+  #サブサンプル点数
+  Bsize<-sapply(B_list, function(B)nrow(B[[1]]))
+  
+  #計算時間
+  times<-sapply(speak_list, function(s)s[["time"]])
   
   aggrs <- append(aggrs,list(Xsize=sapply(1:length(X), function(l)nrow(X[[l]])),Xsamples=length(X),
                              Bsize=Bsize,Bsamples=samples, times=times,
                              maxdim=maxdim,maxscale=maxscale))
   
-  class(aggrs) <- "bettiComp"
+  class(aggrs) <- "dist_changed"
   
   stopCluster(cl)
   
