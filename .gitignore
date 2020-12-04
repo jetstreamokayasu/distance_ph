@@ -29,3 +29,5 @@ video_data/
 *.html
 *.Rmd
 *.log
+
+*.pdf

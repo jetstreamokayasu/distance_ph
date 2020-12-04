@@ -41,6 +41,8 @@ smooth_landscape_method<-function(X,maxdim,maxscale,samples, const.size=0, spar=
 #bootstrap.homology.mk2をTDAstatsを使う形に書き換え
 smoothed_landscape_homology<-function(X,maxdim,maxscale,const.band=0,maximum.thresh = F, spar=seq(0, 1, 0.1)){
   
+  start_t<-Sys.time()
+  
   if(!("bootsSamples" %in% class(X))) stop("input must be bootsSamples")
   peak <- matrix(0,maxdim,length(X))
   
@@ -68,7 +70,9 @@ smoothed_landscape_homology<-function(X,maxdim,maxscale,const.band=0,maximum.thr
     print(paste0("dimension ",d,", ",round(mhole,digits = 2)," mean hole"))
   }
   
-  bootstrap.summary <- append(bootstrap.summary,list(band=band))
+  end_t<-Sys.time()
+  
+  bootstrap.summary <- append(bootstrap.summary,list(band=band, time=difftime(end_t, start_t, units = "secs")))
   class(bootstrap.summary) <- "smoothPhom"
   return(bootstrap.summary)
 }
@@ -114,6 +118,7 @@ persistence_weighted_mean<-function(diag){
 #次元の数を2に限定しない形に書き換え
 #parallel使用
 #cluster設定をこちらで行うようにした
+#この関数でparLapplyによりsmoothed_landscape_homologyを実行するようにした
 smooth_landscape_method_paral<-function(X,maxdim,maxscale,samples, const.size=0, spar=seq(0, 1, 0.1)){
   
   cl <- makeCluster(4, outfile="")
@@ -124,6 +129,8 @@ smooth_landscape_method_paral<-function(X,maxdim,maxscale,samples, const.size=0,
     library(myfs)
     library(seephacm)
     library(TDAstats)
+    library(parallel)
+    library(TDA)
   })
   
   clusterEvalQ(cl, {
@@ -140,22 +147,41 @@ smooth_landscape_method_paral<-function(X,maxdim,maxscale,samples, const.size=0,
     
   })
   
-  Bsize<-numeric(length(X))#サブサンプル点数
-  times<-numeric(length(X))#計算時間
+  #サブサンプルリスト作成
+  B_list <- lapply(X, function(Y){
+    
+    if(const.size==0){size<-nrow(Y)*(0.8)}
+    else{size<-const.size}
+    
+    B<-seephacm:::bootstrapper(Y,size,samples)
+    
+    return(B)
+    
+    })
+  
+  
+  speak_list<-parLapply(cl, B_list, function(B){
+    
+    speak<-smoothed_landscape_homology(X = B, maxdim = maxdim, maxscale = maxscale, spar = spar)
+    
+    m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]]) 
+    
+    o_mat<-matrix(0, 1, maxdim+1)
+    colnames(o_mat)<-c(paste0("H", 1:maxdim), "time")
+    o_mat[1, ]<-c(m5, speak[["time"]])
+    
+    #parallelフォルダにcsvを出力
+    write.csv(as.data.frame(o_mat), file = paste0("./parallel/", "H", maxdim, "_", 
+                                                  gsub("\\.", "", round(speak[[paste0("dim", maxdim, "mhole")]], digits = 2)), 
+                                                  "_", format(Sys.time(), "%m%d_%H%M"), ".csv"))
+    
+    return(speak)
+    
+    })
   
   for(t in 1:length(X)){
     
-    cat("data set", t, "calculating\n")
-    if(const.size==0){size<-nrow(X[[t]])*(0.8)}
-    else{size<-const.size}
-    
-    B <- seephacm:::bootstrapper(X[[t]],size,samples)
-    
-    times[t]<-system.time(
-      speak <- smoothed_landscape_homology_paral(cl = cl, X = B, maxdim = maxdim, maxscale = maxscale, spar = spar)
-    )[3]
-    
-    m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]])
+    m5 <- sapply(1:maxdim,function(d)speak_list[[t]][[paste0("dim",d,"mhole")]])
     
     for (i in 1:maxdim) {
       
@@ -163,10 +189,13 @@ smooth_landscape_method_paral<-function(X,maxdim,maxscale,samples, const.size=0,
       
     }
     
-    Bsize[t]<-size
-    cat("calc time =", times[t], "\n")
-    
   }
+  
+  #サブサンプル点数
+  Bsize<-sapply(B_list, function(B)nrow(B[[1]]))
+  
+  #計算時間
+  times<-sapply(speak_list, function(s)s[["time"]])
   
   aggrs <- append(aggrs,list(Xsize=sapply(1:length(X), function(l)nrow(X[[l]])), Xsamples=length(X), 
                              Bsize=Bsize, Bsamples=samples, times=times, 
