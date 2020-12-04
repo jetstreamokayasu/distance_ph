@@ -196,3 +196,6 @@ ellip4_inst$alt_distmat[[5]]$calc_pd(maxdim = 2, maxscale = 3)
 ellip5<-xEllip_unif(n = 200, a = 5, b = 1, c = 1)
 
 ellip5_inst<-TDAdataset$new(ellip5)
+ellip5_inst$calc_pd(maxdim = 2, maxscale = 3)
+
+ellip5_inst2<-TDAdataset$new(ellip5)

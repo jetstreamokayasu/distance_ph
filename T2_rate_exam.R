@@ -28,3 +28,27 @@ trs350_colle1_wvr_time<-system.time( trs350_colle1_wvr_aggr<-calc_distance_chang
 torus340_colle_set1<-map(torus340_colle_set[[1]], ~{.[["noizyX"]]})
 
 trs340_colle1_wvr_time<-system.time( trs340_colle1_wvr_aggr<-calc_distance_change_betti(X = torus340_colle_set1, maxdim = 2, maxscale = 3, samples = 10, ph_func = weighted_homology, l_rate=0.8, eta=3) )
+
+#-----------------------
+#2次元トーラス100セットをWVRで推定してみる-------
+#330点トーラス
+
+torus330_colle_set1<-map(torus330_colle_set[[1]], ~{.[["noizyX"]]})
+
+trs330_colle1_wvr_time<-system.time( trs330_colle1_wvr_aggr<-calc_distance_change_betti(X = torus330_colle_set1, maxdim = 2, maxscale = 3, samples = 10, ph_func = weighted_homology, l_rate=0.8, eta=3) )
+
+#-----------------------
+#2次元トーラス100セットをWVRで推定してみる-------
+#320点トーラス
+
+torus320_colle_set1<-map(torus320_colle_set[[1]], ~{.[["noizyX"]]})
+
+trs320_colle1_wvr_time<-system.time( trs320_colle1_wvr_aggr<-calc_distance_change_betti(X = torus320_colle_set1, maxdim = 2, maxscale = 3, samples = 10, ph_func = weighted_homology, l_rate=0.8, eta=3) )
+
+#-----------------------
+#2次元トーラス100セットをWVRで推定してみる-------
+#310点トーラス
+
+torus310_colle_set1<-map(torus310_colle_set[[1]], ~{.[["noizyX"]]})
+
+trs310_colle1_wvr_time<-system.time( trs310_colle1_wvr_aggr<-calc_distance_change_betti(X = torus310_colle_set1, maxdim = 2, maxscale = 3, samples = 10, ph_func = weighted_homology, l_rate=0.8, eta=3) )

@@ -220,17 +220,20 @@ manupulated_dist_mat_subs_pd<-function(X, threth, sub_rate, n_pd){
 #d_mat=TならXに距離行列を入れられる
 landmark_points<-function(X, n_land, d_mat=F){
   
+  n_land<-as.integer(n_land)
+  
   if(d_mat){X_dist<-X}else{X_dist<-dist(X) %>% as.matrix()}
   
   l_idx<-sample(nrow(X), 1)
   
   l_idx<-which.max(X_dist[l_idx, ]) %>% c(., l_idx)
 
+  if(n_land > 2){
+    for (i in 1:(n_land-2)) {
   
-  for (i in 1:(n_land-2)) {
-
-    l_idx<-apply(X_dist[-l_idx, l_idx], 1, min) %>% which.max() %>% attributes() %$% as.integer(.) %>% c(., l_idx)
-
+      l_idx<-apply(X_dist[-l_idx, l_idx], 1, min) %>% which.max() %>% attributes() %$% as.integer(.) %>% c(., l_idx)
+  
+    }
   }
   
   return(l_idx)

@@ -1,7 +1,7 @@
 #MPHのイメージ図をプロットする
 
 #----------------------------------------------
-#任意のデータ点を中心とした座標ベクトル表現を試す
+#任意のデータ点を中心とした座標ベクトル表現を試す------
 #アニュラスデータで
 
 anu<-anulusUnif(100)
@@ -28,7 +28,7 @@ points(anu[1, 1], anu[1, 2], pch=16, col=2)
 polygon(anu_1B, anu_2B, col="pink")
 
 #-----------------------------------------
-#multiresolution PHの概念図
+#multiresolution PHの概念図-------
 #torus300_colle_set[[1]][[10]][["noizyX"]]の1番目の点を使う
 #land10Gの18番目のインデックス
 
@@ -42,8 +42,8 @@ trs300_1_10_arnd1B<-trs300_1_10_arnd1B/trs300_1_10_dist[1, -1] + torus300_colle_
 trs300_1_10_arnd1C<-torus300_colle_set[[1]][[10]][["noizyX"]][2, ] - torus300_colle_set[[1]][[10]][["noizyX"]][1, ]
 trs300_1_10_arnd1C<- trs300_1_10_arnd1C/trs300_1_10_dist[1, 2] + torus300_colle_set[[1]][[10]][["noizyX"]][1, ]
 
-#---------------------------------------------------------
-#距離行列変化後、変化した点の他の点からの相対位置を見る
+#----------------------------------------------------------
+#距離行列変化後、変化した点の他の点からの相対位置を見る----
 
 anu2<-anulusUnif(30)
 
@@ -90,7 +90,7 @@ for (i in 1:length(anu2x)) {
 # 0.62754936 0.56812733 
 
 #-------------------------------------------
-#MHPの適用後の計算を見る
+#MHPの適用後の計算を見る----
 x1<-c(1.2, 0)
 x2<-c(0, 0.9)
 x3<-c(-1.1, 0)
@@ -415,7 +415,7 @@ trush<-lapply(1:nrow(idx_mat), function(i){
 })
 
 #------------------------------------------
-#フィルトレーションのアニメーション
+#フィルトレーションのアニメーション--------
 library(animation)
 library(jpeg)
 library(tcltk)
@@ -462,7 +462,7 @@ saveGIF({
 }, interbal=1.0, movie.name = "filt_fri.gif")
 
 #--------------------------------------------
-#FRI適用前後比較GIF
+#FRI適用前後比較GIF--------------
 oldpar <- par(no.readonly = TRUE) 
 
 #FRI適用後の下三角距離行列
@@ -532,7 +532,7 @@ saveVideo(expr = plot_filt(), video.name = "filt_comp4.mp4", img.name = "filt_co
 
 
 #---------------------------------------------
-#1-exp(-(d_ij/eta)^2)を図示
+#1-exp(-(d_ij/eta)^2)を図示---------------
 
 plot(seq(0, 1, length=100), 1-exp(-(seq(0, 1, length=100)/2)^2), type="l")
 title("1-exp(-(d_ij/eta)^2)")
@@ -550,7 +550,8 @@ points(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist5[land10F[1], ])
 trs300_1_10_dist_p<-ggplot() + geom_point(aes(x = trs300_1_10_dist[land10F[1], ], y = trs300_1_10_dist5[land10F[1], ]), size=3, shape = 1)+ scale_y_continuous(limits = c(0, 1)) + theme(axis.text=element_text(size=14))
 trs300_1_10_dist_p2<-trs300_1_10_dist_p + geom_point(aes(x = trs300_1_10_dist[land10F[1], ], y = trs300_1_10_dist5B[land10F[1], ]), size=3, color = 2, shape = 1)
 
-#1-exp(-(d_ij/eta)^2)を掛けてみる
+#--------------------------------
+#1-exp(-(d_ij/eta)^2)を掛けてみる------------
 plot(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist[land10F[1], ]*(1-exp(-(trs300_1_10_dist[land10F[1], ]/3)^2)), col=2, pch=4)
 points(trs300_1_10_dist[land10F[1], ], trs300_1_10_dist[land10F[1], ])
 

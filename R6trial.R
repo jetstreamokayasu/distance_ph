@@ -155,14 +155,18 @@ DistmatPD<-
       
       change_dist = function(l_rate, eta, l_idx){
         
-        private$l_rate <- l_rate
         private$eta <- eta
         
         if(missing(l_idx)){
-        private$l_idx <- landmark_points(X = self$distmat, n_land = nrow(self$distmat)*l_rate, d_mat = T)
-        }else{private$l_idx <- l_idx}
+          private$l_rate <- l_rate
+          private$l_idx <- landmark_points(X = self$distmat, n_land = nrow(self$distmat)*l_rate, d_mat = T)
+        }else{
+          private$l_idx <- l_idx
+          private$l_rate <- length(l_idx)/nrow(self$distmat)
+          }
         
         self$distmat <- dist_wvr_change(X_dist = self$distmat, lands = private$l_idx, eta = eta)
+        
         
         private$changed = TRUE
         
