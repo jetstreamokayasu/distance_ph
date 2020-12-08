@@ -423,22 +423,6 @@ colnames(para_set5)<-c("l_rate", "eta")
 #parallelで並列計算時に使うオジェクト読み込み
 clusterExport(cl, varlist = c("t3orus4_list3_5_subs", "para_set5"))
 
-#サブセット1をグリッドサーチ
-t3ours4_list3_5_sub_gs1_time<-system.time( t3ours4_list3_5_sub_gs1<-parLapply(cl, 1:nrow(para_set4), function(p){
-  
-  wpd<-weighted_homology(X = t3orus4_list3_5_subs[[1]], maxdim = 3, maxscale = 9, l_rate = para_set4$l_rate[p], eta = para_set4$eta[p])
-  
-  #parallelフォルダにtxtを出力
-  sink(paste0("./parallel/", "l_rate", gsub("\\.", "", para_set4$l_rate[p]), "eta", gsub("\\.", "", para_set4$eta[p]), "_", format(Sys.time(), "%m%d_%H%M"), ".txt"))
-  print(paste0("l_rate=", para_set4$l_rate[p]))
-  print(paste0("eta=", para_set4$eta[p]))
-  print(paste0("time=", wpd[["time"]][3]))
-  sink()
-  
-  return(wpd)
-  
-}) )
-
 #サブセット1~10をグリッドサーチ
 t3ours4_list3_5_sub_gsH2_time<-system.time( 
   
@@ -448,43 +432,11 @@ t3ours4_list3_5_sub_gsH2_time<-system.time(
       
       wpd<-weighted_homology(X = t3orus4_list3_5_subs[[i]], maxdim = 3, maxscale = 9, l_rate = para_set5$l_rate[p], eta = para_set5$eta[p])
       
-      wpl<-calc_landscape(diag = wpd, maxscale = 9, plot = F)
-      H2_peaks<-calc.landscape.peak(X = wpl[["2-land"]], dimension = 2, thresh = wpl[["thresh"]]/2, tseq = wpl[["tseq"]], show = F)
-      
       #parallelフォルダにcsvを出力
-      o_mat<-matrix(0, 1, 4)
-      colnames(o_mat)<-c("H2", "l_rate", "eta", "time")
-      o_mat[1, ]<-c(H2_peaks, para_set5$l_rate[p], para_set5$eta[p], wpd[["time"]])
-      
-      #parallelフォルダにcsvを出力
-      write.csv(as.data.frame(o_mat), file = paste0("./parallel/", "H2", "_", 
-                                                    gsub("\\.", "", round(H2_peaks, digits = 2)), 
-                                                    "_", format(Sys.time(), "%m%d_%H%M"), ".csv"))
-      
-      return(list(wpd=wpd, wpl=wpl, H2=H2_peaks))
-      
-    })
-    
-    return(sub_gs)
-    
-  })
-)
-
-#サブセット6~10をグリッドサーチ
-t3ours4_list3_5_sub_gs6to10_time<-system.time( 
-  
-  t3ours4_list3_5_sub_gs6to10<-lapply(6:10, function(i){
-    
-    sub_gs<-parLapply(cl, 1:nrow(para_set4), function(p){
-      
-      wpd<-weighted_homology(X = t3orus4_list3_5_subs[[i]], maxdim = 3, maxscale = 9, l_rate = para_set4$l_rate[p], eta = para_set4$eta[p])
-      
-      #parallelフォルダにtxtを出力
-      sink(paste0("./parallel/", "data", i, "_", "lrate", gsub("\\.", "", para_set4$l_rate[p]), "eta", gsub("\\.", "", para_set4$eta[p]), "_", format(Sys.time(), "%m%d_%H%M"), ".txt"))
-      print(paste0("l_rate=", para_set4$l_rate[p]))
-      print(paste0("eta=", para_set4$eta[p]))
-      print(paste0("time=", wpd[["time"]][3]))
-      sink()
+      write.csv(as.data.frame(wpd[["pd"]]), 
+                file = paste0("./parallel/", "data", i, "_", "lrate", 
+                              gsub("\\.", "", para_set5$l_rate[p]), "eta", gsub("\\.", "", para_set5$eta[p]), 
+                              "_", format(Sys.time(), "%m%d_%H%M"), ".csv"))
       
       return(wpd)
       
@@ -493,5 +445,4 @@ t3ours4_list3_5_sub_gs6to10_time<-system.time(
     return(sub_gs)
     
   })
-  
 )
