@@ -28,6 +28,20 @@ torus300_colle_setB<-lapply(torus300_colle_set, function(X)lapply(X, function(Y)
   save2RData(trs300_colle2to3_wvr_aggr)
 }
 
+#100セットリスト4~5つ目
+{
+  trs300_colle4to5_wvr_aggr<-lapply(4:5, function(k){
+    
+    cat("list", k, "calc\n")
+    time<-system.time( aggr<-calc_distance_change_betti(X = torus300_colle_setB[[k]], 
+                                                        maxdim = 2, maxscale = 3, samples = 10, 
+                                                        ph_func = weighted_homology, l_rate=0.8, eta=3) )
+    return(append(aggr, list(time=time)))
+    
+  })
+  save2RData(trs300_colle4to5_wvr_aggr)
+}
+
 #-----------------------
 #2次元トーラス100セットをWVRで推定してみる-------
 #350点トーラス
@@ -53,6 +67,21 @@ torus300_colle_setB<-lapply(torus300_colle_set, function(X)lapply(X, function(Y)
     
   })
   save2RData(trs350_colle2to3_wvr_aggr)
+}
+
+#100セットリスト4~5つ目
+
+{
+  trs350_colle4to5_wvr_aggr<-lapply(4:5, function(k){
+    
+    cat("list", k, "calc\n")
+    time<-system.time( aggr<-calc_distance_change_betti(X = torus350_colle_setB[[k]], 
+                                                        maxdim = 2, maxscale = 3, samples = 10, 
+                                                        ph_func = weighted_homology, l_rate=0.8, eta=3) )
+    return(append(aggr, list(time=time)))
+    
+  })
+  save2RData(trs350_colle4to5_wvr_aggr)
 }
 
 #-----------------------
