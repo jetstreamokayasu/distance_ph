@@ -82,3 +82,7 @@ end_ph<-Sys.time()
 }
 
 t3ours4_list2_2_sub_normal_time2<-system.time( t3ours4_list2_2_sub_normal_pd2<-calculate_homology(mat = t3ours4_list2_2_sub_dist, dim = 3, threshold = 9, format = "distmat") )
+
+t3ours6<-x3Dtorus_unif(n = 600, r = 2, R1 = 8, R2 = 4)
+t3ours6_inst<-TDAdataset$new(t3ours6)
+t3ours6_inst$calc_pd(maxdim = 3, maxscale = 9)

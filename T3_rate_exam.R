@@ -100,7 +100,7 @@ t3orus4_list3_1to30aggrs2_time<-system.time(
                                                              ph_func = weighted_homology, l_rate=0.5, eta=7.5) )
 
 #-------------------------------------
-#3次元トーラスで成功率を求めてみる----
+#500点3次元トーラスで成功率を求めてみる----
 #H3の推定がうまくいかないので試す
 #r = 2, R1 = 8, R2 = 4
 #全データセット数30、サブサンプル数5
@@ -199,3 +199,86 @@ t3orus4_list3_1to2aggrs_test_time<-system.time(
 t3orus450_list1_1to30_wvr_H2aggrs1_time<-system.time(
   t3orus450_list1_1to30_wvr_H2aggrs1<-calc_distance_change_betti_paral(X = t3orus450_list1[1:30], maxdim = 3, maxscale = 9, samples = 5, 
                                                                      ph_func = weighted_homology, l_rate=0.1, eta=3.9) )   
+
+
+#-------------------------------------
+#500点3次元トーラスで2次ベッチ数の成功率を求めてみる----
+#r = 2, R1 = 8, R2 = 4
+#全データセット数30、サブサンプル数5
+#eta=3.6, ランドマーク点50%
+t3orus4_list3_1to30_wvrH2_aggrs4_time<-system.time(
+  t3orus4_list3_1to30_wvrH2_aggrs4<-calc_distance_change_betti_paral(X = t3orus4_list3B[1:30], maxdim = 3, maxscale = 9, samples = 5, 
+                                                              ph_func = weighted_homology, l_rate=0.5, eta=3.6) )   
+
+#-------------------------------------
+#500点3次元トーラスで2次ベッチ数の成功率を求めてみる----
+#r = 2, R1 = 8, R2 = 4
+#全データセット数30、サブサンプル数5
+#eta=6.0, ランドマーク点10%
+t3orus4_list3_1to30_wvrH2_aggrs5_time<-system.time(
+  t3orus4_list3_1to30_wvrH2_aggrs5<-calc_distance_change_betti_paral(X = t3orus4_list3B[1:30], maxdim = 3, maxscale = 9, samples = 5, 
+                                                                     ph_func = weighted_homology, l_rate=0.1, eta=6.0) )   
+
+#-------------------------------------
+#500点3次元トーラスで2次ベッチ数の成功率を求めてみる----
+#r = 2, R1 = 8, R2 = 4
+#全データセット数30、サブサンプル数5
+#eta=4.0, ランドマーク点50%
+t3orus4_list3_1to30_wvrH2_aggrs6_time<-system.time(
+  t3orus4_list3_1to30_wvrH2_aggrs6<-calc_distance_change_betti_paral(X = t3orus4_list3B[1:30], maxdim = 3, maxscale = 9, samples = 5, 
+                                                                     ph_func = weighted_homology, l_rate=0.5, eta=4.0) )   
+
+#-------------------------------------
+#500点3次元トーラスで2次ベッチ数の成功率を求めてみる----
+#r = 2, R1 = 8, R2 = 4
+#全データセット数30、サブサンプル数5
+#eta=4.5, ランドマーク点50%
+t3orus4_list3_1to30_wvrH2_aggrs7_time<-system.time(
+  t3orus4_list3_1to30_wvrH2_aggrs7<-calc_distance_change_betti_paral(X = t3orus4_list3B[1:30], maxdim = 3, maxscale = 9, samples = 5, 
+                                                                     ph_func = weighted_homology, l_rate=0.5, eta=4.5) )   
+
+
+#-------------------------------------
+#450点3次元トーラスで2次ベッチ数の成功率を求めてみる----
+#r = 2, R1 = 8, R2 = 4
+#全データセット数30、サブサンプル数5
+#eta=4.0, ランドマーク点50%
+t3orus450_list1_1to30_wvr_aggrs2_time<-system.time(
+  t3orus450_list1_1to30_wvrH2_aggrs2<-calc_distance_change_betti_paral(X = t3orus450_list1[1:30], maxdim = 3, maxscale = 9, samples = 5, 
+                                                                     ph_func = weighted_homology, l_rate=0.5, eta=4.0) )   
+
+#-------------------------------------
+#490点3次元トーラスで2次ベッチ数の成功率を求めてみる----
+#r = 2, R1 = 8, R2 = 4
+#全データセット数30、サブサンプル数5
+#eta=4.0, ランドマーク点50%
+t3orus490_list1_1to30_wvr_aggrs2_time<-system.time(
+  t3orus490_list1_1to30_wvrH2_aggrs2<-calc_distance_change_betti_paral(X = t3orus490_list1[1:30], maxdim = 3, maxscale = 9, samples = 5, 
+                                                                       ph_func = weighted_homology, l_rate=0.5, eta=4.0) )   
+
+#-------------------------------------
+#480点3次元トーラスで2次ベッチ数の成功率を求めてみる----
+#r = 2, R1 = 8, R2 = 4
+#全データセット数30、サブサンプル数5
+#eta=4.0, ランドマーク点50%
+t3orus480_list1_1to30_wvr_aggrs2_time<-system.time(
+  t3orus480_list1_1to30_wvrH2_aggrs2<-calc_distance_change_betti_paral(X = t3orus480_list1[1:30], maxdim = 3, maxscale = 9, samples = 5, 
+                                                                       ph_func = weighted_homology, l_rate=0.5, eta=4.0) )   
+
+#-------------------------------------
+#470点3次元トーラスで2次ベッチ数の成功率を求めてみる----
+#r = 2, R1 = 8, R2 = 4
+#全データセット数30、サブサンプル数5
+#eta=4.0, ランドマーク点50%
+t3orus470_list1_1to30_wvr_aggrs2_time<-system.time(
+  t3orus470_list1_1to30_wvrH2_aggrs2<-calc_distance_change_betti_paral(X = t3orus470_list1[1:30], maxdim = 3, maxscale = 9, samples = 5, 
+                                                                       ph_func = weighted_homology, l_rate=0.5, eta=4.0) )   
+
+#-------------------------------------
+#460点3次元トーラスで2次ベッチ数の成功率を求めてみる----
+#r = 2, R1 = 8, R2 = 4
+#全データセット数30、サブサンプル数5
+#eta=4.0, ランドマーク点50%
+t3orus460_list1_1to30_wvr_aggrs2_time<-system.time(
+  t3orus460_list1_1to30_wvrH2_aggrs2<-calc_distance_change_betti_paral(X = t3orus460_list1[1:30], maxdim = 3, maxscale = 9, samples = 5, 
+                                                                       ph_func = weighted_homology, l_rate=0.5, eta=4.0) )   

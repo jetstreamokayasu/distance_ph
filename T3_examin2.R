@@ -446,3 +446,41 @@ t3ours4_list3_5_sub_gsH2_time<-system.time(
     
   })
 )
+
+#サブサンプルのPLをまとめる
+t3ours4_list3_5_sub_gsH2_pls<-lapply(t3ours4_list3_5_sub_gsH2, function(X){
+  
+  sub_pls<-lapply(X, function(Y){calc_landscape(diag = Y[["pd"]], maxscale = 9, plot = F)})
+  
+})
+
+#サブサンプルのPLのH2局所最大値をまとめる
+t3ours4_list3_5_sub_gsH2_peaks_H2<-lapply(t3ours4_list3_5_sub_gsH2_pls, function(X){
+  
+  sub_pls<-sapply(X, function(Y){calc.landscape.peak(X = Y[["2-land"]], dimension = 2, thresh = Y[["thresh"]]*(2*pi)/surface_nshpere(2), tseq = Y[["tseq"]], show = F)})
+  
+})
+
+#サブサンプル1~10のPLのH2局所最大値の平均
+t3ours4_list3_5_sub_gsH2_peaks_H2_ave<-sapply(1:length(t3ours4_list3_5_sub_gsH2_peaks_H2[[1]]), function(i){
+  mpeaks<-sapply(t3ours4_list3_5_sub_gsH2_peaks_H2, function(PL){PL[[i]]}) %>% mean()
+})
+
+#H2局所最大値の数をパラメータごとにプロット
+#サブサンプル1~10平均
+par(mai=c(0.7, 0.7, 0.3, 0.3))
+par(mgp=c(2, 1, 0))
+plot(para_set5, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(para_set5$l_rate, para_set5$eta, labels = round(t3ours4_list3_5_sub_gsH2_peaks_H2_ave, 2),
+     col = ifelse(t3ours4_list3_5_sub_gsH2_peaks_H2_ave >= 2.5 & t3ours4_list3_5_sub_gsH2_peaks_H2_ave < 3.5, 2, 4), cex = 0.8)
+
+plot(rbind(para_set4, para_set5), xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(para_set4$l_rate, para_set4$eta, labels = round(t3ours4_list3_5_sub_gs_peaks_H2_ave, 2),
+     col = ifelse(t3ours4_list3_5_sub_gs_peaks_H2_ave >= 2.5 & t3ours4_list3_5_sub_gs_peaks_H2_ave < 3.5, 2, 4), cex = 0.8)
+
+#---------------------------------
+#ggplotでH2局所最大値の数をパラメータごとにプロット----
+#サブサンプル1~10平均
+para_gs_plt<-ggplot(data = para_set5) + geom_text(aes(x = l_rate, y = eta, label = round(t3ours4_list3_5_sub_gsH2_peaks_H2_ave, 2), color = as.factor( if_else(t3ours4_list3_5_sub_gsH2_peaks_H2_ave >= 2.5 & t3ours4_list3_5_sub_gsH2_peaks_H2_ave < 3.5, 1, 2) )))
+para_gs_plt3<-para_gs_plt + geom_text(data = para_set4, aes(x = l_rate, y = eta, label = round(t3ours4_list3_5_sub_gs_peaks_H2_ave, 2), col = as.factor( if_else(t3ours4_list3_5_sub_gs_peaks_H2_ave >= 2.5 & t3ours4_list3_5_sub_gs_peaks_H2_ave < 3.5, 1, 2) )))
+para_gs_plt2<-para_gs_plt3 + scale_color_brewer(palette = "Set1") + guides(color="none") + theme_test()

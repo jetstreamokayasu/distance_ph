@@ -213,7 +213,7 @@ lines(seq(300, 350, by=10), wvrsucs_mean_dim2-wvrsucs_sd_dim2, lty="dashed", col
 lines(seq(300, 350, by=10), wvrsucs_mean_dim2+wvrsucs_sd_dim2, lty="dashed", col=red)
 
 
-#expを掛ける距離行列変化手法2次ベッチ数
+#expを掛ける距離行列変化手法1次ベッチ数
 points(rep(300, 5), torus300_wvr_rate[,1], col=red, pch=16)
 points(rep(310, 5), torus310_wvr_rate[,1], col=red, pch=16)
 points(rep(320, 5), torus320_wvr_rate[,1], col=red, pch=16)

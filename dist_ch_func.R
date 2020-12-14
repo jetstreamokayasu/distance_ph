@@ -224,9 +224,11 @@ landmark_points<-function(X, n_land, d_mat=F){
   
   if(d_mat){X_dist<-X}else{X_dist<-dist(X) %>% as.matrix()}
   
+  if(n_land == 0){return(numeric(0))}
+    
   l_idx<-sample(nrow(X), 1)
   
-  l_idx<-which.max(X_dist[l_idx, ]) %>% c(., l_idx)
+  if(n_land >= 2){l_idx<-which.max(X_dist[l_idx, ]) %>% c(., l_idx)}
 
   if(n_land > 2){
     for (i in 1:(n_land-2)) {
@@ -443,6 +445,8 @@ dist_fri_change<-function(X_dist, lands, eta){
 #X_dist=距離行列, lands=ランドマーク点, eta=FRIのハイパラ
 
 dist_wvr_change<-function(X_dist, lands, eta){
+  
+  if(length(lands)==0){return(X_dist)}
   
   X_chng_dist<-X_dist
   
