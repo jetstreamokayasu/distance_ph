@@ -151,7 +151,7 @@ t3_H3rate$n_points %<>% as.numeric()
 #CTIC2019手法
 t3_H3_plt<-ggplot(data = t3_H3rate, aes(x = n_points)) + geom_point(aes(y = dim3rate, color = "conventional")) + geom_line(aes(y = dim3rate))
 t3_H3_plt_arng<-t3_H3_plt + ylim(0, 1) + scale_color_manual(breaks = c("conventional", "proposed2A", "proposed2B"), values = c("black","darkorange1", "maroon1"), guide = "legend", name = "method", 
-                                                              labels = c("conventional", "eta=6.5, l_rate=0.5", "eta=4.0, l_rate=0.5"))
+                                                              labels = c("conventional",expression(paste(eta==6.5, ~~epsilon==0.5)), expression(paste(eta==4.0, ~~epsilon==0.5))))
 
 #exp距離変化。eta=6.5, l_rate=0.5
 t3_wvr_H3rateA<-tibble("450"=t3rs450_wvr_rate,
@@ -178,4 +178,6 @@ t3_wvr_H3rateB<-tibble("450"=cycle_number(t3orus450_list1_1to30_wvrH2_aggrs2, 3)
 t3_wvr_H3rateB$n_points %<>% as.numeric()
 
 t3_wvrH3_pltB<-t3_wvrH3_plt + geom_point(data = t3_wvr_H3rateB, aes(y = dim3rate, color = "proposed2B")) + geom_line(data = t3_wvr_H3rateB, aes(y = dim3rate, color = "proposed2B"))
-t3_H3_plt<-t3_wvrH3_pltB + labs(x = "Number of points", y = "Success rate")
+t3_H3_plt<-t3_wvrH3_pltB + labs(x = "Data density", y = "Success rate") + theme(axis.text = element_text(size=15))
+
+t3_H3_plt2<-t3_H3_plt + scale_x_continuous(breaks = seq(450, 500, by=10), labels = c(expression(450/(64*pi^3)), expression(460/(64*pi^3)), expression(470/(64*pi^3)), expression(480/(64*pi^3)), expression(490/(64*pi^3)), expression(500/(64*pi^3))))
