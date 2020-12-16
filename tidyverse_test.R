@@ -178,6 +178,6 @@ t3_wvr_H3rateB<-tibble("450"=cycle_number(t3orus450_list1_1to30_wvrH2_aggrs2, 3)
 t3_wvr_H3rateB$n_points %<>% as.numeric()
 
 t3_wvrH3_pltB<-t3_wvrH3_plt + geom_point(data = t3_wvr_H3rateB, aes(y = dim3rate, color = "proposed2B")) + geom_line(data = t3_wvr_H3rateB, aes(y = dim3rate, color = "proposed2B"))
-t3_H3_plt<-t3_wvrH3_pltB + labs(x = "Data density", y = "Success rate") + theme(axis.text = element_text(size=15))
+t3_H3_plt<-t3_wvrH3_pltB + labs(x = "Data density", y = "Success rate") + theme(axis.text = element_text(size=11), axis.title = element_text(size=15), legend.text = element_text(size=10))
 
 t3_H3_plt2<-t3_H3_plt + scale_x_continuous(breaks = seq(450, 500, by=10), labels = c(expression(450/(64*pi^3)), expression(460/(64*pi^3)), expression(470/(64*pi^3)), expression(480/(64*pi^3)), expression(490/(64*pi^3)), expression(500/(64*pi^3))))

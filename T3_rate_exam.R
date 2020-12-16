@@ -131,6 +131,15 @@ t3orus450_list1_1to30_wvr_aggrs1_time<-system.time(
   t3orus450_list1_1to30_wvr_aggrs1<-calc_distance_change_betti_paral(X = t3orus450_list1[1:30], maxdim = 3, maxscale = 9, samples = 5, 
                                                                      ph_func = weighted_homology, l_rate=0.5, eta=6.5) )   
 
+#31~100セット目
+{
+t3orus450_list1_31to100_wvr_aggrs1_time<-system.time(
+  t3orus450_list1_31to100_wvr_aggrs1<-calc_distance_change_betti_paral(X = t3orus450_list1[31:100], maxdim = 3, maxscale = 9, samples = 5, 
+                                                                     ph_func = weighted_homology, l_rate=0.5, eta=6.5) )   
+
+save2RData(t3orus450_list1_31to100_wvr_aggrs1_time)
+save2RData(t3orus450_list1_31to100_wvr_aggrs1)
+}
 
 #-------------------------------------
 #490点3次元トーラスで成功率を求めてみる----
@@ -145,6 +154,16 @@ save2RData(t3orus490_list1_1to30_wvr_aggrs1_time)
 save2RData(t3orus490_list1_1to30_wvr_aggrs1)
 }
 
+#31~100セット目
+{
+  t3orus490_list1_31to100_wvr_aggrs1_time<-system.time(
+    t3orus490_list1_31to100_wvr_aggrs1<-calc_distance_change_betti_paral(X = t3orus490_list1[31:100], maxdim = 3, maxscale = 9, samples = 5, 
+                                                                         ph_func = weighted_homology, l_rate=0.5, eta=6.5) )   
+  
+  save2RData(t3orus490_list1_31to100_wvr_aggrs1_time)
+  save2RData(t3orus490_list1_31to100_wvr_aggrs1)
+}
+
 #-------------------------------------
 #480点3次元トーラスで成功率を求めてみる----
 #r = 2, R1 = 8, R2 = 4
@@ -156,6 +175,16 @@ save2RData(t3orus490_list1_1to30_wvr_aggrs1)
                                                                        ph_func = weighted_homology, l_rate=0.5, eta=6.5) )   
   save2RData(t3orus480_list1_1to30_wvr_aggrs1_time)
   save2RData(t3orus480_list1_1to30_wvr_aggrs1)
+}
+
+#31~100セット目
+{
+  t3orus480_list1_31to100_wvr_aggrs1_time<-system.time(
+    t3orus480_list1_31to100_wvr_aggrs1<-calc_distance_change_betti_paral(X = t3orus480_list1[31:100], maxdim = 3, maxscale = 9, samples = 5, 
+                                                                         ph_func = weighted_homology, l_rate=0.5, eta=6.5) )   
+  
+  save2RData(t3orus480_list1_31to100_wvr_aggrs1_time)
+  save2RData(t3orus480_list1_31to100_wvr_aggrs1)
 }
 
 #-------------------------------------

@@ -44,12 +44,84 @@ trs220_list1_wvr_time1<-system.time(
                                                            ph_func = weighted_homology, l_rate=0.8, eta=3) )
 
 
+#------------------------
+#230点トーラス------------
+
+trs230_list1<-lapply(1:100, function(i)torusUnif(n = 230, 1, 2.5))
+
+trs230_list1_inted<-lapply(trs230_list1, function(X){interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .)})
+
+{
+trs230_list1_inted_time1<-system.time(
+  trs230_list1_inted_aggr1<-smooth_landscape_method(X = trs230_list1_inted, maxdim = 2, maxscale = 3, samples = 10) 
+)
+
+save2RData(trs230_list1_inted_time1)
+save2RData(trs230_list1_inted_aggr1)
+  
+}
+
+{
+trs230_list1_wvr_time1<-system.time(
+  trs230_list1_wvr_aggr1<-calc_distance_change_betti(X = trs230_list1, maxdim = 2, maxscale = 3, samples = 10, 
+                                                     ph_func = weighted_homology, l_rate=0.8, eta=3) )
+
+save2RData(trs230_list1_wvr_time1)
+save2RData(trs230_list1_wvr_aggr1)
+  
+}
+
+#------------------------
+#240点トーラス------------
+
+trs240_list1<-lapply(1:100, function(i)torusUnif(n = 240, 1, 2.5))
+
+trs240_list1_inted<-lapply(trs240_list1, function(X){interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .)})
+
+{
+  trs240_list1_inted_time1<-system.time(
+    trs240_list1_inted_aggr1<-smooth_landscape_method(X = trs240_list1_inted, maxdim = 2, maxscale = 3, samples = 10) 
+  )
+  
+  save2RData(trs240_list1_inted_time1)
+  save2RData(trs240_list1_inted_aggr1)
+  
+}
+
+{
+  trs240_list1_wvr_time1<-system.time(
+    trs240_list1_wvr_aggr1<-calc_distance_change_betti(X = trs240_list1, maxdim = 2, maxscale = 3, samples = 10, 
+                                                       ph_func = weighted_homology, l_rate=0.8, eta=3) )
+  
+  save2RData(trs240_list1_wvr_time1)
+  save2RData(trs240_list1_wvr_aggr1)
+  
+}
+
 #-----------------
 #250点トーラス-----
 trs250_list1<-lapply(1:100, function(i)torusUnif(n = 250, 1, 2.5))
 
 trs250_list1_inted<-lapply(trs250_list1, function(X)interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .))
 
-
-
 trs250_list1_inted1<-TDAdataset$new(trs250_list1_inted[[1]])
+
+{
+  trs250_list1_inted_time1<-system.time(
+    trs250_list1_inted_aggr1<-smooth_landscape_method(X = trs250_list1_inted, maxdim = 2, maxscale = 3, samples = 10) 
+  )
+  
+  save2RData(trs250_list1_inted_time1)
+  save2RData(trs250_list1_inted_aggr1)
+  
+}
+
+{
+  trs250_list1_wvr_time1<-system.time(
+    trs250_list1_wvr_aggr1<-calc_distance_change_betti(X = trs250_list1, maxdim = 2, maxscale = 3, samples = 10, 
+                                                       ph_func = weighted_homology, l_rate=0.8, eta=3) )
+  
+  save2RData(trs250_list1_wvr_time1)
+  save2RData(trs250_list1_wvr_aggr1)
+  
+}
