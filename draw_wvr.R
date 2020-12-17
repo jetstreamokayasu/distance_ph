@@ -138,3 +138,13 @@ plot_filt_wvr<-function(){
 ff_pass<-animation::ani.options(ffmpeg="D:/okayasu/D_download/ffmpeg-4.3.1-2020-10-01-essentials_build/bin/ffmpeg.exe")
 
 saveVideo(expr = plot_filt_wvr(), video.name = "filt_comp_wvr.mp4", img.name = "filt_comp_wvr", interval=0.3, ani.width=1000, ani.height=500)
+
+
+#------------------------------
+#expを掛ける距離変化の図
+
+exp_chng_plt<-ggplot() + geom_line(aes(x = seq(0, 7, length = 500), y = seq(0, 7, length = 500)*(1-exp( -(seq(0, 7, length = 500)/3)^2 ))), color = "red", size = 2)
+exp_chng_plt2<-exp_chng_plt + geom_line(aes(x = seq(0, 7, length = 500), y = seq(0, 7, length = 500)), size = 1.5) + xlab("Original distance") + ylab("Changed distance")
+exp_chng_plt3<-exp_chng_plt2 + theme(axis.title = element_text(size=25), axis.text = element_text(size=20))
+
+ggsave("./pics/distance_ch.pdf", plot = exp_chng_plt3)

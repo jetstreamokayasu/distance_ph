@@ -15,10 +15,23 @@ trs200_list1_inted_aggr1<-smooth_landscape_method(X = trs200_list1_inted, maxdim
 
 trs200_list1_wvr_aggr1<-calc_distance_change_betti(X = trs200_list1, maxdim = 2, maxscale = 3, samples = 10, 
                                                          ph_func = weighted_homology, l_rate=0.8, eta=3)
-
+#---------------------
+#100セットのリスト2～6個目----
 trs200_list2to6<-lapply(1:5, function(k){lapply(1:100, function(i)torusUnif(n = 200, 1, 2.5))})
 
-#trs210_list1, trs220_list1が存在しないため210~220点計算し直し
+{
+  trs200_list2to5_aggrs<-lapply(1:4, function(k){
+    
+    cat("list", k, "calc\n")
+    time<-system.time(aggr<-smooth_landscape_method(trs200_list2to6[[k]], 2, 3, 10))
+    return(append(aggr, list(time=time)))
+    
+  })
+  save2Rdata(trs200_list2to5_aggrs)
+}
+
+#--------------------
+#trs210_list1, trs220_list1が存在しないため210~220点計算し直し-----
 #------------------------
 #210点トーラス------------
 
@@ -34,10 +47,15 @@ trs210_list1_inted_aggr1<-smooth_landscape_method(X = trs210_list1_inted, maxdim
 save2RData(trs210_list1_inted_time1)  
 save2RData(trs210_list1_inted_aggr1) 
 }
+
+{
 trs210_list1_wvr_time1<-system.time(
   trs210_list1_wvr_aggr1<-calc_distance_change_betti(X = trs210_list1, maxdim = 2, maxscale = 3, samples = 10, 
                                                          ph_func = weighted_homology, l_rate=0.8, eta=3) )
 
+save2RData(trs210_list1_wvr_time1)
+save2RData(trs210_list1_wvr_aggr1)
+}
 #------------------------
 #220点トーラス------------
 

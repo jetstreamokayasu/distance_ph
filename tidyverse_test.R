@@ -74,9 +74,9 @@ suc_plot_ave<-ggplot(data = sucs_rates_smz, mapping = aes(x = n_points, y = dim2
 suc_plot_sd<-suc_plot_ave + geom_ribbon(aes(ymin = dim2rate_mean - dim2rate_sd, ymax = dim2rate_mean + dim2rate_sd), alpha = 0.1)
 suc_plot_all<-suc_plot_sd + geom_point(data = sucs_rates_tbl, aes(x = n_points, y = dim2rate, color = "conventional"), size = 1.8) 
 suc_plot_all2<-suc_plot_all + ylim(0, 1) + scale_color_manual(breaks = c("conventional", "proposed1", "proposed2"), values = c("black","royalblue1", "red"), guide = "legend", name = "method", 
-                                                              labels = c("conventional", "poprosed 1", "proposed 2"))
+                                                              labels = c("conventional", "proposed 1", "proposed 2"))
 
-ctic_plt<-suc_plot_all2 +labs(x = "Data density", y = "Success rate") + theme(axis.text = element_text(size=14), axis.title = element_text(size=16), legend.text = element_text(size=12), legend.title = element_text(size=15))
+ctic_plt<-suc_plot_all2 +labs(x = "Data density", y = "Success rate") + theme(axis.text = element_text(size=20), axis.title = element_text(size=25), legend.text = element_text(size=20), legend.title = element_text(size=25))
 ctic_plt2<-ctic_plt + scale_x_continuous(breaks = seq(300, 350, by=10), labels = c(expression(30/pi^2), expression(31/pi^2), expression(32/pi^2), expression(33/pi^2), expression(34/pi^2), expression(35/pi^2)) )
 ggsave("./pics/conventional_T2H2_plot.pdf", plot = ctic_plt2)
 
@@ -139,7 +139,7 @@ t3_wvr_H2rateB<-tibble("450"=cycle_number(t3orus450_list1_1to30_wvrH2_aggrs2, 2)
 t3_wvr_H2rateB$n_points %<>% as.numeric()
 
 t3_wvr_pltB<-t3_wvr_plt + geom_point(data = t3_wvr_H2rateB, aes(y = dim2rate, color = "proposed2B")) + geom_line(data = t3_wvr_H2rateB, aes(y = dim2rate, color = "proposed2B"))
-t3_plt<-t3_wvr_pltB + labs(x = "Data density", y = "Success rate") + theme(axis.text = element_text(size=14), axis.title = element_text(size=16), legend.text = element_text(size=11), legend.title = element_text(size=15))
+t3_plt<-t3_wvr_pltB + labs(x = "Data density", y = "Success rate") + theme(axis.text = element_text(size=20), axis.title = element_text(size=25), legend.text = element_text(size=20), legend.title = element_text(size=25))
 t3_T3H2_plt2<-t3_plt + scale_x_continuous(breaks = seq(450, 500, by=10), labels = c(expression(450/(64*pi^3)), expression(460/(64*pi^3)), expression(470/(64*pi^3)), expression(480/(64*pi^3)), expression(490/(64*pi^3)), expression(500/(64*pi^3))))
 
 ggsave("./pics/success_T3H2_plot.pdf", plot = t3_T3H2_plt2)

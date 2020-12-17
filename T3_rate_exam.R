@@ -223,6 +223,16 @@ save2RData(t3orus490_list1_1to30_wvr_aggrs1)
   save2RData(t3orus460_list1_1to30_wvr_aggrs1)
 }
 
+#31~100セット目
+{
+  t3orus460_list1_31to100_wvr_aggrs1_time<-system.time(
+    t3orus460_list1_31to100_wvr_aggrs1<-calc_distance_change_betti_paral(X = t3orus460_list1[31:100], maxdim = 3, maxscale = 9, samples = 5, 
+                                                                         ph_func = weighted_homology, l_rate=0.5, eta=6.5) )   
+  
+  save2RData(t3orus460_list1_31to100_wvr_aggrs1_time)
+  save2RData(t3orus460_list1_31to100_wvr_aggrs1)
+}
+
 #--------------------------------------
 #calc_distance_change_betti_paralのテスト----
 t3orus4_list3_1to2aggrs_test_time<-system.time(
