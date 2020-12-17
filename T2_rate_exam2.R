@@ -15,6 +15,10 @@ trs200_list1_inted_aggr1<-smooth_landscape_method(X = trs200_list1_inted, maxdim
 
 trs200_list1_wvr_aggr1<-calc_distance_change_betti(X = trs200_list1, maxdim = 2, maxscale = 3, samples = 10, 
                                                          ph_func = weighted_homology, l_rate=0.8, eta=3)
+
+trs200_list2to6<-lapply(1:5, function(k){lapply(1:100, function(i)torusUnif(n = 200, 1, 2.5))})
+
+#trs210_list1, trs220_list1が存在しないため210~220点計算し直し
 #------------------------
 #210点トーラス------------
 
@@ -22,8 +26,14 @@ trs210_list1<-lapply(1:100, function(i)torusUnif(n = 210, 1, 2.5))
 
 trs210_list1_inted<-lapply(trs210_list1, function(X){interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .)})
 
+{
+  trs210_list1_inted_time1<-system.time(
 trs210_list1_inted_aggr1<-smooth_landscape_method(X = trs210_list1_inted, maxdim = 2, maxscale = 3, samples = 10)
+)
 
+save2RData(trs210_list1_inted_time1)  
+save2RData(trs210_list1_inted_aggr1) 
+}
 trs210_list1_wvr_time1<-system.time(
   trs210_list1_wvr_aggr1<-calc_distance_change_betti(X = trs210_list1, maxdim = 2, maxscale = 3, samples = 10, 
                                                          ph_func = weighted_homology, l_rate=0.8, eta=3) )

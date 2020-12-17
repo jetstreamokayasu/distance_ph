@@ -72,12 +72,16 @@ suc_plot_sd<-suc_plot_ave + geom_ribbon(data=sucs_rates_smz, aes(x = sucs_rates_
 #こっちの場合は出る
 suc_plot_ave<-ggplot(data = sucs_rates_smz, mapping = aes(x = n_points, y = dim2rate_mean)) + geom_line() 
 suc_plot_sd<-suc_plot_ave + geom_ribbon(aes(ymin = dim2rate_mean - dim2rate_sd, ymax = dim2rate_mean + dim2rate_sd), alpha = 0.1)
-suc_plot_all<-suc_plot_sd + geom_point(data = sucs_rates_tbl, aes(x = n_points, y = dim2rate, color = "conventional")) 
+suc_plot_all<-suc_plot_sd + geom_point(data = sucs_rates_tbl, aes(x = n_points, y = dim2rate, color = "conventional"), size = 1.8) 
 suc_plot_all2<-suc_plot_all + ylim(0, 1) + scale_color_manual(breaks = c("conventional", "proposed1", "proposed2"), values = c("black","royalblue1", "red"), guide = "legend", name = "method", 
-                                                              labels = c("conventional", "interpolation", "distance change"))
+                                                              labels = c("conventional", "poprosed 1", "proposed 2"))
+
+ctic_plt<-suc_plot_all2 +labs(x = "Data density", y = "Success rate") + theme(axis.text = element_text(size=14), axis.title = element_text(size=16), legend.text = element_text(size=12), legend.title = element_text(size=15))
+ctic_plt2<-ctic_plt + scale_x_continuous(breaks = seq(300, 350, by=10), labels = c(expression(30/pi^2), expression(31/pi^2), expression(32/pi^2), expression(33/pi^2), expression(34/pi^2), expression(35/pi^2)) )
+ggsave("./pics/conventional_T2H2_plot.pdf", plot = ctic_plt2)
 
 #expを掛ける距離変化手法のプロット
-wvr_plot1<-suc_plot_all2 + geom_line(data = wvr_rates_smz, aes(x = n_points, y = dim2rate_mean), color = "red")
+wvr_plot1<-ctic_plt2 + geom_line(data = wvr_rates_smz, aes(x = n_points, y = dim2rate_mean), color = "red")
 wvr_plot2<-wvr_plot1 + geom_ribbon(data = wvr_rates_smz, aes(ymin = dim2rate_mean - dim2rate_sd, ymax = dim2rate_mean + dim2rate_sd), fill = "red", alpha = 0.1)
 wvr_plot3<-wvr_plot2 + geom_point(data = wvr_rates_tbl, aes(x = n_points, y = dim2rate, colour = "proposed2"))
 
@@ -87,8 +91,10 @@ inter_plot_ave<-wvr_plot3 + geom_line(data = inter_rates_smz, aes(x = n_points, 
 inter_plot_sd<-inter_plot_ave + geom_ribbon(data = inter_rates_smz, aes(ymin = dim2rate_mean - dim2rate_sd, ymax = dim2rate_mean + dim2rate_sd), fill = "royalblue1", alpha = 0.1)
 inter_plot_all<-inter_plot_sd + geom_point(data = inter_rates_tbl, aes(x = n_points, y = dim2rate, color = "proposed1"))
 
+ggsave("./pics/success_T2H2_plot.pdf", plot = inter_plot_all)
+
 #成功率グラフ全体
-success_plt<-inter_plot_all + labs(x = "Number of points", y = "Success rate")
+#success_plt<-inter_plot_all + labs(x = "Number of points", y = "Success rate")
 
 #------------------------------
 #3次元トーラス2次ベッチ数推定成功率グラフ------
@@ -106,7 +112,7 @@ t3_H2rate$n_points %<>% as.numeric()
 #CTIC2019手法
 t3_suc_plt<-ggplot(data = t3_H2rate, aes(x = n_points)) + geom_point(aes(y = dim2rate, color = "conventional")) + geom_line(aes(y = dim2rate))
 t3_suc_plt_arng<-t3_suc_plt + ylim(0, 1) + scale_color_manual(breaks = c("conventional", "proposed2A", "proposed2B"), values = c("black","darkorange1", "maroon1"), guide = "legend", name = "method", 
-                                                              labels = c("conventional", "eta=6.5, l_rate=0.5", "eta=4.0, l_rate=0.5"))
+                                                              labels = c("conventional", expression(paste(eta==6.5, ~~epsilon==0.5)), expression(paste(eta==4.0, ~~epsilon==0.5))))
 
 #exp距離変化。eta=6.5, l_rate=0.5
 t3_wvr_H2rateA<-tibble("450"=t3rs450_wvr_rate_H2,
@@ -133,8 +139,10 @@ t3_wvr_H2rateB<-tibble("450"=cycle_number(t3orus450_list1_1to30_wvrH2_aggrs2, 2)
 t3_wvr_H2rateB$n_points %<>% as.numeric()
 
 t3_wvr_pltB<-t3_wvr_plt + geom_point(data = t3_wvr_H2rateB, aes(y = dim2rate, color = "proposed2B")) + geom_line(data = t3_wvr_H2rateB, aes(y = dim2rate, color = "proposed2B"))
-t3_plt<-t3_wvr_pltB + labs(x = "Number of points", y = "Success rate")
+t3_plt<-t3_wvr_pltB + labs(x = "Data density", y = "Success rate") + theme(axis.text = element_text(size=14), axis.title = element_text(size=16), legend.text = element_text(size=11), legend.title = element_text(size=15))
+t3_T3H2_plt2<-t3_plt + scale_x_continuous(breaks = seq(450, 500, by=10), labels = c(expression(450/(64*pi^3)), expression(460/(64*pi^3)), expression(470/(64*pi^3)), expression(480/(64*pi^3)), expression(490/(64*pi^3)), expression(500/(64*pi^3))))
 
+ggsave("./pics/success_T3H2_plot.pdf", plot = t3_T3H2_plt2)
 
 #------------------------------
 #3次元トーラス3次ベッチ数推定成功率グラフ------
@@ -151,7 +159,7 @@ t3_H3rate$n_points %<>% as.numeric()
 #CTIC2019手法
 t3_H3_plt<-ggplot(data = t3_H3rate, aes(x = n_points)) + geom_point(aes(y = dim3rate, color = "conventional")) + geom_line(aes(y = dim3rate))
 t3_H3_plt_arng<-t3_H3_plt + ylim(0, 1) + scale_color_manual(breaks = c("conventional", "proposed2A", "proposed2B"), values = c("black","darkorange1", "maroon1"), guide = "legend", name = "method", 
-                                                              labels = c("conventional",expression(paste(eta==6.5, ~~epsilon==0.5)), expression(paste(eta==4.0, ~~epsilon==0.5))))
+                                                              labels = c("conventional", expression(paste(eta==6.5, ~~epsilon==0.5)), expression(paste(eta==4.0, ~~epsilon==0.5))))
 
 #exp距離変化。eta=6.5, l_rate=0.5
 t3_wvr_H3rateA<-tibble("450"=t3rs450_wvr_rate,
@@ -178,6 +186,8 @@ t3_wvr_H3rateB<-tibble("450"=cycle_number(t3orus450_list1_1to30_wvrH2_aggrs2, 3)
 t3_wvr_H3rateB$n_points %<>% as.numeric()
 
 t3_wvrH3_pltB<-t3_wvrH3_plt + geom_point(data = t3_wvr_H3rateB, aes(y = dim3rate, color = "proposed2B")) + geom_line(data = t3_wvr_H3rateB, aes(y = dim3rate, color = "proposed2B"))
-t3_H3_plt<-t3_wvrH3_pltB + labs(x = "Data density", y = "Success rate") + theme(axis.text = element_text(size=11), axis.title = element_text(size=15), legend.text = element_text(size=10))
+t3_H3_plt<-t3_wvrH3_pltB + labs(x = "Data density", y = "Success rate") + theme(axis.text = element_text(size=14), axis.title = element_text(size=16), legend.text = element_text(size=11), legend.title = element_text(size=15))
 
 t3_H3_plt2<-t3_H3_plt + scale_x_continuous(breaks = seq(450, 500, by=10), labels = c(expression(450/(64*pi^3)), expression(460/(64*pi^3)), expression(470/(64*pi^3)), expression(480/(64*pi^3)), expression(490/(64*pi^3)), expression(500/(64*pi^3))))
+
+ggsave("./pics/success_T3H3_plot.pdf", plot = t3_H3_plt2)

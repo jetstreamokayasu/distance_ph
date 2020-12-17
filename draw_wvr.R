@@ -6,10 +6,13 @@ x3<-c(-1.1, 0)
 x4<-c(0, -1.3)
 x5<-c(0.5, 0.4)
 d_t<-cbind(c(1.2, 0, -1.1, 0, 0.5), c(0, 0.9, 0, -1.3, 0.4))
-plot(d_t, xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5))
-text(c(1.2, 0, -1.1, 0, 0.5), c(0, 0.9, 0, -1.3, 0.4), labels = 1:5, pos=3)
-
-d_t_inst<-TDAdataset$new(d_t)
+pdf(file = "./sample_data3.pdf")
+pdf(file = "./pics/sample_data3_death.pdf")
+plot(d_t_inst$data, xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5), pch = 16, xlab = "", ylab = "")
+points(d_t_inst$data[c(1,3),], col = 2, pch = 16)
+text(c(1.2, 0, -1.1, 0, 0.5), c(0, 0.9, 0, -1.3, 0.4), labels = 1:5, pos=3, cex = 1.5)
+dev.off()
+#d_t_inst<-TDAdataset$new(d_t)
 
 # > d_t_inst$get_pd()
 # dimension    birth     death
