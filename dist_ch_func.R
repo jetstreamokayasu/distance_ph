@@ -508,3 +508,110 @@ calc_per<-function (pd, dim){
   return(pers)
 
 }
+
+
+#---------------------------------------
+#試験的な関数-------------
+#上から順に距離を入れ替える
+dist_element_replace1<-function(pd, dim, distmat){
+  
+  h2_rows<-which(pd[,1]==dim)
+  
+  dist_cp<-distmat
+  dist_cp[upper.tri(dist_cp)]<-0
+  
+  birth_e<-sapply(h2_rows, function(i)which(dist_cp == pd[i,2], arr.ind = T))
+  
+  dist_cp<-distmat
+  
+  for (i in 1:ncol(birth_e)) {
+    
+    c_eta<-pd[h2_rows[i], 3]/sqrt(log(10))
+    
+    dist_cp[birth_e[1,i], ]<-distmat[birth_e[1,i],]*( 1-exp( -(distmat[birth_e[1,i], ]/c_eta)^2 ) )
+    
+    dist_cp[, birth_e[1,i]]<-distmat[, birth_e[1,i]]*( 1-exp( -(distmat[, birth_e[1,i]]/c_eta)^2 ) )
+    
+    dist_cp[birth_e[2,i], ]<-distmat[birth_e[2,i], ]*( 1-exp( -(distmat[birth_e[2,i], ]/c_eta)^2 ) )
+    
+    dist_cp[, birth_e[2,i]]<-distmat[, birth_e[2,i]]*( 1-exp( -(distmat[, birth_e[2,i]]/c_eta)^2 ) )
+    
+    
+  }
+  
+  return(dist_cp)
+  
+}
+
+#---------------------------------------
+#重複を取り除いて距離操作----
+dist_element_replace_nodupl<-function(pd, dim, distmat){
+  
+  h2_rows<-which(pd[,1]==dim)
+  
+  dist_cp<-distmat
+  dist_cp[upper.tri(dist_cp)]<-0
+  
+  birth_e<-sapply(h2_rows, function(i)which(dist_cp == pd[i,2], arr.ind = T))
+  
+  dist_cp<-distmat
+  
+  p_set<-c()
+  for (j in 1:ncol(birth_e)) {
+    
+    pers<-pd[h2_rows[j], 3] - pd[h2_rows[j], 2]
+    
+    if(birth_e[1, j] %in% p_set[, 1]){
+      
+      if(pers > p_set[p_set[, 1]==birth_e[1, j], 3]){
+        
+        death<-pd[h2_rows[j], 3]
+        
+        p_set[p_set[, 1]==birth_e[1, j], ]<-c(birth_e[1, j], death, pers)
+        
+      }
+      
+    }else{
+      
+      death<-pd[h2_rows[j], 3]
+      
+      p_set<-rbind(p_set, c(birth_e[1, j], death, pers))
+      
+    }
+    
+    if(birth_e[2, j] %in% p_set[, 1]){
+      
+      if(pers > p_set[p_set[, 1]==birth_e[2, j], 3]){
+        
+        death<-pd[h2_rows[j], 3]
+        
+        p_set[p_set[, 1]==birth_e[2, j], ]<-c(birth_e[2, j], death, pers)
+        
+      }
+      
+    }else{
+      
+      death<-pd[h2_rows[j], 3]
+      
+      p_set<-rbind(p_set, c(birth_e[2, j], death, pers))
+      
+    }
+    
+  }
+  
+  colnames(p_set)<-c("p_idx", "death", "persistence")
+  p_set %<>% as_tibble()
+  
+  for (i in 1:nrow(p_set)) {
+    
+    c_eta<-p_set$death[i]/sqrt(log(10))
+    
+    dist_cp[p_set$p_idx[i], ]<-distmat[p_set$p_idx[i], ]*( 1-exp( -(distmat[p_set$p_idx[i], ]/c_eta)^2 ) )
+    
+    dist_cp[, p_set$p_idx[i]]<-distmat[, p_set$p_idx[i]]*( 1-exp( -(distmat[, p_set$p_idx[i]]/c_eta)^2 ) )
+    
+  }
+  
+  return(dist_cp)
+  
+}

@@ -47,8 +47,21 @@ trs200_list2to5_inted<-lapply(trs200_list2to6[1:4], function(Z){lapply(Z, functi
 }
 
 
+{#距離操作手法
+  trs200_list2to5_wvr_aggrs<-lapply(1:4, function(k){
+    
+    cat("list", k, "calc\n")
+    time<-system.time(aggr<-calc_distance_change_betti(trs200_list2to6[[k]], maxdim = 2, maxscale = 3, samples = 10, ph_func = weighted_homology, l_rate=0.8, eta=3))
+    return(append(aggr, list(time=time)))
+    
+  })
+  save2RData(trs200_list2to5_wvr_aggrs)
+}
+
+
 #--------------------
 #trs210_list1, trs220_list1が存在しないため210~220点計算し直し-----
+#210点計算終了
 #------------------------
 #210点トーラス------------
 
@@ -56,7 +69,7 @@ trs210_list1<-lapply(1:100, function(i)torusUnif(n = 210, 1, 2.5))
 
 trs210_list1_inted<-lapply(trs210_list1, function(X){interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .)})
 
-{
+{#補間手法
   trs210_list1_inted_time1<-system.time(
 trs210_list1_inted_aggr1<-smooth_landscape_method(X = trs210_list1_inted, maxdim = 2, maxscale = 3, samples = 10)
 )
@@ -65,7 +78,7 @@ save2RData(trs210_list1_inted_time1)
 save2RData(trs210_list1_inted_aggr1) 
 }
 
-{
+{#距離操作手法
 trs210_list1_wvr_time1<-system.time(
   trs210_list1_wvr_aggr1<-calc_distance_change_betti(X = trs210_list1, maxdim = 2, maxscale = 3, samples = 10, 
                                                          ph_func = weighted_homology, l_rate=0.8, eta=3) )
@@ -78,12 +91,18 @@ save2RData(trs210_list1_wvr_aggr1)
 
 trs220_list1<-lapply(1:100, function(i)torusUnif(n = 220, 1, 2.5))
 
+#補間手法
 trs220_list1_inted<-lapply(trs220_list1, function(X){interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .)})
-
+{
 trs220_list1_inted_time1<-system.time(
 trs220_list1_inted_aggr1<-smooth_landscape_method(X = trs220_list1_inted, maxdim = 2, maxscale = 3, samples = 10) 
 )
+  save2RData(trs220_list1_inted_time1)
+  save2RData(trs220_list1_inted_aggr1)
+  
+}
 
+#距離操作手法
 trs220_list1_wvr_time1<-system.time(
   trs220_list1_wvr_aggr1<-calc_distance_change_betti(X = trs220_list1, maxdim = 2, maxscale = 3, samples = 10, 
                                                            ph_func = weighted_homology, l_rate=0.8, eta=3) )
