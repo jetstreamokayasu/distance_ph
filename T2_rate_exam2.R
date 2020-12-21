@@ -19,7 +19,7 @@ trs200_list1_wvr_aggr1<-calc_distance_change_betti(X = trs200_list1, maxdim = 2,
 #100セットのリスト2～6個目----
 trs200_list2to6<-lapply(1:5, function(k){lapply(1:100, function(i)torusUnif(n = 200, 1, 2.5))})
 
-{
+{#ctic2019手法
   trs200_list2to5_aggrs<-lapply(1:4, function(k){
     
     cat("list", k, "calc\n")
@@ -27,8 +27,25 @@ trs200_list2to6<-lapply(1:5, function(k){lapply(1:100, function(i)torusUnif(n = 
     return(append(aggr, list(time=time)))
     
   })
-  save2Rdata(trs200_list2to5_aggrs)
+  save2RData(trs200_list2to5_aggrs)
 }
+
+#補間手法
+
+trs200_list2to5_inted<-lapply(trs200_list2to6[1:4], function(Z){lapply(Z, function(X)interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .))})
+  
+
+{
+  trs200_list2to5_inted_aggrs<-lapply(1:4, function(k){
+    
+    cat("list", k, "calc\n")
+    time<-system.time(aggr<-smooth_landscape_method(trs200_list2to5_inted[[k]], 2, 3, 10))
+    return(append(aggr, list(time=time)))
+    
+  })
+  save2RData(trs200_list2to5_inted_aggrs)
+}
+
 
 #--------------------
 #trs210_list1, trs220_list1が存在しないため210~220点計算し直し-----

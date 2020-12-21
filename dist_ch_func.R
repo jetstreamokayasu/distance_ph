@@ -494,3 +494,17 @@ weighted_homology<-function(X, maxdim, maxscale, l_rate, eta, ...){
   return(pds)
   
 }
+
+
+#----------------------------------
+#パーシステンス計算関数----
+#seephacmの修正版
+calc_per<-function (pd, dim){
+  
+  pers <- pd[pd[, 1] == dim, 3] - pd[pd[, 1] == dim, 2]
+  
+  attr(pers, "pers_dim") <- dim
+  
+  return(pers)
+
+}

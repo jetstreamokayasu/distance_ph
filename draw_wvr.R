@@ -85,6 +85,7 @@ d_t_inst$create_changed_distmat(eta = 1, l_idx = c(1, 2))
 d_t_inst$create_changed_distmat(eta = 1, l_idx = c(1, 3, 5))
 d_t_inst$create_changed_distmat(eta = 1, l_idx = c(3, 5))
 
+
 #-------------------------------------
 #d_ij*[1-exp(-(d_ij/eta)^2)による距離変化前後のフィルトレーション比較----
 library(animation)

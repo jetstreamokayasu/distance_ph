@@ -253,6 +253,15 @@ t3orus450_list1_1to30_wvr_H2aggrs1_time<-system.time(
   t3orus450_list1_1to30_wvr_H2aggrs1<-calc_distance_change_betti_paral(X = t3orus450_list1[1:30], maxdim = 3, maxscale = 9, samples = 5, 
                                                                      ph_func = weighted_homology, l_rate=0.1, eta=3.9) )   
 
+{
+  t3orus450_list1_31to100_wvr_H2aggrs1_time<-system.time(
+    t3orus450_list1_31to100_wvr_H2aggrs1<-calc_distance_change_betti_paral(X = t3orus450_list1[31:100], maxdim = 3, maxscale = 9, samples = 5, 
+                                                                         ph_func = weighted_homology, l_rate=0.1, eta=3.9) )   
+  
+  save2RData(t3orus450_list1_31to100_wvr_H2aggrs1)
+  save2RData(t3orus450_list1_31to100_wvr_H2aggrs1_time)
+  
+}
 
 #-------------------------------------
 #500点3次元トーラスで2次ベッチ数の成功率を求めてみる----
@@ -299,6 +308,17 @@ t3orus4_list3_1to30_wvrH2_aggrs7_time<-system.time(
 t3orus450_list1_1to30_wvr_aggrs2_time<-system.time(
   t3orus450_list1_1to30_wvrH2_aggrs2<-calc_distance_change_betti_paral(X = t3orus450_list1[1:30], maxdim = 3, maxscale = 9, samples = 5, 
                                                                      ph_func = weighted_homology, l_rate=0.5, eta=4.0) )   
+
+{
+  
+  t3orus450_list1_31to100_wvr_aggrs2_time<-system.time(
+    t3orus450_list1_31to100_wvrH2_aggrs2<-calc_distance_change_betti_paral(X = t3orus450_list1[31:100], maxdim = 3, maxscale = 9, samples = 5, 
+                                                                         ph_func = weighted_homology, l_rate=0.5, eta=4.0) )   
+  
+  save2RData(t3orus450_list1_31to100_wvr_aggrs2_time)
+  save2RData(t3orus450_list1_31to100_wvrH2_aggrs2)
+  
+}
 
 #-------------------------------------
 #490点3次元トーラスで2次ベッチ数の成功率を求めてみる----
