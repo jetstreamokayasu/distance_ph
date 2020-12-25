@@ -47,12 +47,12 @@ lines(seq(450, 500, by=10), c(t3rs450_rate_H2, t3rs460_rate_H2, t3rs470_rate_H2,
 
 #-------------------------------
 #espを掛ける距離行列変化手法----
-t3rs500_wvr_rate<-cycle_number(t3orus4_list3_1to30aggrs3, 3)[2] /30
-t3rs490_wvr_rate<-cycle_number(t3orus490_list1_1to30_wvr_aggrs1, 3)[2] / 30
-t3rs480_wvr_rate<-cycle_number(t3orus480_list1_1to30_wvr_aggrs1, 3)[2] / 30
-t3rs470_wvr_rate<-cycle_number(t3orus470_list1_1to30_wvr_aggrs1, 3)[2] / 30
-t3rs460_wvr_rate<-cycle_number(t3orus460_list1_1to30_wvr_aggrs1, 3)[2] / 30
-t3rs450_wvr_rate<-cycle_number(t3orus450_list1_1to30_wvr_aggrs1, 3)[2] / 30
+t3rs500_wvr_rate<-(cycle_number(t3orus4_list3_1to30aggrs3, 3)[2] + cycle_number(t3orus4_list3_31to100_wvr_aggrs3, 3)[2])/100
+t3rs490_wvr_rate<-(cycle_number(t3orus490_list1_1to30_wvr_aggrs1, 3)[2]+cycle_number(t3orus490_list1_31to100_wvr_aggrs1, 3)[2])/100
+t3rs480_wvr_rate<-(cycle_number(t3orus480_list1_1to30_wvr_aggrs1, 3)[2]+cycle_number(t3orus480_list1_31to100_wvr_aggrs1, 3)[2])/100
+t3rs470_wvr_rate<-(cycle_number(t3orus470_list1_1to30_wvr_aggrs1, 3)[2]+cycle_number(t3orus470_list1_31to100_wvr_aggrs1, 3)[2])/100
+t3rs460_wvr_rate<-(cycle_number(t3orus460_list1_1to30_wvr_aggrs1, 3)[2]+cycle_number(t3orus460_list1_31to100_wvr_aggrs1, 3)[2])/100
+t3rs450_wvr_rate<-(cycle_number(t3orus450_list1_1to30_wvr_aggrs1, 3)[2]+cycle_number(t3orus450_list1_31to100_wvr_aggrs1, 3)[2])/100
 
 #espを掛ける距離行列変化手法
 #3次ベッチ数推定成功率プロット
@@ -87,3 +87,4 @@ points(460, t3rs460_wvr_rate_H2, pch=16, col=red)
 points(450, t3rs450_wvr_rate_H2, pch=16, col=red)
 
 lines(seq(450, 500, by=10), c(t3rs450_wvr_rate_H2, t3rs460_wvr_rate_H2, t3rs470_wvr_rate_H2, t3rs480_wvr_rate_H2, t3rs490_wvr_rate_H2, t3rs500_wvr_rate_H2), col=red)
+

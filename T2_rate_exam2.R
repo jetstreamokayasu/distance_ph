@@ -86,6 +86,50 @@ trs210_list1_wvr_time1<-system.time(
 save2RData(trs210_list1_wvr_time1)
 save2RData(trs210_list1_wvr_aggr1)
 }
+
+#---------------------
+#210点トーラス100セットのリスト2～5個目----
+trs210_list2to5<-lapply(1:4, function(k){lapply(1:100, function(i)torusUnif(n = 210, 1, 2.5))})
+
+{#ctic2019手法
+  trs210_list2to5_aggrs<-lapply(1:4, function(k){
+    
+    cat("list", k, "calc\n")
+    time<-system.time(aggr<-smooth_landscape_method(trs210_list2to5[[k]], 2, 3, 10))
+    return(append(aggr, list(time=time)))
+    
+  })
+  save2RData(trs210_list2to5_aggrs)
+}
+
+#補間手法
+
+trs210_list2to5_inted<-lapply(trs210_list2to5[1:4], function(Z){lapply(Z, function(X)interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .))})
+
+
+{
+  trs210_list2to5_inted_aggrs<-lapply(1:4, function(k){
+    
+    cat("list", k, "calc\n")
+    time<-system.time(aggr<-smooth_landscape_method(trs210_list2to5_inted[[k]], 2, 3, 10))
+    return(append(aggr, list(time=time)))
+    
+  })
+  save2RData(trs210_list2to5_inted_aggrs)
+}
+
+
+{#距離操作手法
+  trs200_list2to5_wvr_aggrs<-lapply(1:4, function(k){
+    
+    cat("list", k, "calc\n")
+    time<-system.time(aggr<-calc_distance_change_betti(trs200_list2to6[[k]], maxdim = 2, maxscale = 3, samples = 10, ph_func = weighted_homology, l_rate=0.8, eta=3))
+    return(append(aggr, list(time=time)))
+    
+  })
+  save2RData(trs200_list2to5_wvr_aggrs)
+}
+
 #------------------------
 #220点トーラス------------
 
@@ -103,9 +147,15 @@ trs220_list1_inted_aggr1<-smooth_landscape_method(X = trs220_list1_inted, maxdim
 }
 
 #距離操作手法
+{
 trs220_list1_wvr_time1<-system.time(
   trs220_list1_wvr_aggr1<-calc_distance_change_betti(X = trs220_list1, maxdim = 2, maxscale = 3, samples = 10, 
                                                            ph_func = weighted_homology, l_rate=0.8, eta=3) )
+ 
+  save2RData(trs220_list1_wvr_time1)
+  save2RData(trs220_list1_wvr_aggr1)
+   
+}
 
 
 #------------------------

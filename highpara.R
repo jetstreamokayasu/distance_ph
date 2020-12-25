@@ -147,7 +147,7 @@ plane_inst<-TDAdataset$new(cbind(xx_t, yy_t))
 #plane_inst$input_pd(pd = calculate_homology(mat = plane_inst$data, dim = 1))
 plane_inst$calc_pd(maxdim = 1, maxscale = 2)
 
-#t3orus4_list3_15の下三角行列
+#下三角行列
 plane_inst_dist_cp<-plane_inst$distmat
 plane_inst_dist_cp[upper.tri(plane_inst_dist_cp)]<-0
 

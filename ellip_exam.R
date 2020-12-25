@@ -190,6 +190,24 @@ ellip4_inst$alt_distmat[[4]]$calc_pd(maxdim = 2, maxscale = 3)
 ellip4_inst$create_changed_distmat(l_rate = 0.6, eta = 3)
 ellip4_inst$alt_distmat[[5]]$calc_pd(maxdim = 2, maxscale = 3)
 
+ellip4_inst$create_subsample(sub_size = ellip4_inst$n_points*0.8, n_subs = 10)
+
+ellip4_inst$subsamples[[1]]$create_changed_distmat(l_rate = 0.5, eta = 3.8)
+ellip4_inst$subsamples[[1]]$alt_distmat[[8]]$calc_pd(maxdim = 2, maxscale = 3)
+ellip4_inst$subsamples[[1]]$alt_distmat[[8]]$calc_pl()
+
+for (i in 1:10) {
+  
+  ellip4_inst$subsamples[[i]]$distmat<-dist(ellip4_inst$subsamples[[i]]$data) %>% as.matrix()
+  ellip4_inst$subsamples[[i]]$change_dist(l_rate = 0.5, eta = 4)
+  ellip4_inst$subsamples[[i]]$calc_pd(maxdim = 2, maxscale = 3)
+  ellip4_inst$subsamples[[i]]$calc_pl(plot = F)
+  ellip4_inst$subsamples[[i]]$pl_peak_count(show = F)
+  print(ellip4_inst$subsamples[[i]]$peaks)
+}
+
+ellip4_sub_H2<-map_dbl(ellip4_inst$subsamples, ~{.$peaks[2]})
+
 #----------------
 #楕円体の密度が高い場合をやってみる
 #ellip5, 200点。パラメータはellip4と同じ
@@ -199,3 +217,63 @@ ellip5_inst<-TDAdataset$new(ellip5)
 ellip5_inst$calc_pd(maxdim = 2, maxscale = 3)
 
 ellip5_inst2<-TDAdataset$new(ellip5)
+
+#---------------------------------------
+#楕円体の成功率を求める
+#ellip4, 80点。a = 5, b = 1, c = 1
+ellip80_list1<-map(1:100, ~{xEllip_unif(n = 80, a = 5, b = 1, c = 1)})
+
+#CTIC2019手法
+ellip80_aggr1<-smooth_landscape_method(X = ellip80_list1, maxdim = 2, maxscale = 3, samples = 10)
+
+ellip80_wvr_aggr1<-calc_distance_change_betti(X = ellip80_list1, maxdim = 2, maxscale = 3, samples = 10, ph_func =  weighted_homology, l_rate=0.5, eta=4.0)
+
+
+
+#-----------------------
+#グリッドサーチのようにランドマーク点割合とハイパラetaを試す------------
+
+lrate_set6<-seq(0.1, 0.8, by=0.05)
+eta_set6<-seq(1.0, 7.0, by=0.2)
+
+para_set6<-expand.grid(lrate_set6, eta_set6)
+colnames(para_set6)<-c("l_rate", "eta")
+
+ellip80_sub_gsH2_time<-system.time( 
+  
+  ellip80_sub_gsH2<-lapply(ellip4_inst$subsamples, function(S){
+    
+    sub_gs<-lapply(1:nrow(para_set6), function(p){
+      
+      wpd<-weighted_homology(X = S$data, maxdim = 2, maxscale = 3, l_rate = para_set6$l_rate[p], eta = para_set6$eta[p])
+      
+      cat("para_set=", i, "\n")
+      cat("rate=", para_set6$l_rate[p], "\n")
+      cat("eta=", para_set6$eta[p], "\n")
+      
+      return(wpd)
+      
+    })
+    
+    return(sub_gs)
+    
+  })
+)
+
+ellip80_sub_gsH2_pls<-lapply(ellip80_sub_gsH2, function(X){
+  
+  sub_pls<-lapply(X, function(Y){calc_landscape(diag = Y[["pd"]], maxscale = 3, plot = F)})
+  
+})
+
+#サブサンプルのPLのH2局所最大値をまとめる
+ellip80_sub_gsH2_pls_peaks_H2<-lapply(t3ours4_list3_5_sub_gsH2_pls, function(X){
+  
+  sub_pls<-sapply(X, function(Y){calc.landscape.peak(X = Y[["2-land"]], dimension = 2, thresh = Y[["thresh"]]*(2*pi)/surface_nshpere(2), tseq = Y[["tseq"]], show = F)})
+  
+})
+
+#サブサンプル1~10のPLのH2局所最大値の平均
+t3ours4_list3_5_sub_gsH2_peaks_H2_ave<-sapply(1:length(t3ours4_list3_5_sub_gsH2_peaks_H2[[1]]), function(i){
+  mpeaks<-sapply(t3ours4_list3_5_sub_gsH2_peaks_H2, function(PL){PL[[i]]}) %>% mean()
+})

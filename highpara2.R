@@ -112,3 +112,6 @@ ball2_inst$alt_distmat[[2]]$distmat<-dist_element_replace_nodupl(pd = ball2_inst
 
 ball3<-xBall_unif(n = 800)
 ball3_inst<-TDAdataset$new(ball3)
+
+#3次元トーラス
+t3orus4_list3_15$alt_distmat[[4]]$distmat<-dist_element_replace_nodupl(pd = t3orus4_list3_15$get_pd(), dim = 3, distmat = t3orus4_list3_15$distmat)
