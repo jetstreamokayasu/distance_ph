@@ -226,6 +226,7 @@ ellip80_list1<-map(1:100, ~{xEllip_unif(n = 80, a = 5, b = 1, c = 1)})
 #CTIC2019手法
 ellip80_aggr1<-smooth_landscape_method(X = ellip80_list1, maxdim = 2, maxscale = 3, samples = 10)
 
+#expを掛ける距離変化
 ellip80_wvr_aggr1<-calc_distance_change_betti(X = ellip80_list1, maxdim = 2, maxscale = 3, samples = 10, ph_func =  weighted_homology, l_rate=0.5, eta=4.0)
 
 
@@ -267,13 +268,25 @@ ellip80_sub_gsH2_pls<-lapply(ellip80_sub_gsH2, function(X){
 })
 
 #サブサンプルのPLのH2局所最大値をまとめる
-ellip80_sub_gsH2_pls_peaks_H2<-lapply(t3ours4_list3_5_sub_gsH2_pls, function(X){
+ellip80_sub_gsH2_pls_peaks_H2<-lapply(ellip80_sub_gsH2_pls, function(X){
   
   sub_pls<-sapply(X, function(Y){calc.landscape.peak(X = Y[["2-land"]], dimension = 2, thresh = Y[["thresh"]]*(2*pi)/surface_nshpere(2), tseq = Y[["tseq"]], show = F)})
   
 })
 
 #サブサンプル1~10のPLのH2局所最大値の平均
-t3ours4_list3_5_sub_gsH2_peaks_H2_ave<-sapply(1:length(t3ours4_list3_5_sub_gsH2_peaks_H2[[1]]), function(i){
-  mpeaks<-sapply(t3ours4_list3_5_sub_gsH2_peaks_H2, function(PL){PL[[i]]}) %>% mean()
+ellip80_sub_gsH2_pls_peaks_H2_ave<-sapply(1:length(ellip80_sub_gsH2_pls_peaks_H2[[1]]), function(i){
+  mpeaks<-sapply(ellip80_sub_gsH2_pls_peaks_H2, function(PL){PL[[i]]}) %>% mean()
 })
+
+#H2局所最大値の数をパラメータごとにプロット
+#サブサンプル1~10平均
+par(mai=c(0.7, 0.7, 0.3, 0.3))
+par(mgp=c(2, 1, 0))
+plot(para_set6, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(para_set6$l_rate, para_set6$eta, labels = round(ellip80_sub_gsH2_pls_peaks_H2_ave, 2),
+     col = ifelse(ellip80_sub_gsH2_pls_peaks_H2_ave >= 0.5 & ellip80_sub_gsH2_pls_peaks_H2_ave < 1.5, 2, 4), cex = 0.8)
+
+ellip80_gs_ggp<-ggplot(data = para_set6) + geom_text(aes(x = l_rate, y = eta, label = round(ellip80_sub_gsH2_pls_peaks_H2_ave, 2), color = as.factor( if_else(ellip80_sub_gsH2_pls_peaks_H2_ave >= 0.5 & ellip80_sub_gsH2_pls_peaks_H2_ave < 1.5, 1, 2) )))
+ellip80_gs_ggp2<-ellip80_gs_ggp + scale_color_brewer(palette = "Set1") + guides(color="none") + theme_test() + ylab(expression(eta)) + xlab("Landmark rate")
+

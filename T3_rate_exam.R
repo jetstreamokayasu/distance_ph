@@ -31,6 +31,14 @@ t3orus450_list1<-lapply(1:100, function(i)x3Dtorus_unif(n = 450, r = 2, R1 = 8, 
 t3orus450_list1_1to30_normal_aggrs_time<-system.time(
   t3orus450_list1_1to30_normal_aggrs<-smooth_landscape_method_paral(X = t3orus450_list1[1:30], maxdim = 3, maxscale = 9, samples = 5) )
 
+{
+  t3orus450_list1_31to100_normal_aggrs_time<-system.time(
+    t3orus450_list1_31to100_normal_aggrs<-smooth_landscape_method_paral(X = t3orus450_list1[31:100], maxdim = 3, maxscale = 9, samples = 5) )
+  
+  save2RData(t3orus450_list1_31to100_normal_aggrs_time)
+  save2RData(t3orus450_list1_31to100_normal_aggrs)
+}
+
 
 #------------------------------------
 #素の550点3次元トーラスで成功率を求めてみる----
@@ -54,6 +62,14 @@ t3orus490_list1<-lapply(1:100, function(i)x3Dtorus_unif(n = 490, r = 2, R1 = 8, 
 t3orus490_list1_1to30_normal_aggrs_time<-system.time(
   t3orus490_list1_1to30_normal_aggrs<-smooth_landscape_method_paral(X = t3orus490_list1[1:30], maxdim = 3, maxscale = 9, samples = 5) )
 
+{
+  t3orus490_list1_31to100_normal_aggrs_time<-system.time(
+    t3orus490_list1_31to100_normal_aggrs<-smooth_landscape_method_paral(X = t3orus490_list1[31:100], maxdim = 3, maxscale = 9, samples = 5) )
+  
+  save2RData(t3orus490_list1_31to100_normal_aggrs_time)
+  save2RData(t3orus490_list1_31to100_normal_aggrs)
+}
+
 #------------------------------------
 #素の480点3次元トーラスで成功率を求めてみる----
 #r = 2, R1 = 8, R2 = 4
@@ -64,6 +80,14 @@ t3orus480_list1<-lapply(1:100, function(i)x3Dtorus_unif(n = 480, r = 2, R1 = 8, 
 
 t3orus480_list1_1to30_normal_aggrs_time<-system.time(
   t3orus480_list1_1to30_normal_aggrs<-smooth_landscape_method_paral(X = t3orus480_list1[1:30], maxdim = 3, maxscale = 9, samples = 5) )
+
+{
+  t3orus480_list1_31to100_normal_aggrs_time<-system.time(
+    t3orus480_list1_31to100_normal_aggrs<-smooth_landscape_method_paral(X = t3orus480_list1[31:100], maxdim = 3, maxscale = 9, samples = 5) )
+  
+  save2RData(t3orus480_list1_31to100_normal_aggrs_time)
+  save2RData(t3orus480_list1_31to100_normal_aggrs)
+}
 
 #------------------------------------
 #素の470点3次元トーラスで成功率を求めてみる----
@@ -80,6 +104,13 @@ t3orus470_list1<-lapply(1:100, function(i)x3Dtorus_unif(n = 470, r = 2, R1 = 8, 
   save2RData(t3orus470_list1_1to30_normal_aggrs)
 }
 
+{
+  t3orus470_list1_31to100_normal_aggrs_time<-system.time(
+    t3orus470_list1_31to100_normal_aggrs<-smooth_landscape_method_paral(X = t3orus470_list1[31:100], maxdim = 3, maxscale = 9, samples = 5) )
+  
+  save2RData(t3orus470_list1_31to100_normal_aggrs_time)
+  save2RData(t3orus470_list1_31to100_normal_aggrs)
+}
 
 #------------------------------------
 #素の460点3次元トーラスで成功率を求めてみる----
@@ -94,6 +125,14 @@ t3orus460_list1<-lapply(1:100, function(i)x3Dtorus_unif(n = 460, r = 2, R1 = 8, 
   
   save2RData(t3orus460_list1_1to30_normal_aggrs_time)
   save2RData(t3orus460_list1_1to30_normal_aggrs)
+}
+
+{
+  t3orus460_list1_31to100_normal_aggrs_time<-system.time(
+    t3orus460_list1_31to100_normal_aggrs<-smooth_landscape_method_paral(X = t3orus460_list1[31:100], maxdim = 3, maxscale = 9, samples = 5) )
+  
+  save2RData(t3orus460_list1_31to100_normal_aggrs_time)
+  save2RData(t3orus460_list1_31to100_normal_aggrs)
 }
 
 #-------------------------------------
