@@ -336,6 +336,13 @@ t3orus4_list3_1to30_wvrH2_aggrs6_time<-system.time(
   t3orus4_list3_1to30_wvrH2_aggrs6<-calc_distance_change_betti_paral(X = t3orus4_list3B[1:30], maxdim = 3, maxscale = 9, samples = 5, 
                                                                      ph_func = weighted_homology, l_rate=0.5, eta=4.0) )   
 
+{#31~100セット目
+  t3orus4_list3_31to100_wvrH2_aggrs6_time<-system.time(
+  t3orus4_list3_31to100_wvrH2_aggrs6<-calc_distance_change_betti_paral(X = t3orus4_list3B[31:100], maxdim = 3, maxscale = 9, samples = 5, 
+                                                                     ph_func = weighted_homology, l_rate=0.5, eta=4.0) )   
+save2RData(t3orus4_list3_31to100_wvrH2_aggrs6_time)
+save2RData(t3orus4_list3_31to100_wvrH2_aggrs6)
+}
 #-------------------------------------
 #500点3次元トーラスで2次ベッチ数の成功率を求めてみる----
 #r = 2, R1 = 8, R2 = 4
