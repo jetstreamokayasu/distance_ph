@@ -6,10 +6,17 @@ x3<-c(-1.1, 0)
 x4<-c(0, -1.3)
 x5<-c(0.5, 0.4)
 d_t<-cbind(c(1.2, 0, -1.1, 0, 0.5), c(0, 0.9, 0, -1.3, 0.4))
-pdf(file = "./sample_data3.pdf")
-pdf(file = "./pics/sample_data3_death.pdf")
-plot(d_t_inst$data, xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5), pch = 16, xlab = "", ylab = "")
-points(d_t_inst$data[c(1,3),], col = 2, pch = 16)
+pdf(file = "./pics/sample_data4.pdf")
+pdf(file = "./pics/sample_52_conect.pdf")
+pdf(file = "./pics/sample_data4_birth.pdf")
+pdf(file = "./pics/sample_data4_death.pdf")
+pdf(file = "./pics/changed_data4.pdf")
+pdf(file = "./pics/changed_51_connect.pdf")
+pdf(file = "./pics/changed_52_connect.pdf")
+pdf(file = "./pics/changed_data4_birth.pdf")
+pdf(file = "./pics/changed_data4_death.pdf")
+plot(d_t_inst$data, xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5), pch = 16, xlab = "", ylab = "", cex = 1.5)
+points(d_t_inst$data[c(1,3),], col = 2, pch = 16, cex = 1.5) #距離変更点を赤くする
 text(c(1.2, 0, -1.1, 0, 0.5), c(0, 0.9, 0, -1.3, 0.4), labels = 1:5, pos=3, cex = 1.5)
 dev.off()
 #d_t_inst<-TDAdataset$new(d_t)
@@ -39,9 +46,9 @@ lines(c(x3[1], x4[1]), c(x3[2], x4[2]))
 lines(c(x1[1], x4[1]), c(x1[2], x4[2]))#生成#1.769181
 lines(c(x4[1], x5[1]), c(x4[2], x5[2]))#消滅#1.7720045
 
-d_t_inst$create_changed_distmat(l_rate = 0.4, eta = 1)
-d_t_inst$create_changed_distmat(l_rate = 0.2, eta = 1)
-d_t_inst$create_changed_distmat(l_rate = 0.5, eta = 1)
+# d_t_inst$create_changed_distmat(l_rate = 0.4, eta = 1)
+# d_t_inst$create_changed_distmat(l_rate = 0.2, eta = 1)
+# d_t_inst$create_changed_distmat(l_rate = 0.5, eta = 1)
 
 d_t_inst$alt_distmat[[8]]$calc_pd(maxdim = 1, maxscale = 3)
 
@@ -68,6 +75,7 @@ d_t_altdistmat8_low[upper.tri(d_t_altdistmat8_low)]<-0
 #d_t_instのオリジナル距離行列の下三角行列
 d_t_dist_low<-d_t_inst$distmat
 d_t_dist_low[upper.tri(d_t_dist_low)]<-0
+d_t_dist_sorted<-sort(d_t_dist_low) %>% unique()
 
 #d_t_instの8個目の変化後距離行列の値をソート
 #[8]生成、[9]消滅
@@ -78,12 +86,25 @@ for (i in 1:8) {
   draw_line(x = d_t[idx[1], ], y =d_t[idx[2],])
 }
 
+#距離変化前後の結合インデックスを並べる
 d_t8_idxs<-lapply(2:9, function(i)which(d_t_altdistmat8_low==d_t_altdistmat8_sorted[i], arr.ind = T)) %>% do.call(rbind, .)
 
-d_t_inst$create_changed_distmat(eta = 1, l_idx = c(3, 4))
-d_t_inst$create_changed_distmat(eta = 1, l_idx = c(1, 2))
-d_t_inst$create_changed_distmat(eta = 1, l_idx = c(1, 3, 5))
-d_t_inst$create_changed_distmat(eta = 1, l_idx = c(3, 5))
+d_t_idxs<-lapply(2:9, function(i)which(d_t_dist_low==d_t_dist_sorted[i], arr.ind = T)) %>% do.call(rbind, .)
+
+# d_t_inst$create_changed_distmat(eta = 1, l_idx = c(3, 4))
+# d_t_inst$create_changed_distmat(eta = 1, l_idx = c(1, 2))
+# d_t_inst$create_changed_distmat(eta = 1, l_idx = c(1, 3, 5))
+# d_t_inst$create_changed_distmat(eta = 1, l_idx = c(3, 5))
+
+#距離変化後の結合を描く
+draw_line(x = d_t[5, ], y = d_t[1, ])
+draw_line(x = d_t[5, ], y = d_t[2, ])
+draw_line(x = d_t[3, ], y = d_t[2, ])
+draw_line(x = d_t[2, ], y = d_t[1, ])
+draw_line(x = d_t[5, ], y = d_t[3, ])
+draw_line(x = d_t[4, ], y = d_t[3, ])
+draw_line(x = d_t[4, ], y = d_t[1, ])#生成
+draw_line(x = d_t[5, ], y = d_t[4, ])#消滅
 
 
 #-------------------------------------

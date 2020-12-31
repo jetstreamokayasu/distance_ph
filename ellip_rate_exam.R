@@ -204,7 +204,7 @@ ellip180_list1to5<-map(1:5, ~{map(1:100, ~{xEllip_unif(n = 180, a = 5, b = 1, c 
 }
   
 {#補間手法
-  ellip180_list1to5_inted<-lapply(ellip170_list1to5, function(Z){lapply(Z, function(X)interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .))})
+  ellip180_list1to5_inted<-lapply(ellip180_list1to5, function(Z){lapply(Z, function(X)interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .))})
   save2RData(ellip180_list1to5_inted)
   
   ellip180_list1to5_inted_aggr<-lapply(1:5, function(k){
@@ -216,3 +216,90 @@ ellip180_list1to5<-map(1:5, ~{map(1:100, ~{xEllip_unif(n = 180, a = 5, b = 1, c 
   })
   save2RData(ellip180_list1to5_inted_aggr)
 }
+
+
+#--------------------------------------
+#楕円体の成功率を求める
+#190点。a = 5, b = 1, c = 1
+ellip190_list1to5<-map(1:5, ~{map(1:100, ~{xEllip_unif(n = 190, a = 5, b = 1, c = 1)})})
+
+{#100セットリスト1~5つ目
+  {#CTIC2019
+    ellip190_list1to5_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-smooth_landscape_method(X = ellip190_list1to5[[k]], maxdim = 2, maxscale = 3, samples = 10) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(ellip190_list1to5_aggr)
+  }
+  
+  {#expを掛ける距離変化
+    ellip190_list1to5_wvr_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-calc_distance_change_betti(X = ellip190_list1to5[[k]], maxdim = 2, maxscale = 3, samples = 10, ph_func =  weighted_homology, l_rate=0.45, eta=3.7) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(ellip190_list1to5_wvr_aggr)
+  }
+  
+  {#補間手法
+    ellip190_list1to5_inted<-lapply(ellip190_list1to5, function(Z){lapply(Z, function(X)interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .))})
+    save2RData(ellip190_list1to5_inted)
+    
+    ellip190_list1to5_inted_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-smooth_landscape_method(X = ellip190_list1to5_inted[[k]], maxdim = 2, maxscale = 3, samples = 10) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(ellip190_list1to5_inted_aggr)
+  }
+}
+
+#--------------------------------------
+#楕円体の成功率を求める
+#200点。a = 5, b = 1, c = 1
+ellip200_list1to5<-map(1:5, ~{map(1:100, ~{xEllip_unif(n = 200, a = 5, b = 1, c = 1)})})
+
+#100セットリスト1~5つ目
+  {#CTIC2019
+    ellip200_list1to5_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-smooth_landscape_method(X = ellip200_list1to5[[k]], maxdim = 2, maxscale = 3, samples = 10) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(ellip200_list1to5_aggr)
+  }
+  
+  {#expを掛ける距離変化
+    ellip200_list1to5_wvr_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-calc_distance_change_betti(X = ellip200_list1to5[[k]], maxdim = 2, maxscale = 3, samples = 10, ph_func =  weighted_homology, l_rate=0.45, eta=3.7) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(ellip200_list1to5_wvr_aggr)
+  }
+  
+  #補間手法
+    ellip200_list1to5_inted<-lapply(ellip200_list1to5, function(Z){lapply(Z, function(X)interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .))})
+    save2RData(ellip200_list1to5_inted)
+    
+    {ellip200_list1to5_inted_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-smooth_landscape_method(X = ellip200_list1to5_inted[[k]], maxdim = 2, maxscale = 3, samples = 10) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(ellip200_list1to5_inted_aggr)
+  }
+
