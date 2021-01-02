@@ -11,6 +11,12 @@ smooth_landscape_method<-function(X,maxdim,maxscale,samples, const.size=0, spar=
     
   })
   
+  #サブサンプルサイズ
+  Bsize<-numeric(length(X))
+  
+  #計算時間
+  times<-numeric(length(X))
+  
   for(t in 1:length(X)){
     
     cat("data set", t, "calculating\n")
@@ -27,10 +33,13 @@ smooth_landscape_method<-function(X,maxdim,maxscale,samples, const.size=0, spar=
       
     }
     
+    Bsize[t]<-size
+    times[t]<-speak[["time"]]
+    
   }
   
   aggrs <- append(aggrs,list(Xsize=sapply(1:length(X), function(l)nrow(X[[l]])),Xsamples=length(X),
-                             Bsize=size,Bsamples=samples,
+                             Bsize=size,Bsamples=samples, times=times,
                              maxdim=maxdim,maxscale=maxscale))
   class(aggrs) <- "bettiComp"
   

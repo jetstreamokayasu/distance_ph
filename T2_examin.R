@@ -1,10 +1,11 @@
+#---------------------------
 #密度が低い場合にスケールを変化させた場合のPHがどうなるかを調べる------
 half_trs1<-torus1/2
 
 hf_trs1_pd<-calculate_homology(half_trs1, dim = 2, threshold = 3)
 hf_trs1_pl<-calcLandscape(diag = hf_trs1_pd, maxscale = 3)
 
-
+#-------------------
 #torus300_colle_set[[1]]を使って300点トーラス100セットのFRI距離行列変化の実験をする-----
 trs300_1_fri_aggr_time<-system.time( trs300_1_fri_aggr<-fri_distance_change_method(torus300_colle_set[[1]], maxdim = 2, maxscale = 3, samples = 10, l_rate = 0.3, eta = 1) )
 
@@ -164,18 +165,70 @@ par(mgp=c(2, 1, 0))
 plot(para_set2, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
 text(para_set2[, 1], para_set2[, 2], labels = round(trs300_1_10_para_test2_times, digits = 2), col = smoothPalette(x = trs300_1_10_para_test2_times-round(trs300_1_10_pd_time[3], digits = 2), palfunc = blue2red))
 
+
+#--------------------------
+#ハイパラeta決定式を試す------
+
+trs300_1_16_inst<-TDAdataset$new(torus300_colle_set[[1]][[16]][["noizyX"]])
+trs300_1_16_inst$create_changed_distmat(l_rate = 0, eta = 1)
+trs300_1_16_inst$alt_distmat[[1]]$distmat<-trs300_1_16_inst$distmat
+
+for (i in 1:trs300_1_16_inst$n_points) {
+ 
+  c_eta<-sort(trs300_1_16_inst$distmat[i,])[61]*sqrt(2/3)
+  
+  trs300_1_16_inst$alt_distmat[[1]]$distmat[i,]<-trs300_1_16_inst$distmat[i,]*( 1-exp( -(trs300_1_16_inst$distmat[i,]/c_eta)^2 ) )
+   
+}
+
+plot(trs300_1_16_inst$distmat[5,], trs300_1_16_inst$alt_distmat[[1]]$distmat[5,], col=2)
+
+trs300_1_16_inst$alt_distmat[[1]]$calc_pd(maxdim = 2, maxscale = 3)
+
+trs300_1_58_inst<-TDAdataset$new(torus300_colle_set[[1]][[58]][["noizyX"]])
+trs300_1_58_inst$create_changed_distmat(l_rate = 0, eta = 1)
+trs300_1_58_inst$alt_distmat[[1]]$distmat<-trs300_1_58_inst$distmat
+
+for (i in 1:trs300_1_58_inst$n_points) {
+  
+  c_eta<-sort(trs300_1_58_inst$distmat[i,])[51]*sqrt(2/3)
+  
+  trs300_1_58_inst$alt_distmat[[1]]$distmat[i,]<-trs300_1_58_inst$distmat[i,]*( 1-exp( -(trs300_1_58_inst$distmat[i,]/c_eta)^2 ) )
+  trs300_1_58_inst$alt_distmat[[1]]$distmat[,i]<-trs300_1_58_inst$distmat[,i]*( 1-exp( -(trs300_1_58_inst$distmat[,i]/c_eta)^2 ) )
+}
+
+plot(trs300_1_58_inst$distmat[90,], trs300_1_58_inst$alt_distmat[[1]]$distmat[90,], col=2)
+plot(trs300_1_58_inst$distmat[ ,90], trs300_1_58_inst$alt_distmat[[1]]$distmat[, 90], col=2)
+
+trs300_1_58_inst$alt_distmat[[1]]$calc_pd(maxdim = 2, maxscale = 3)
+
+trs300_1_58_inst$create_changed_distmat(l_rate = 0.1, eta = 1)
+
+for(i in trs300_1_58_inst$alt_distmat[[2]]$get_param()$l_idx){
+  
+  c_eta<-sort(trs300_1_58_inst$distmat[i, ])[21]
+  
+  trs300_1_58_inst$alt_distmat[[2]]$distmat[i,]<-trs300_1_58_inst$distmat[i,]*( 1-exp( -(trs300_1_58_inst$distmat[i,]/c_eta)^2 ) )
+  trs300_1_58_inst$alt_distmat[[2]]$distmat[,i]<-trs300_1_58_inst$distmat[,i]*( 1-exp( -(trs300_1_58_inst$distmat[,i]/c_eta)^2 ) )
+  
+  
+}
+
 #----------------------------
-#改良したベッチ数推定関数を試す
+#改良したベッチ数推定関数を試す----
 
 #noizyXを外す
 torus300_colle_set_1to2<-map(torus300_colle_set[[1]][1:2], ~{.[["noizyX"]]})
 
-trs300_colle1_wvr_aggr_test<-calc_distance_change_betti_paral(X = torus300_colle_set_1to2, 
+trs300_colle1_wvr_aggr_test<-calc_distance_change_betti(X = torus300_colle_set_1to2, 
                                                         maxdim = 2, maxscale = 3, samples = 4, 
-                                                        ph_func = weighted_homology, l_rate=0.6, eta=2)
+                                                        ph_func = weighted_homology, l_rate=0.6, eta=1.5)
 
 
-trs300_colle1_aggr_test<-smooth_landscape_method_paral(X = torus300_colle_set_1to2, maxdim = 2, maxscale = 3, samples = 4)
+trs300_colle1_aggr_test<-smooth_landscape_method(X = torus300_colle_set_1to2, maxdim = 2, maxscale = 3, samples = 4)
+
+
+
 
 #---------------------------------------
 search_load(trs300_1_10_pd_time, path="D:/okayasu/D_documents/R/distance_ph/vars")

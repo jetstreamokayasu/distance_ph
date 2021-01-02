@@ -475,3 +475,51 @@ calc.landscape.peak(X = t3ours4_list2_2_sub_pl2[["3-land"]], dimension = 3, thre
 
 plot(t3ours4_list2_2_sub_dist[t3ours4_list2_2_sub_pd[["l_idx"]][1], ], t3ours4_list2_2_sub_dist[t3ours4_list2_2_sub_pd[["l_idx"]][1], ])
 points(t3ours4_list2_2_sub_dist[t3ours4_list2_2_sub_pd[["l_idx"]][1], ], t3ours4_list2_2_sub_wvr_dist[t3ours4_list2_2_sub_pd[["l_idx"]][1], ], col=2)
+
+#--------------------------
+#ハイパラeta決定式を試す------
+
+#データ準備
+t3orus4_inst<-TDAdataset$new(t3orus4)
+t3orus4_inst$calc_pd(maxdim = 3, maxscale = 9)
+
+t3orus4_inst$alt_distmat[[1]]$calc_pd(maxdim = 3, maxscale = 9)
+
+t3orus4_list3_15<-TDAdataset$new(t3orus4_list3[[15]][["noizyX"]][sample(1:500, 400),])
+t3orus4_list3_15$calc_pd(maxdim = 3, maxscale = 9)
+
+#-----------------------------
+
+t3orus4_list3_15$create_changed_distmat(l_rate = 0.1, eta = 1)
+t3orus4_list3_15$alt_distmat[[1]]$distmat<-t3orus4_list3_15$distmat
+
+for (i in t3orus4_list3_15$alt_distmat[[1]]$get_param()$l_idx) {
+  
+  c_eta<-sort(t3orus4_list3_15$distmat[i,])[21]*sqrt(2/3)
+  
+  t3orus4_list3_15$alt_distmat[[1]]$distmat[i,]<-t3orus4_list3_15$distmat[i,]*( 1-exp( -(t3orus4_list3_15$distmat[i,]/c_eta)^2 ) )
+  t3orus4_list3_15$alt_distmat[[1]]$distmat[,i]<-t3orus4_list3_15$distmat[,i]*( 1-exp( -(t3orus4_list3_15$distmat[,i]/c_eta)^2 ) )
+  
+}
+
+plot(t3orus4_list3_15$distmat[95,], t3orus4_list3_15$alt_distmat[[1]]$distmat[95,], col=2)
+t3orus4_list3_15$alt_distmat[[1]]$calc_pd(maxdim = 3, maxscale = 9)
+
+#------------------------------------------------------
+
+t3orus4_list3_15$create_changed_distmat(l_rate = 0.3, eta = 1)
+t3orus4_list3_15$alt_distmat[[2]]$distmat<-t3orus4_list3_15$distmat
+
+for (i in t3orus4_list3_15$alt_distmat[[2]]$get_param()$l_idx) {
+  
+  c_eta<-sort(t3orus4_list3_15$distmat[i,])[21]*sqrt(2/3)
+  
+  t3orus4_list3_15$alt_distmat[[2]]$distmat[i,]<-t3orus4_list3_15$distmat[i,]*( 1-exp( -(t3orus4_list3_15$distmat[i,]/c_eta)^2 ) )
+  t3orus4_list3_15$alt_distmat[[2]]$distmat[,i]<-t3orus4_list3_15$distmat[,i]*( 1-exp( -(t3orus4_list3_15$distmat[,i]/c_eta)^2 ) )
+  
+}
+
+plot(t3orus4_list3_15$distmat[95,], t3orus4_list3_15$alt_distmat[[2]]$distmat[95,], col=2)
+t3orus4_list3_15$alt_distmat[[2]]$calc_pd(maxdim = 3, maxscale = 9)
+
+

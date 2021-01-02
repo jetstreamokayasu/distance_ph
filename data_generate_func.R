@@ -170,3 +170,21 @@ search_load<-function(var, path="./data"){
   print(paste0(path, "/", elname, ".RData"))
   
 }
+
+#--------------------------------------------
+#3次元球体内に一様分布---------
+#n=データ点数、r=半径
+xBall_unif<-function(n, r = 1){
+  
+  R<-runif(n = n, min = 0, max = r)
+  theta<-runif(n = n, min = -1, max = 1)
+  phi<-runif(n = n, min = 0, max = 2*pi)
+  
+  x<-(R^(1/3)) * sqrt(1 - theta^2) * cos(phi)
+  y<-(R^(1/3)) * sqrt(1 - theta^2) * sin(phi)
+  z<-(R^(1/3)) * theta
+  
+  return(cbind(x, y, z))
+  
+}
+

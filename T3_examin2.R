@@ -272,7 +272,7 @@ t3ours4_list3_5_sub_gs6to10_time<-system.time(
 
 
 #------------------------------------
-#グリッドサーチ計算結果まとめ
+#グリッドサーチ計算結果まとめ-----
 
 #サブサンプル2~5のPLをまとめる
 t3ours4_list3_5_sub_gs2to5_pls<-lapply(t3ours4_list3_5_sub_gs2to5, function(X){
@@ -349,6 +349,38 @@ plot(para_set4, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
 text(para_set4$l_rate, para_set4$eta, labels = round(t3ours4_list3_5_sub_gs_peaks_H3_ave, 2),
      col = ifelse(t3ours4_list3_5_sub_gs_peaks_H3_ave >= 0.5 & t3ours4_list3_5_sub_gs_peaks_H3_ave < 1.5, 2, 4))
 
+#-------------------------------
+#GS結果をH2に関してまとめる-----
+
+#サブサンプル2~5のPLのH2局所最大値をまとめる
+t3ours4_list3_5_sub_gs2to5_peaks_H2<-lapply(t3ours4_list3_5_sub_gs2to5_pls, function(X){
+  
+  sub_pls<-sapply(X, function(Y){calc.landscape.peak(X = Y[["2-land"]], dimension = 2, thresh = Y[["thresh"]]*(2*pi)/surface_nshpere(2), tseq = Y[["tseq"]])})
+  
+})
+
+#サブサンプル1, 6~10のPLのH2局所最大値をまとめる
+t3ours4_list3_5_sub_gs1_6to10_peaks_H2<-lapply(t3ours4_list3_5_sub_gs1_6to10_pls, function(X){
+  
+  sub_pls<-sapply(X, function(Y){calc.landscape.peak(X = Y[["2-land"]], dimension = 2, thresh = Y[["thresh"]]*(2*pi)/surface_nshpere(2), tseq = Y[["tseq"]])})
+  
+})
+
+#サブサンプル1~10のPLのH2局所最大値をまとめる
+t3ours4_list3_5_sub_gs_peaks_H2<-c(t3ours4_list3_5_sub_gs1_6to10_peaks_H2[1], t3ours4_list3_5_sub_gs2to5_peaks_H2, t3ours4_list3_5_sub_gs1_6to10_peaks_H2[2:6])
+
+#サブサンプル1~10のPLのH2局所最大値の平均
+t3ours4_list3_5_sub_gs_peaks_H2_ave<-sapply(1:length(t3ours4_list3_5_sub_gs_peaks_H2[[1]]), function(i){
+  mpeaks<-sapply(t3ours4_list3_5_sub_gs_peaks_H2, function(PL){PL[[i]]}) %>% mean()
+})
+
+#H2局所最大値の数をパラメータごとにプロット
+#サブサンプル1~10平均
+plot(para_set4, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(para_set4$l_rate, para_set4$eta, labels = round(t3ours4_list3_5_sub_gs_peaks_H2_ave, 2),
+     col = ifelse(t3ours4_list3_5_sub_gs_peaks_H2_ave >= 2.5 & t3ours4_list3_5_sub_gs_peaks_H2_ave < 3.5, 2, 4))
+
+
 #-------------------
 #サブサンプル1~10の計算時間をまとめる------
 t3ours4_list3_5_sub_gs_times<-lapply(t3ours4_list3_5_sub_gs, function(X){
@@ -376,3 +408,79 @@ t3orus4_list_3_5_sub2_plt1<-ggplot() + geom_point(aes(x = t3orus4_list3_5_subs2_
 t3orus4_list_3_5_sub2_plt2<-t3orus4_list_3_5_sub2_plt1 + theme(axis.text=element_text(size=14))
 t3orus4_list_3_5_sub2_plt3<-t3orus4_list_3_5_sub2_plt2 + geom_point(aes(x = t3orus4_list3_5_subs2_dist[51, ], y = t3orus4_list3_5_subs2_altdist[51, ]), size=3, shape = 1, color = 2)
 
+
+
+
+#----------------------------------------
+#サブサンプルでハイパラグリッドサーチ。H2成功率確認用----
+
+eta_set5<-seq(1, 4, by=0.2)
+land_rate_set4<-seq(0.1, 0.9, by=0.1)
+para_set5<-expand.grid(land_rate_set4, eta_set5)
+colnames(para_set5)<-c("l_rate", "eta")
+
+
+#parallelで並列計算時に使うオジェクト読み込み
+clusterExport(cl, varlist = c("t3orus4_list3_5_subs", "para_set5"))
+
+#サブセット1~10をグリッドサーチ
+t3ours4_list3_5_sub_gsH2_time<-system.time( 
+  
+  t3ours4_list3_5_sub_gsH2<-lapply(1:10, function(i){
+    
+    sub_gs<-parLapply(cl, 1:nrow(para_set5), function(p){
+      
+      wpd<-weighted_homology(X = t3orus4_list3_5_subs[[i]], maxdim = 3, maxscale = 9, l_rate = para_set5$l_rate[p], eta = para_set5$eta[p])
+      
+      #parallelフォルダにcsvを出力
+      write.csv(as.data.frame(wpd[["pd"]]), 
+                file = paste0("./parallel/", "data", i, "_", "lrate", 
+                              gsub("\\.", "", para_set5$l_rate[p]), "eta", gsub("\\.", "", para_set5$eta[p]), 
+                              "_", format(Sys.time(), "%m%d_%H%M"), ".csv"))
+      
+      return(wpd)
+      
+    })
+    
+    return(sub_gs)
+    
+  })
+)
+
+#サブサンプルのPLをまとめる
+t3ours4_list3_5_sub_gsH2_pls<-lapply(t3ours4_list3_5_sub_gsH2, function(X){
+  
+  sub_pls<-lapply(X, function(Y){calc_landscape(diag = Y[["pd"]], maxscale = 9, plot = F)})
+  
+})
+
+#サブサンプルのPLのH2局所最大値をまとめる
+t3ours4_list3_5_sub_gsH2_peaks_H2<-lapply(t3ours4_list3_5_sub_gsH2_pls, function(X){
+  
+  sub_pls<-sapply(X, function(Y){calc.landscape.peak(X = Y[["2-land"]], dimension = 2, thresh = Y[["thresh"]]*(2*pi)/surface_nshpere(2), tseq = Y[["tseq"]], show = F)})
+  
+})
+
+#サブサンプル1~10のPLのH2局所最大値の平均
+t3ours4_list3_5_sub_gsH2_peaks_H2_ave<-sapply(1:length(t3ours4_list3_5_sub_gsH2_peaks_H2[[1]]), function(i){
+  mpeaks<-sapply(t3ours4_list3_5_sub_gsH2_peaks_H2, function(PL){PL[[i]]}) %>% mean()
+})
+
+#H2局所最大値の数をパラメータごとにプロット
+#サブサンプル1~10平均
+par(mai=c(0.7, 0.7, 0.3, 0.3))
+par(mgp=c(2, 1, 0))
+plot(para_set5, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(para_set5$l_rate, para_set5$eta, labels = round(t3ours4_list3_5_sub_gsH2_peaks_H2_ave, 2),
+     col = ifelse(t3ours4_list3_5_sub_gsH2_peaks_H2_ave >= 2.5 & t3ours4_list3_5_sub_gsH2_peaks_H2_ave < 3.5, 2, 4), cex = 0.8)
+
+plot(rbind(para_set4, para_set5), xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(para_set4$l_rate, para_set4$eta, labels = round(t3ours4_list3_5_sub_gs_peaks_H2_ave, 2),
+     col = ifelse(t3ours4_list3_5_sub_gs_peaks_H2_ave >= 2.5 & t3ours4_list3_5_sub_gs_peaks_H2_ave < 3.5, 2, 4), cex = 0.8)
+
+#---------------------------------
+#ggplotでH2局所最大値の数をパラメータごとにプロット----
+#サブサンプル1~10平均
+para_gs_plt<-ggplot(data = para_set5) + geom_text(aes(x = l_rate, y = eta, label = round(t3ours4_list3_5_sub_gsH2_peaks_H2_ave, 2), color = as.factor( if_else(t3ours4_list3_5_sub_gsH2_peaks_H2_ave >= 2.5 & t3ours4_list3_5_sub_gsH2_peaks_H2_ave < 3.5, 1, 2) )))
+para_gs_plt3<-para_gs_plt + geom_text(data = para_set4, aes(x = l_rate, y = eta, label = round(t3ours4_list3_5_sub_gs_peaks_H2_ave, 2), col = as.factor( if_else(t3ours4_list3_5_sub_gs_peaks_H2_ave >= 2.5 & t3ours4_list3_5_sub_gs_peaks_H2_ave < 3.5, 1, 2) )))
+para_gs_plt2<-para_gs_plt3 + scale_color_brewer(palette = "Set1") + guides(color="none") + theme_test()

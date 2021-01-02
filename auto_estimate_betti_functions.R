@@ -98,6 +98,12 @@ calc_distance_change_betti <- function(X,maxdim,maxscale,samples, const.size=0, 
     
   })
   
+  #サブサンプルサイズ
+  Bsize<-numeric(length(X))
+  
+  #計算時間
+  times<-numeric(length(X))
+  
   for(t in 1:length(X)){
     
     cat("data set", t, "calculating\n")
@@ -113,10 +119,13 @@ calc_distance_change_betti <- function(X,maxdim,maxscale,samples, const.size=0, 
       
     }
     
+    Bsize[t]<-size
+    times[t]<-speak[["time"]]
+    
   }
   
   aggrs <- append(aggrs,list(Xsize=sapply(1:length(X), function(l)nrow(X[[l]])),Xsamples=length(X),
-                             Bsize=size,Bsamples=samples,
+                             Bsize=Bsize,Bsamples=samples, times=times,
                              maxdim=maxdim,maxscale=maxscale))
   class(aggrs) <- "dist_changed"
   
