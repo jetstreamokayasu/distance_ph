@@ -410,9 +410,9 @@ multiresolut_homology<-function(X, maxdim, l_rate=0.3, a=1){
 #------------------------------------------------------
 #図中のx-y点間に直線を引く関数-------------------------
 #lines関数を書き換えただけ
-draw_line<-function(x, y){
+draw_line<-function(x, y, ...){
   
-  lines(c(x[1], y[1]), c(x[2], y[2]))
+  lines(c(x[1], y[1]), c(x[2], y[2]), ...)
   
 }
 

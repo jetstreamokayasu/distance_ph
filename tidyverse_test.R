@@ -128,12 +128,12 @@ t3_wvr_H2rateA$n_points %<>% as.numeric()
 t3_wvr_plt<-t3_suc_plt_arng + geom_point(data = t3_wvr_H2rateA, aes(y = dim2rate, color = "proposed2A")) + geom_line(data = t3_wvr_H2rateA, aes(y = dim2rate, color = "proposed2A"))
 
 ##exp距離変化。eta=4.0, l_rate=0.5
-t3_wvr_H2rateB<-tibble("450"=cycle_number(t3orus450_list1_1to30_wvrH2_aggrs2, 2)[4]/30,
-                       "460"=cycle_number(t3orus460_list1_1to30_wvrH2_aggrs2, 2)[4]/30,
-                       "470"=cycle_number(t3orus470_list1_1to30_wvrH2_aggrs2, 2)[4]/30,
-                       "480"=cycle_number(t3orus480_list1_1to30_wvrH2_aggrs2, 2)[4]/30,
-                       "490"=cycle_number(t3orus490_list1_1to30_wvrH2_aggrs2, 2)[4]/30,
-                       "500"=cycle_number(t3orus4_list3_1to30_wvrH2_aggrs6, 2)[4]/30) %>% 
+t3_wvr_H2rateB<-tibble("450"=(map_dbl(list(t3orus450_list1_1to30_wvrH2_aggrs2, t3orus450_list1_31to100_wvrH2_aggrs2), ~cycle_number(., 2)[4]) %>% sum()/100),
+                       "460"=(map_dbl(list(t3orus460_list1_1to30_wvrH2_aggrs2, t3orus460_list1_31to100_wvrH2_aggrs2), ~cycle_number(., 2)[4]) %>% sum()/100),
+                       "470"=(map_dbl(list(t3orus470_list1_1to30_wvrH2_aggrs2, t3orus470_list1_31to100_wvrH2_aggrs2), ~cycle_number(., 2)[4]) %>% sum()/100),
+                       "480"=(map_dbl(list(t3orus480_list1_1to30_wvrH2_aggrs2, t3orus480_list1_31to100_wvrH2_aggrs2), ~cycle_number(., 2)[4]) %>% sum()/100),
+                       "490"=(map_dbl(list(t3orus490_list1_1to30_wvrH2_aggrs2, t3orus490_list1_31to100_wvrH2_aggrs2), ~cycle_number(., 2)[4]) %>% sum()/100),
+                       "500"=(map_dbl(list(t3orus4_list3_1to30_wvrH2_aggrs6, t3orus4_list3_31to100_wvrH2_aggrs6), ~cycle_number(., 2)[4]) %>% sum()/100) ) %>% 
   pivot_longer(cols = as.character(seq(450, 500, by=10)), names_to = "n_points", values_to = "dim2rate")
 
 t3_wvr_H2rateB$n_points %<>% as.numeric()
@@ -142,7 +142,7 @@ t3_wvr_pltB<-t3_wvr_plt + geom_point(data = t3_wvr_H2rateB, aes(y = dim2rate, co
 t3_plt<-t3_wvr_pltB + labs(x = "Data density", y = "Success rate") + theme(axis.text = element_text(size=20), axis.title = element_text(size=25), legend.text = element_text(size=20), legend.title = element_text(size=25))
 t3_T3H2_plt2<-t3_plt + scale_x_continuous(breaks = seq(450, 500, by=10), labels = c(expression(450/(64*pi^3)), expression(460/(64*pi^3)), expression(470/(64*pi^3)), expression(480/(64*pi^3)), expression(490/(64*pi^3)), expression(500/(64*pi^3))))
 
-ggsave("./pics/success_T3H2_plot.pdf", plot = t3_T3H2_plt2)
+ggsave("./pics/success_T3H2_plot2.pdf", plot = t3_T3H2_plt2)
 
 #------------------------------
 #3次元トーラス3次ベッチ数推定成功率グラフ------
@@ -175,12 +175,12 @@ t3_wvr_H3rateA$n_points %<>% as.numeric()
 t3_wvrH3_plt<-t3_H3_plt_arng + geom_point(data = t3_wvr_H3rateA, aes(y = dim3rate, color = "proposed2A"), size=1.8) + geom_line(data = t3_wvr_H3rateA, aes(y = dim3rate, color = "proposed2A"))
 
 #exp距離変化。eta=4.0, l_rate=0.5
-t3_wvr_H3rateB<-tibble("450"=cycle_number(t3orus450_list1_1to30_wvrH2_aggrs2, 3)[2]/30,
-                       "460"=cycle_number(t3orus460_list1_1to30_wvrH2_aggrs2, 3)[2]/30,
-                       "470"=cycle_number(t3orus470_list1_1to30_wvrH2_aggrs2, 3)[2]/30,
-                       "480"=cycle_number(t3orus480_list1_1to30_wvrH2_aggrs2, 3)[2]/30,
-                       "490"=cycle_number(t3orus490_list1_1to30_wvrH2_aggrs2, 3)[2]/30,
-                       "500"=cycle_number(t3orus4_list3_1to30_wvrH2_aggrs6, 3)[2]/30) %>% 
+t3_wvr_H3rateB<-tibble("450"=(map_dbl(list(t3orus450_list1_1to30_wvrH2_aggrs2, t3orus450_list1_31to100_wvrH2_aggrs2), ~cycle_number(., 3)[2]) %>% sum()/100),
+                       "460"=(map_dbl(list(t3orus460_list1_1to30_wvrH2_aggrs2, t3orus460_list1_31to100_wvrH2_aggrs2), ~cycle_number(., 3)[2]) %>% sum()/100),
+                       "470"=(map_dbl(list(t3orus470_list1_1to30_wvrH2_aggrs2, t3orus470_list1_31to100_wvrH2_aggrs2), ~cycle_number(., 3)[2]) %>% sum()/100),
+                       "480"=(map_dbl(list(t3orus480_list1_1to30_wvrH2_aggrs2, t3orus480_list1_31to100_wvrH2_aggrs2), ~cycle_number(., 3)[2]) %>% sum()/100),
+                       "490"=(map_dbl(list(t3orus490_list1_1to30_wvrH2_aggrs2, t3orus490_list1_31to100_wvrH2_aggrs2), ~cycle_number(., 3)[2]) %>% sum()/100),
+                       "500"=(map_dbl(list(t3orus4_list3_1to30_wvrH2_aggrs6, t3orus4_list3_31to100_wvrH2_aggrs6), ~cycle_number(., 3)[2]) %>% sum()/100) ) %>% 
   pivot_longer(cols = as.character(seq(450, 500, by=10)), names_to = "n_points", values_to = "dim3rate")
 
 t3_wvr_H3rateB$n_points %<>% as.numeric()
@@ -190,4 +190,4 @@ t3_H3_plt<-t3_wvrH3_pltB + labs(x = "Data density", y = "Success rate") + theme(
 
 t3_H3_plt2<-t3_H3_plt + scale_x_continuous(breaks = seq(450, 500, by=10), labels = c(expression(450/(64*pi^3)), expression(460/(64*pi^3)), expression(470/(64*pi^3)), expression(480/(64*pi^3)), expression(490/(64*pi^3)), expression(500/(64*pi^3))))
 
-ggsave("./pics/success_T3H3_plot.pdf", plot = t3_H3_plt2)
+ggsave("./pics/success_T3H3_plot2.pdf", plot = t3_H3_plt2)

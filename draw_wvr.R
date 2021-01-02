@@ -15,9 +15,9 @@ pdf(file = "./pics/changed_51_connect.pdf")
 pdf(file = "./pics/changed_52_connect.pdf")
 pdf(file = "./pics/changed_data4_birth.pdf")
 pdf(file = "./pics/changed_data4_death.pdf")
-plot(d_t_inst$data, xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5), pch = 16, xlab = "", ylab = "", cex = 1.5)
-points(d_t_inst$data[c(1,3),], col = 2, pch = 16, cex = 1.5) #距離変更点を赤くする
-text(c(1.2, 0, -1.1, 0, 0.5), c(0, 0.9, 0, -1.3, 0.4), labels = 1:5, pos=3, cex = 1.5)
+plot(d_t_inst$data, xlim = c(-1.5, 1.5), ylim = c(-1.5, 1.5), pch = 16, xlab = "", ylab = "", cex = 5)
+points(d_t_inst$data[c(1,3),], col = 2, pch = 16, cex = 5) #距離変更点を赤くする
+text(c(1.2, 0, -1.1, 0, 0.5), c(0, 0.9, 0, -1.3, 0.4), labels = 1:5, pos=3, cex = 5)
 dev.off()
 #d_t_inst<-TDAdataset$new(d_t)
 
@@ -37,14 +37,14 @@ dev.off()
 # 4 1.7691806 2.2000000 1.702939 0.000000 1.7720045
 # 5 0.8062258 0.7071068 1.649242 1.772005 0.0000000
 
-lines(c(x2[1], x5[1]), c(x2[2], x5[2]))
-lines(c(x1[1], x5[1]), c(x1[2], x5[2]))
-lines(c(x2[1], x3[1]), c(x2[2], x3[2]))
-lines(c(x1[1], x2[1]), c(x1[2], x2[2]))
-lines(c(x3[1], x5[1]), c(x3[2], x5[2]))
-lines(c(x3[1], x4[1]), c(x3[2], x4[2]))
-lines(c(x1[1], x4[1]), c(x1[2], x4[2]))#生成#1.769181
-lines(c(x4[1], x5[1]), c(x4[2], x5[2]))#消滅#1.7720045
+lines(c(x2[1], x5[1]), c(x2[2], x5[2]), lwd = 6)
+lines(c(x1[1], x5[1]), c(x1[2], x5[2]), lwd = 6)
+lines(c(x2[1], x3[1]), c(x2[2], x3[2]), lwd = 6)
+lines(c(x1[1], x2[1]), c(x1[2], x2[2]), lwd = 6)
+lines(c(x3[1], x5[1]), c(x3[2], x5[2]), lwd = 6)
+lines(c(x3[1], x4[1]), c(x3[2], x4[2]), lwd = 6)
+lines(c(x1[1], x4[1]), c(x1[2], x4[2]), lwd = 6)#生成#1.769181
+lines(c(x4[1], x5[1]), c(x4[2], x5[2]), lwd = 6)#消滅#1.7720045
 
 # d_t_inst$create_changed_distmat(l_rate = 0.4, eta = 1)
 # d_t_inst$create_changed_distmat(l_rate = 0.2, eta = 1)
@@ -97,14 +97,14 @@ d_t_idxs<-lapply(2:9, function(i)which(d_t_dist_low==d_t_dist_sorted[i], arr.ind
 # d_t_inst$create_changed_distmat(eta = 1, l_idx = c(3, 5))
 
 #距離変化後の結合を描く
-draw_line(x = d_t[5, ], y = d_t[1, ])
-draw_line(x = d_t[5, ], y = d_t[2, ])
-draw_line(x = d_t[3, ], y = d_t[2, ])
-draw_line(x = d_t[2, ], y = d_t[1, ])
-draw_line(x = d_t[5, ], y = d_t[3, ])
-draw_line(x = d_t[4, ], y = d_t[3, ])
-draw_line(x = d_t[4, ], y = d_t[1, ])#生成
-draw_line(x = d_t[5, ], y = d_t[4, ])#消滅
+draw_line(x = d_t[5, ], y = d_t[1, ], lwd = 6)
+draw_line(x = d_t[5, ], y = d_t[2, ], lwd = 6)
+draw_line(x = d_t[3, ], y = d_t[2, ], lwd = 6)
+draw_line(x = d_t[2, ], y = d_t[1, ], lwd = 6)
+draw_line(x = d_t[5, ], y = d_t[3, ], lwd = 6)
+draw_line(x = d_t[4, ], y = d_t[3, ], lwd = 6)
+draw_line(x = d_t[4, ], y = d_t[1, ], lwd = 6)#生成
+draw_line(x = d_t[5, ], y = d_t[4, ], lwd = 6)#消滅
 
 
 #-------------------------------------

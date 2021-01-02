@@ -58,18 +58,22 @@ a0<-c(0, -0.5)*8
 a1<-c(0.5*sqrt(3)/2, 0.25)*8
 a2<-c(0, 0.5)*8
 a3<-c(-0.5*sqrt(3)/2, 0.25)*8
-plot(rbind(a0, a1, a2, a3), xlim = c(-5, 5), ylim = c(-5, 5), pch=16, cex=1.5, ylab = "", xlab = "")
+plot(rbind(a0, a1, a2, a3), xlim = c(-5, 5), ylim = c(-5, 5), pch=16, ylab = "", xlab = "", cex = 5)
 plot_circle(x = 0, y = 0, r = 4)
 
 pdf(file = "./pics/interpolated_data.pdf")
 pdf(file = "./pics/interpolated_birth.pdf")
 pdf(file = "./pics/interpolated_death.pdf")
+
+pdf(file = "./pics/low_density_data.pdf")
+pdf(file = "./pics/low_density_birth.pdf")
+pdf(file = "./pics/low_density_death.pdf")
 dev.off()
 
 a4<-(a1+a0)/2
 a5<-(a3+a0)/2
-points(a1_set$data, pch = 16, cex = 1.5)
-points(rbind(a4, a5), pch = 16, col = 4, cex = 1.5)
+points(a1_set$data, pch = 16, cex = 5)
+points(rbind(a4, a5), pch = 16, col = 4, cex = 5)
 
 #a1_set<-TDAdataset$new(rbind(a0, a1, a2, a3, a4, a5))
 #a1_set$calc_pd(maxdim = 1, maxscale = 8)
@@ -79,11 +83,22 @@ r<-a1_set$get_pd()[6, 2]/2 #生成半径
 r<-a1_set$get_pd()[6, 3]/2 #消滅半径
 r<-14/5 #アルファ複体における消滅半径?
 
+r<-2*sqrt(3)#密度が低い場合(補間点無し)の生成半径
+r<-4#密度が低い場合(補間点無し)の消滅半径
+
 for (i in 1:a1_set$n_points) {
   
   polygon(a1_set$data[i,1]+r*cos(theta), a1_set$data[i,2]+r*sin(theta), col=rgb(255/255, 153/255, 153/255, alpha = 0.3))
   
 }
+
+for (i in 1:(a1_set$n_points-2)) {
+  
+  polygon(a1_set$data[i,1]+r*cos(theta), a1_set$data[i,2]+r*sin(theta), col=rgb(255/255, 153/255, 153/255, alpha = 0.3))
+  
+}
+
+points(a1_set$data[1:4, ], pch = 16, cex = 5)
 
 #-----------------------
 #3つの円が交わるときの半径を求める------

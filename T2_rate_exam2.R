@@ -239,3 +239,133 @@ trs250_list1_inted1<-TDAdataset$new(trs250_list1_inted[[1]])
   save2RData(trs250_list1_wvr_aggr1)
   
 }
+
+#--------------------------------------
+#290点トーラス-----
+trs290_list1to5<-map(1:5, ~{map(1:100, ~{torusUnif(n = 290, 1, 2.5)})})
+#trs290_list1to5<-map(trs290_list1to5_inted, ~{map(., ~{.[1:290, ]})})
+save2RData(trs290_list1to5)
+
+#100セットリスト1~5つ目
+  {#CTIC2019
+    trs290_list1to5_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-smooth_landscape_method(X = trs290_list1to5[[k]], maxdim = 2, maxscale = 3, samples = 10) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(trs290_list1to5_aggr)
+  }
+  
+  {#expを掛ける距離変化
+    trs290_list1to5_wvr_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-calc_distance_change_betti(X = trs290_list1to5[[k]], maxdim = 2, maxscale = 3, samples = 10, ph_func =  weighted_homology, l_rate=0.8, eta=3.0) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(trs290_list1to5_wvr_aggr)
+  }
+  
+  {#補間手法
+    trs290_list1to5_inted<-lapply(trs290_list1to5, function(Z){lapply(Z, function(X)interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .))})
+    save2RData(trs290_list1to5_inted)
+    
+    trs290_list1to5_inted_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-smooth_landscape_method(X = trs290_list1to5_inted[[k]], maxdim = 2, maxscale = 3, samples = 10) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(trs290_list1to5_inted_aggr)
+  }
+
+
+#--------------------------------------
+#280点トーラス-----
+trs280_list1to5<-map(1:5, ~{map(1:100, ~{torusUnif(n = 280, 1, 2.5)})})
+save2RData(trs280_list1to5)
+
+{#100セットリスト1~5つ目
+  {#CTIC2019
+    trs280_list1to5_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-smooth_landscape_method(X = trs280_list1to5[[k]], maxdim = 2, maxscale = 3, samples = 10) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(trs280_list1to5_aggr)
+  }
+  
+  {#expを掛ける距離変化
+    trs280_list1to5_wvr_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-calc_distance_change_betti(X = trs280_list1to5[[k]], maxdim = 2, maxscale = 3, samples = 10, ph_func =  weighted_homology, l_rate=0.8, eta=3.0) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(trs280_list1to5_wvr_aggr)
+  }
+  
+  {#補間手法
+    trs280_list1to5_inted<-lapply(trs280_list1to5, function(Z){lapply(Z, function(X)interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .))})
+    save2RData(trs280_list1to5_inted)
+    
+    trs280_list1to5_inted_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-smooth_landscape_method(X = trs280_list1to5_inted[[k]], maxdim = 2, maxscale = 3, samples = 10) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(trs280_list1to5_inted_aggr)
+  }
+}
+
+#--------------------------------------
+#270点トーラス-----
+trs270_list1to5<-map(1:5, ~{map(1:100, ~{torusUnif(n = 270, 1, 2.5)})})
+save2RData(trs270_list1to5)
+
+{#100セットリスト1~5つ目
+  {#CTIC2019
+    trs270_list1to5_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-smooth_landscape_method(X = trs270_list1to5[[k]], maxdim = 2, maxscale = 3, samples = 10) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(trs270_list1to5_aggr)
+  }
+  
+  {#expを掛ける距離変化
+    trs270_list1to5_wvr_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-calc_distance_change_betti(X = trs270_list1to5[[k]], maxdim = 2, maxscale = 3, samples = 10, ph_func =  weighted_homology, l_rate=0.8, eta=3.0) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(trs280_list1to5_wvr_aggr)
+  }
+  
+  {#補間手法
+    trs270_list1to5_inted<-lapply(trs270_list1to5, function(Z){lapply(Z, function(X)interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .))})
+    save2RData(trs270_list1to5_inted)
+    
+    trs270_list1to5_inted_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-smooth_landscape_method(X = trs270_list1to5_inted[[k]], maxdim = 2, maxscale = 3, samples = 10) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(trs270_list1to5_inted_aggr)
+  }
+}
