@@ -46,15 +46,16 @@ birth_cell<-map_lgl(seq_along(cell), ~{(t3orus4_list3_81_sub1_pdH3[2] > cell[.])
 death_cell<-map_lgl(seq_along(cell), ~{(t3orus4_list3_81_sub1_pdH3[3] > cell[.]) & (t3orus4_list3_81_sub1_pdH3[3] <= cell[. + 1])}) %>% which()
 
 cell_col<-rep(NA, length = length(t3orus4_list3_81_ori_hist$counts))
-cell_col[birth_cell]<-"red"
-cell_col[death_cell]<-"blue"
+cell_col[birth_cell]<-"#e4007f4d"
+cell_col[death_cell]<-"#00a0e94d"
 
-t3orus4_list3_81_inst$subsamples[[1]]$data %>% dist() %>% hist(breaks = seq(0, 28, by=0.5), main="T^3 original")
+t3orus4_list3_81_inst$subsamples[[1]]$data %>% dist() %>% hist(breaks = seq(0, 28, by=0.5), main="T^3 original", xlab = "distance")
 
-t3orus4_list3_81_sub1$distmat %>% as.dist() %>% hist(breaks = seq(0, 28, by=0.5), main="T^3 original", col = cell_col)
+t3orus4_list3_81_sub1$distmat %>% as.dist() %>% hist(breaks = seq(0, 28, by=0.5), main="T^3 original", col = cell_col, xlab = "distance")
 
 #距離がetaと等しい
 abline(v = t3orus4_list3_81_inst$subsamples[[1]]$get_param()$eta, col = "green3")
+text(x = 6.5, y = 2000, labels = expression(plain(distance) == eta), pos = 3)
 
 #距離が変曲点
 abline(v = t3orus4_list3_81_inst$subsamples[[1]]$get_param()$eta * sqrt(3/2), col = "deeppink")
@@ -130,7 +131,7 @@ cell_col3d<-t3orus4_list3_81_sub2_dist_hist$counts %>% length() %>% rep(NA, leng
 cell_col3d[d_cell3]<-"#00a0e94d"
 
 t3orus4_list3_81_sub2_dist_hist<-t3orus4_list3_81_sub2$distmat %>% 
-  as.dist() %>% hist(breaks = seq(0, 28, by=0.5), main="T^3 l_rate=0.5 eta=6.5", col = cell_col3b)
+  as.dist() %>% hist(breaks = seq(0, 28, by=0.5), main="T^3 original", col = cell_col3b)
 
 t3orus4_list3_81_sub2$distmat %>% as.dist() %>% hist(breaks = seq(0, 28, by=0.5), col = cell_col3d, add = T)
 

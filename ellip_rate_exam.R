@@ -33,6 +33,10 @@ ellip200_aggr1<-smooth_landscape_method(X = ellip200_list1, maxdim = 2, maxscale
 #150点。a = 5, b = 1, c = 1
 ellip150_list1<-map(1:100, ~{xEllip_unif(n = 150, a = 5, b = 1, c = 1)})
 
+plot3d(ellip150_list1[[1]], size = 4)
+aspect3d("iso")
+rgl.postscript("ellip150.pdf", fmt = "pdf")
+
 #CTIC2019手法
 ellip150_aggr1<-smooth_landscape_method(X = ellip150_list1, maxdim = 2, maxscale = 3, samples = 10)
 save2RData(ellip150_aggr1)

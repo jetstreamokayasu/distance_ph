@@ -104,4 +104,4 @@ e_surf<-ellip_surface(5, 1, 1)
   scale_x_continuous(breaks = seq(150, 200, by=10), labels =  round(seq(150, 200, by=10)/e_surf, digits = 3))
 }
 
-plot(sapply(seq(450, 500, by=10), function(k){expression(k/(64*pi^3))}), ellip_wvr_rates_tbl$dim2rate)
+ggsave("./pics/ellip_success_plt.pdf", plot = ellip_whole_plt)
