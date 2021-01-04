@@ -91,6 +91,9 @@ t3orus480_list1_1to30_normal_aggrs_time<-system.time(
   save2RData(t3orus480_list1_31to100_normal_aggrs)
 }
 
+#480点3次元トーラス100セット2つ目
+t3orus480_list2<-lapply(1:100, function(i)x3Dtorus_unif(n = 480, r = 2, R1 = 8, R2 = 4))
+
 #------------------------------------
 #素の470点3次元トーラスで成功率を求めてみる----
 #r = 2, R1 = 8, R2 = 4
@@ -248,6 +251,16 @@ save2RData(t3orus490_list1_1to30_wvr_aggrs1)
   
   save2RData(t3orus480_list1_31to100_wvr_aggrs1_time)
   save2RData(t3orus480_list1_31to100_wvr_aggrs1)
+}
+
+#100セット2つ目
+{
+  t3orus480_list2_wvr_aggr1_time<-system.time(
+    t3orus480_list2_wvr_aggr1<-calc_distance_change_betti_paral(X = t3orus480_list2, maxdim = 3, maxscale = 9, samples = 5, 
+                                                                ph_func = weighted_homology, l_rate=0.5, eta=6.5) )   
+  
+  save2RData(t3orus480_list2_wvr_aggr1_time)
+  save2RData(t3orus480_list2_wvr_aggr1)
 }
 
 #-------------------------------------

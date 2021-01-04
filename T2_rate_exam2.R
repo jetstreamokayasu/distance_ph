@@ -352,7 +352,7 @@ save2RData(trs270_list1to5)
       return(append(aggr, list(time=time)))
       
     })
-    save2RData(trs280_list1to5_wvr_aggr)
+    save2RData(trs270_list1to5_wvr_aggr)
   }
   
   {#補間手法
@@ -367,5 +367,91 @@ save2RData(trs270_list1to5)
       
     })
     save2RData(trs270_list1to5_inted_aggr)
+  }
+}
+
+#--------------------------------------
+#260点トーラス-----
+trs260_list1to5<-map(1:5, ~{map(1:100, ~{torusUnif(n = 260, 1, 2.5)})})
+save2RData(trs260_list1to5)
+
+{#100セットリスト1~5つ目
+  {#CTIC2019
+    trs260_list1to5_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-smooth_landscape_method(X = trs260_list1to5[[k]], maxdim = 2, maxscale = 3, samples = 10) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(trs260_list1to5_aggr)
+  }
+  
+  {#expを掛ける距離変化
+    trs260_list1to5_wvr_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-calc_distance_change_betti(X = trs260_list1to5[[k]], maxdim = 2, maxscale = 3, samples = 10, ph_func =  weighted_homology, l_rate=0.8, eta=3.0) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(trs260_list1to5_wvr_aggr)
+  }
+  
+  {#補間手法
+    trs260_list1to5_inted<-lapply(trs260_list1to5, function(Z){lapply(Z, function(X)interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .))})
+    save2RData(trs260_list1to5_inted)
+    
+    trs260_list1to5_inted_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-smooth_landscape_method(X = trs260_list1to5_inted[[k]], maxdim = 2, maxscale = 3, samples = 10) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(trs260_list1to5_inted_aggr)
+  }
+}
+
+#--------------------------------------
+#250点トーラス-----
+trs250_list1to5<-map(1:5, ~{map(1:100, ~{torusUnif(n = 250, 1, 2.5)})})
+save2RData(trs250_list1to5)
+
+{#100セットリスト1~5つ目
+  {#CTIC2019
+    trs250_list1to5_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-smooth_landscape_method(X = trs250_list1to5[[k]], maxdim = 2, maxscale = 3, samples = 10) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(trs250_list1to5_aggr)
+  }
+  
+  {#expを掛ける距離変化
+    trs250_list1to5_wvr_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-calc_distance_change_betti(X = trs250_list1to5[[k]], maxdim = 2, maxscale = 3, samples = 10, ph_func =  weighted_homology, l_rate=0.8, eta=3.0) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(trs250_list1to5_wvr_aggr)
+  }
+  
+  {#補間手法
+    trs250_list1to5_inted<-lapply(trs260_list1to5, function(Z){lapply(Z, function(X)interpo3d:::voronoi_interpo(X, 10) %>% rbind(X, .))})
+    save2RData(trs250_list1to5_inted)
+    
+    trs250_list1to5_inted_aggr<-lapply(1:5, function(k){
+      
+      cat("list", k, "calc\n")
+      time<-system.time( aggr<-smooth_landscape_method(X = trs250_list1to5_inted[[k]], maxdim = 2, maxscale = 3, samples = 10) )
+      return(append(aggr, list(time=time)))
+      
+    })
+    save2RData(trs250_list1to5_inted_aggr)
   }
 }

@@ -155,10 +155,18 @@ save_environment_variale2rdata<-function (){
 #-----------------------------------------------------
 #pathで指定したディレクトリ内に、引数で指定した変数のRDataがあれば
 #.GlobalEnvにロードする
+#指定した変数が.GlobalEnvにあればロードしない
+#overwite=TRUEならば.GlobalEnvに変数が既ににあっても上書きする
 
-search_load<-function(var, path="./data"){
+search_load<-function(var, path="./data", overwite = F){
   
   elname <- substitute(var) %>% as.character()
+  
+  if(elname %in% ls(name = ".GlobalEnv")){
+    
+    if(!overwite){stop(paste0("'", elname, "' is already exit in '.GlobalEnv'." ))}
+    
+  }
   
   if(file.exists(paste0(path, "/", elname, ".RData"))){
 
@@ -185,6 +193,18 @@ xBall_unif<-function(n, r = 1){
   z<-(R^(1/3)) * theta
   
   return(cbind(x, y, z))
+  
+}
+
+#--------------------------------------------
+#楕円体表面積近似値算出関数
+#a=x軸方向の径、b=y軸方向の径、c=z軸方向の径
+#p = 1.6075 のとき最大誤差は1.061% の近似式
+ellip_surface<-function(a, b, c, p = 1.6075){
+  
+  s<-4*pi * ( ((a*b)^p + (a*c)^p + (b*c)^p)/3 )^(1/p)
+  
+  return(s)
   
 }
 
