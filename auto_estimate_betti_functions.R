@@ -22,7 +22,7 @@ fri_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=0, 
     if(const.size==0){size<-X[[t]]$nsample*(4/5)}
     else{size<-const.size}
     
-    B <- seephacm:::bootstrapper(X[[t]]$noizyX,size,samples)
+    B <- usephacm:::bootstrapper(X[[t]]$noizyX,size,samples)
     speak <- fri_dist_changed_pl_peak_count(X = B, maxdim = maxdim, maxscale = maxscale, l_rate = l_rate, eta = eta, spar = spar)
     m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]])
     
@@ -49,7 +49,7 @@ fri_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=0, 
 #bootstrap.homology.mk2から変形
 #witness複体のランドマーク点を使用
 #calc.landscape.peak(BootstrapHomology-mk1.R)をパッケージ化して置き換えるべし
-#seephacm:::calc_diag_centroid(diag)からpersistence_weighted_mean(diag)へ変更
+#usephacm:::calc_diag_centroid(diag)からpersistence_weighted_mean(diag)へ変更
 fri_dist_changed_pl_peak_count <-function(X, maxdim, maxscale, const.band=0, maximum.thresh = F, l_rate=0.15, eta=1, spar = seq(0,1,0.1)){
   require(TDA)
   
@@ -58,7 +58,7 @@ fri_dist_changed_pl_peak_count <-function(X, maxdim, maxscale, const.band=0, max
   
   tseq <- seq(0,maxscale,length.out = 1000)
   diags <- lapply(X,function(x)multiresolut_homology(x, maxdim, l_rate, eta)[[1]])
-  bands<-sapply(diags,function(diag)seephacm:::persistence_weighted_mean(diag))
+  bands<-sapply(diags,function(diag)usephacm:::persistence_weighted_mean(diag))
   print(bands)
   band <- ifelse(const.band==0, max(bands),const.band)
   print(band)
@@ -109,7 +109,7 @@ calc_distance_change_betti <- function(X,maxdim,maxscale,samples, const.size=0, 
     cat("data set", t, "calculating\n")
     if(const.size==0){size<-nrow(X[[t]])*0.8}else{size<-const.size}
     
-    B <- seephacm:::bootstrapper(X[[t]],size,samples)
+    B <- usephacm:::bootstrapper(X[[t]],size,samples)
     speak <- distmat_changed_pl_peak_count(X = B, maxdim = maxdim, maxscale = maxscale, spar = spar, ph_func = ph_func, ...)
     m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]])
     
@@ -138,7 +138,7 @@ calc_distance_change_betti <- function(X,maxdim,maxscale,samples, const.size=0, 
 #bootstrap.homology.mk2から変形
 #witness複体のランドマーク点を使用
 #calc.landscape.peak(BootstrapHomology-mk1.R)をパッケージ化して置き換えるべし
-#seephacm:::persistence_weighted_mean(diag)使用
+#usephacm:::persistence_weighted_mean(diag)使用
 #funcで指定して任意のPH計算関数が使えるように。extra_vはfuncで使う変数リスト
 distmat_changed_pl_peak_count <-function(X, maxdim, maxscale, const.band=0, maximum.thresh = F, spar = seq(0,1,0.1), ph_func, ...){
   require(TDA)
@@ -150,7 +150,7 @@ distmat_changed_pl_peak_count <-function(X, maxdim, maxscale, const.band=0, maxi
   
   tseq <- seq(0,maxscale,length.out = 1000)
   diags <- lapply(X,function(x)ph_func(X=x, maxdim=maxdim, maxscale=maxscale, ...)[["pd"]])
-  bands<-sapply(diags,function(diag)seephacm:::persistence_weighted_mean(diag))
+  bands<-sapply(diags,function(diag)usephacm:::persistence_weighted_mean(diag))
   print(bands)
   band <- ifelse(const.band==0, max(bands),const.band)
   print(band)
@@ -200,7 +200,7 @@ calc_distance_change_betti_paral <- function(X,maxdim,maxscale,samples, const.si
     library(phacm)
     library(tidyverse)
     library(myfs)
-    library(seephacm)
+    library(usephacm)
     library(TDAstats)
     library(TDA)
   })
@@ -227,7 +227,7 @@ calc_distance_change_betti_paral <- function(X,maxdim,maxscale,samples, const.si
     if(const.size==0){size<-nrow(Y)*(0.8)}
     else{size<-const.size}
     
-    B<-seephacm:::bootstrapper(Y,size,samples)
+    B<-usephacm:::bootstrapper(Y,size,samples)
     
     return(B)
     
@@ -287,7 +287,7 @@ calc_distance_change_betti_paral <- function(X,maxdim,maxscale,samples, const.si
 #bootstrap.homology.mk2から変形
 #witness複体のランドマーク点を使用
 #calc.landscape.peak(BootstrapHomology-mk1.R)をパッケージ化して置き換えるべし
-#seephacm:::persistence_weighted_mean(diag)使用
+#usephacm:::persistence_weighted_mean(diag)使用
 #funcで指定して任意のPH計算関数が使えるように。extra_vはfuncで使う変数リスト
 #parallel使用
 distmat_changed_pl_peak_count_paral<-function(cl, X, maxdim, maxscale, const.band=0, maximum.thresh = F, spar = seq(0,1,0.1), ph_func, ...){
@@ -298,7 +298,7 @@ distmat_changed_pl_peak_count_paral<-function(cl, X, maxdim, maxscale, const.ban
   
   tseq <- seq(0,maxscale,length.out = 1000)
   diags <- parLapply(cl, X, function(x)ph_func(X=x, maxdim=maxdim, maxscale=maxscale, ...)[["pd"]])
-  bands<-sapply(diags,function(diag)seephacm:::persistence_weighted_mean(diag))
+  bands<-sapply(diags,function(diag)usephacm:::persistence_weighted_mean(diag))
   print(bands)
   band <- ifelse(const.band==0, max(bands),const.band)
   print(band)

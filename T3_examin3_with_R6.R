@@ -35,3 +35,13 @@ colnames(t_mat)<-c(paste0("H", 1:3), "time")
 
 t1<-Sys.time()
 t2<-Sys.time()
+
+#--------------------------
+#Rファイルを読み込めるか試し
+
+rfile<-scan(file = "./pack.R", what = "")
+some(rfile, ~{str_detect(string = ., pattern = "usephacm")}) %>% any()
+
+#seephacmパッケージから関数が用いられているファイルを探す
+seephacm_files<-map(list.files(pattern = ".R"), ~{scan(file = ., what = "")}) %>% 
+  map_lgl(., ~{some(., ~str_detect(string = ., pattern = "seephacm"))}) %>% which() %>% list.files(pattern = ".R")[.]
