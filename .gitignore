@@ -15,6 +15,7 @@ pics/
 /vars2
 
 video_data/
+exam_result/
 
 *.RData
 *.RDataTmp

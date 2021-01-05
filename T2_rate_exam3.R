@@ -27,14 +27,14 @@ old_aggr_intrsct<-dplyr::intersect(old_dense_aggr_idx, old_mean_aggr_idx)
 
 {
   {#CTIC2019 #100セットリスト2~5つ目
-    trs350_list1to5_aggr<-lapply(2:5, function(k){
+    trs350_list2to5_aggr<-lapply(2:5, function(k){
       
       cat("list", k, "calc\n")
       time<-system.time( aggr<-smooth_landscape_method_paral(X = torus350_colle_setB[[k]], maxdim = 2, maxscale = 3, samples = 10) )
       return(append(aggr, list(time=time)))
       
     })
-    save2RData(trs350_list1to5_aggr)
+    save2RData(trs350_list2to5_aggr)
   }
   
   {#補間手法 #100セットリスト1~5つ目
