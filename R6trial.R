@@ -225,7 +225,7 @@ DistmatPD<-
       
       get_thresh = function(dim){#次元ごとの閾値を返す
         
-        return(seephacm:::persistence_weighted_mean(private$pd)*(2*pi)/surface_nshpere(dim))
+        return(usephacm:::persistence_weighted_mean(private$pd)*(2*pi)/usephacm:::surface_nshpere(dim))
         
       },
       

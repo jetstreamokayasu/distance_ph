@@ -70,9 +70,9 @@ ellip_inted_plt_all<-ellip_inted_plt_sd + geom_point(data = ellip_inted_rates_tb
 #expを掛ける距離変化手法
 ellip150_wvr_rate<-aggr_success_rates(c(list(ellip150_wvr_aggr1), ellip150_list2to5_wvr_aggr), c(0, 1)) %>% do.call(rbind, .)
 ellip160_wvr_rate<-aggr_success_rates(ellip160_list1to5_wvr_aggr, c(0, 1)) %>% do.call(rbind, .)
-ellip170_wvr_rate<-aggr_success_rates(ellip160_list1to5_wvr_aggr, c(0, 1)) %>% do.call(rbind, .)
-ellip180_wvr_rate<-aggr_success_rates(ellip170_list1to5_wvr_aggr, c(0, 1)) %>% do.call(rbind, .)
-ellip190_wvr_rate<-aggr_success_rates(ellip180_list1to5_wvr_aggr, c(0, 1)) %>% do.call(rbind, .)
+ellip170_wvr_rate<-aggr_success_rates(ellip170_list1to5_wvr_aggr, c(0, 1)) %>% do.call(rbind, .)
+ellip180_wvr_rate<-aggr_success_rates(ellip180_list1to5_wvr_aggr, c(0, 1)) %>% do.call(rbind, .)
+ellip190_wvr_rate<-aggr_success_rates(ellip190_list1to5_wvr_aggr, c(0, 1)) %>% do.call(rbind, .)
 ellip200_wvr_rate<-aggr_success_rates(ellip200_list1to5_wvr_aggr, c(0, 1)) %>% do.call(rbind, .)
 
 ellip_wvr_rates_tbl<-tibble("150"=ellip150_wvr_rate,
@@ -100,7 +100,7 @@ ellip_wvr_plt_all<-ellip_wvr_plt_sd + geom_point(data = ellip_wvr_rates_tbl, aes
 e_surf<-ellip_surface(5, 1, 1)
 
 {
-  ellip_whole_plt<-ellip_wvr_plt_all + labs(x = "Data density", y = "Success rate") + theme(axis.text = element_text(size=20), axis.title = element_text(size=25), legend.text = element_text(size=20), legend.title = element_text(size=25)) +
+  ellip_whole_plt<-ellip_wvr_plt_all + labs(x = "Data density", y = "Success rate") + theme(axis.text = element_text(size=25), axis.title = element_text(size=30), legend.text = element_text(size=25), legend.title = element_text(size=30)) +
   scale_x_continuous(breaks = seq(150, 200, by=10), labels =  round(seq(150, 200, by=10)/e_surf, digits = 3))
 }
 

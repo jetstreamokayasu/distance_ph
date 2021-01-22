@@ -182,14 +182,14 @@ torus310_colle_setB<-lapply(torus310_colle_set, function(X)lapply(X, function(Y)
 
 {#100セットリスト1~5つ目
   {#CTIC2019 #100セットリスト2~5つ目
-    trs300_list1to5_aggr<-lapply(2:5, function(k){
+    trs300_list2to5_aggr<-lapply(2:5, function(k){
       
       cat("list", k, "calc\n")
       time<-system.time( aggr<-smooth_landscape_method_paral(X = torus300_colle_setB[[k]], maxdim = 2, maxscale = 3, samples = 10) )
       return(append(aggr, list(time=time)))
       
     })
-    save2RData(trs300_list1to5_aggr)
+    save2RData(trs300_list2to5_aggr)
   }
   
   {#補間手法 #100セットリスト2~5つ目

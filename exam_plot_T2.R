@@ -79,6 +79,11 @@ t2_300lv_ctic_plt_sd<-t2_300lv_ctic_plt_ave + geom_ribbon(aes(ymin = dim2rate_me
 
 ggsave("./pics/conventional_T2H2_plot3.pdf", plot = t2_300lv_ctic_plt_whole)
 
+#スライド用の白抜き背景
+t2_300lv_ctic_plt_whole2<-t2_300lv_ctic_plt_whole + theme_light() + theme(axis.text = element_text(size=30), axis.title = element_text(size=35), legend.text = element_text(size=30), legend.title = element_text(size=35))
+
+#t2_300lv_ctic_plt_whole2<-t2_300lv_ctic_plt_all +labs(x = "The number of points", y = "Success rate") + theme(axis.text = element_text(size=25), axis.title = element_text(size=30), legend.text = element_text(size=25), legend.title = element_text(size=30))
+
 #補間手法
 trs300_inted_rate<-aggr_success_rates(trs300_list1to5_inted_aggr, c(2, 1)) %>% do.call(rbind, .)
 trs310_inted_rate<-aggr_success_rates(trs310_list1to5_inted_aggr, c(2, 1)) %>% do.call(rbind, .)
@@ -107,6 +112,7 @@ t2_300lv_inted_smz<-t2_300lv_inted_rate %>% group_by(n_points) %>%
 
 #ggplotによる補間手法のプロット
 t2_300lv_inted_plt_ave<-t2_300lv_ctic_plt_whole + geom_line(data = t2_300lv_inted_smz, aes(x = n_points, y = dim2rate_mean), color = "royalblue1")
+#t2_300lv_inted_plt_ave<-t2_300lv_ctic_plt_whole2 + geom_line(data = t2_300lv_inted_smz, aes(x = n_points, y = dim2rate_mean), color = "royalblue1")
 t2_300lv_inted_plt_sd<-t2_300lv_inted_plt_ave + geom_ribbon(data = t2_300lv_inted_smz, aes(ymin = dim2rate_mean - dim2rate_sd, ymax = dim2rate_mean + dim2rate_sd), fill = "royalblue1", alpha = 0.1)
 t2_300lv_inted_plt_all<-t2_300lv_inted_plt_sd + geom_point(data = t2_300lv_inted_rate, aes(x = n_points, y = dim2rate, color = "proposed1"), size = 2)
 
@@ -116,3 +122,4 @@ t2_300lv_wvr_plt_sd<-t2_300lv_wvr_plt_ave + geom_ribbon(data = wvr_rates_smz, ae
 t2_300lv_wvr_plt_all<-t2_300lv_wvr_plt_sd + geom_point(data = wvr_rates_tbl, aes(x = n_points, y = dim2rate, colour = "proposed2"), size = 2)
 
 ggsave("./pics/success_T2H2_plot3.pdf", plot = t2_300lv_wvr_plt_all)
+

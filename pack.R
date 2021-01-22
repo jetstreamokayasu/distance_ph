@@ -22,6 +22,7 @@ library(TDAstats)
 library(abind)
 library(parallel)
 # library(ider)
+library(RColorBrewer)
 
 #source('~/R/interpolation_test/interpo_func.R', encoding = 'UTF-8')
 # source('~/R/interpolation_test/interpo_func_2.R', encoding = 'UTF-8')
