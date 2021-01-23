@@ -123,3 +123,10 @@ t2_300lv_wvr_plt_all<-t2_300lv_wvr_plt_sd + geom_point(data = wvr_rates_tbl, aes
 
 ggsave("./pics/success_T2H2_plot3.pdf", plot = t2_300lv_wvr_plt_all)
 
+
+#sucs_ggplt<-
+
+plot_success_rates_test(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate), 
+                               sumry = lst(t2_300lv_ctic_smz, t2_300lv_inted_smz))
+
+plot_success_rates_test(data = lst(t2_300lv_ctic_rate), sumry = lst(t2_300lv_ctic_smz))

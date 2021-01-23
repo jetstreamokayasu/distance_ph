@@ -15,6 +15,8 @@ trs300_1_10$subsamples[[2]]$change_dist(l_rate = 0.8, eta = 3.0)
 trs300_1_10$subsamples[[2]]$data %>% dist() %>% hist(breaks = seq(0, 7, by=0.1))
 trs300_1_10$subsamples[[2]]$distmat %>% as.dist() %>% hist(breaks = seq(0, 7, by=0.1))
 
+trs300_1_10_pd<-ripsDiag(X = trs300_1_10$data, maxdimension = 2, maxscale = 3, printProgress = T)
+
 #-----------------------------------
 #3次元トーラスt3orus4_list3_81。l_rate=0.5, eta=4.0 or eta=6.5------------
 

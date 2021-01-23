@@ -191,7 +191,7 @@ DistmatPD<-
       
       plot_diag = function(){#TDAのdiagramを描画
         
-        pd_conv_stats2tda(pd=private$pd) %>% plot()
+        as_diag(pd=private$pd) %>% plot()
         legend("bottomright", legend = c("dim0", "dim1", "dim2", "dim3")[1:(max(private$pd[,1])+1)], 
                col=c(1, 2, 4, 3)[1:(max(private$pd[,1])+1)], pch=c(16, 2, 23, 3)[1:(max(private$pd[,1])+1)], cex=1.5)
         

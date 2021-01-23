@@ -368,11 +368,12 @@ maxmin_dist_changed_pd<-function(X, maxdim, maxscale, l_rate=0.15, n_vic=10){
 
 #-----------------------------------------------
 #TDAstasのPDからTDAのPD(diagramクラス)へ変換
-pd_conv_stats2tda<-function(pd){
+as_diag<-function(pd){
   
   class(pd)<-"diagram"
   attr(pd, "maxdimension")<-max(pd[,1])
   attr(pd, "scale")<-c(0, max(pd[,3]))
+  colnames(pd)<-c("dimension", "Birth", "Death")
   
   return(pd)
   
