@@ -124,9 +124,33 @@ t2_300lv_wvr_plt_all<-t2_300lv_wvr_plt_sd + geom_point(data = wvr_rates_tbl, aes
 ggsave("./pics/success_T2H2_plot3.pdf", plot = t2_300lv_wvr_plt_all)
 
 
+#ggplotによる成功率一括描画関数の試し
+
 #sucs_ggplt<-
 
-plot_success_rates_test(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate), 
-                               sumry = lst(t2_300lv_ctic_smz, t2_300lv_inted_smz))
+plot_success_rates(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate), 
+                               sumry = lst(t2_300lv_ctic_smz, t2_300lv_inted_smz), white = T, aes_y = "dim1rate")
 
-plot_success_rates_test(data = lst(t2_300lv_ctic_rate), sumry = lst(t2_300lv_ctic_smz))
+plot_success_rates(data = lst(t2_300lv_ctic_rate), sumry = lst(t2_300lv_ctic_smz))
+sucs_plt2<-plot_success_rates(data = lst(t2_300lv_ctic_rate), plot_sd = F)
+sucs_plt<-plot_success_rates(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate))
+
+plot_success_rates(data = lst(t3_H3rate, t3_wvr_H3rateA, t3_wvr_H3rateB), aes_y = "dim3rate", plot_sd = F, 
+                   legend_labels = c("conventional", expression(paste(eta==6.5, ~~epsilon==0.5)), expression(paste(eta==4.0, ~~epsilon==0.5))), 
+                   col_vals = c("black","darkorange1", "maroon1"), 
+                   scale_label = sapply(seq(450, 500, by=10), function(i){bquote(.(i)/(512*pi^3))}))
+
+#plot_success_rates(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate), xlab = "The number of points", scale_label = unique(t2_300lv_ctic_rate$n_points))
+
+smry<-lapply(lst(t3_H3rate, t3_wvr_H3rateA), function(d){
+  
+  smz<-d %>% group_by(n_points) %>% 
+    dplyr::summarise_each(lst(mean, sd), starts_with("dim"))
+  
+  return(smz)
+  
+})
+
+map_at(colnames(t2_300lv_ctic_smz), which(!str_detect(colnames(t2_300lv_ctic_smz), "dim2rate")), ~{paste0("dim2rate_", .)})
+
+
