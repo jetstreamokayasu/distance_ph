@@ -156,7 +156,13 @@ trs300_1_18_inst_hist_H2<-
 
 plot_per_barc(pd = trs300_1_18_inst$get_pd(), dim = 2)
 
+#plot_per_barcで、パーシステンスの次元が3を超えても動作するか確認
 tst_pd<-trs300_1_18_inst$get_pd()[, 1] %>% equals(2) %>% trs300_1_18_inst$get_pd()[., ]
 tst_pd[, 1]<-6
+plot_per_barc(tst_pd)
 
-plot_per_barc(pd = tst_pd)
+tst_pd2<-trs300_1_18_inst$get_pd()[, 1] %>% equals(1) %>% trs300_1_18_inst$get_pd()[., ]
+
+plot_per_barc(pd = rbind(tst_pd2, tst_pd))
+
+

@@ -45,3 +45,6 @@ some(rfile, ~{str_detect(string = ., pattern = "usephacm")}) %>% any()
 #seephacmパッケージから関数が用いられているファイルを探す
 seephacm_files<-map(list.files(pattern = ".R"), ~{read_file(file = .)}) %>% 
   map_lgl(., ~str_detect(string = ., pattern = "usephacm")) %>% which() %>% list.files(pattern = ".R")[.]
+
+missing_writed_files<-map(list.files(pattern = ".R"), ~{read_file(file = .)}) %>% 
+  map_lgl(., ~str_detect(string = ., pattern = "missing")) %>% which() %>% list.files(pattern = ".R")[.]

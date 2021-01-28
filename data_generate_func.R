@@ -211,7 +211,7 @@ ellip_surface<-function(a, b, c, p = 1.6075){
 #-------------------------------------------
 #呼び出し元の関数で、引数に値が渡されていない(missingの)場合に予め定めた値を一括して代入する関数----
 #...にmissingの場合に予め定めた値を代入したい変数と、代入したい値をセットで入れる
-#例えば、fill_missing(x = 1, y = 2)とすると、fill_missingを呼び出した関数内でx,yがmissingのとき、
+#例えば、fill_ifmissing(x = 1, y = 2)とすると、fill_missingを呼び出した関数内でx,yがmissingのとき、
 #xに1が、yに2が代入される
 
 fill_ifmissing<-function(...){
@@ -222,10 +222,18 @@ fill_ifmissing<-function(...){
   elp<-list(...)
   
   elp_names<-names(elp)
+  arg_names<-names(formals(fun = sys.function(-1)))
   
   for (elp_n in elp_names) {
     
-    if(is.null(args_list[[elp_n]])){assign(elp_n, elp[[elp_n]], envir = sys.frame(-1))}
+    #もし引数以外の値が指定されていたらエラーを出して止まる
+    if(!(elp_n %in% arg_names)){stop(paste0(elp_n, " isn't the argument of ", args_list[[1]], "."))}
+    
+    if(is.null(args_list[[elp_n]])){
+      
+        assign(elp_n, elp[[elp_n]], envir = sys.frame(-1))
+      
+      }
     
   }
   

@@ -735,6 +735,7 @@ plot_per_barc<-function(pd, dim, xlim, ylim, col, lwd = 2, ...){
   if( !("dimension" %in% colnames(pd)) ){stop("pd mayn't be persistence diagram.")}
   
   if(missing(dim)){dim<-unique(pd[, 1])}
+  if(!(dim %in% pd[, 1])){stop("dim isn't correct dimension in persistence diagram.")}
   
   pd_Hd<-pd[pd[, 1] == dim, ]
   
@@ -744,7 +745,7 @@ plot_per_barc<-function(pd, dim, xlim, ylim, col, lwd = 2, ...){
   # if(missing(ylim)){ylim <- c(0, nrow(pd_Hd)+1)}
   
   fill_ifmissing(xlim = c(min(pd_Hd[, 2]), max(pd_Hd[, 3])), ylim = c(0, nrow(pd_Hd)+1), 
-                 col = c(1, 2, 4, 3, 5:(5+max(0, dim-3)) )[1:(dim+1)] )
+                 col = c(1, 2, 4, 3, 5:(5+max(0, max(dim)-3)) )[1:(max(dim)+1)] )
   
   plot(x = pd_Hd[, 2:3], xlim = xlim, ylim = ylim, type = "n", xlab = "", ylab = "", 
        xaxt = "n", yaxt = "n")
