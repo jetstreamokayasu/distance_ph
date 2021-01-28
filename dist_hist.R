@@ -42,12 +42,12 @@ t3orus4_list3_81_sub1_pdH3<-t3orus4_list3_81_sub1$get_pd()[t3orus4_list3_81_sub1
 cell<-seq(0, 28, by=0.5)
 
 #生成時刻の距離が含まれているセル
-birth_cell<-map_lgl(seq_along(cell), ~{(t3orus4_list3_81_sub1_pdH3[2] > cell[.]) & (t3orus4_list3_81_sub1_pdH3[2] <= cell[. + 1])}) %>% which()
+birth_cell<-map_lgl(seq_along(cell[-1]), ~{(t3orus4_list3_81_sub1_pdH3[2] > cell[.]) & (t3orus4_list3_81_sub1_pdH3[2] <= cell[. + 1])}) %>% which()
 
 #消滅時刻の距離が含まれているセル
-death_cell<-map_lgl(seq_along(cell), ~{(t3orus4_list3_81_sub1_pdH3[3] > cell[.]) & (t3orus4_list3_81_sub1_pdH3[3] <= cell[. + 1])}) %>% which()
+death_cell<-map_lgl(seq_along(cell[-1]), ~{(t3orus4_list3_81_sub1_pdH3[3] > cell[.]) & (t3orus4_list3_81_sub1_pdH3[3] <= cell[. + 1])}) %>% which()
 
-cell_col<-rep(NA, length = length(t3orus4_list3_81_ori_hist$counts))
+cell_col<-rep(NA, length = length(cell)-1)
 cell_col[birth_cell]<-"#e4007f4d"
 cell_col[death_cell]<-"#00a0e94d"
 
@@ -182,4 +182,19 @@ t3orus4_list3_81_inst$subsamples[[3]]$distmat %>% as.dist() %>% hist(breaks = se
 #t3orus4_list3_81_inst$subsamples[[4]]$change_dist(l_rate = 0.5, eta = 4.0)
 t3orus4_list3_81_inst$subsamples[[4]]$data %>% dist() %>% hist(breaks = seq(0, 28, by=0.5))
 t3orus4_list3_81_inst$subsamples[[4]]$distmat %>% as.dist() %>% hist(breaks = seq(0, 28, by=0.5))
+
+#----------------------------------
+#色を塗ったヒストグラムを描画する関数を試す
+t3orus4_list3_81_sub1_hist<-
+colored_birth_death_cell_hist(data = t3orus4_list3_81_sub1$data, pd = t3orus4_list3_81_sub1$get_pd(), 
+                              dim = 3, breaks = seq(0, 28, by=0.5), m_title = "3-d torus original", eta_line = T, eta = 6.5, pd_line = T, 
+                              inflec_line = T, tile_line = T)
+
+which(t3orus4_list3_81_sub1$get_pd()[, 1] ==3) %>% t3orus4_list3_81_sub1$get_pd()[., ] %>% as.matrix() %>% t()
+
+t3orus4_list3_81_sub1_altdist_hist2<-
+  colored_birth_death_cell_hist(data = t3orus4_list3_81_inst$subsamples[[1]]$distmat, pd = t3orus4_list3_81_inst$subsamples[[1]]$get_pd(), 
+                                dim = 3, breaks = seq(0, 28, by=0.5), distmat = T, 
+                                m_title = expression(paste("3d-torus", ~~epsilon==0.5, ~~eta==6.5)), eta = 6.5, pd_line = T, 
+                                inflec_line = T, tile_line = T)
 

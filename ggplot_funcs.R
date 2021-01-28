@@ -1,8 +1,15 @@
 ##ggplotによる実験結果描画をまとめた関数-----
-#white=白抜きするか否か
+#data=点をプロットするデータ、sumry=dataの平均・標準偏差を入れたDF、aes_x=横軸にする値、aes_y=縦軸にする値
+#ylim=縦軸の描画範囲、col_vals=色として用いる値、fill_alpha=標準偏差の領域を塗る色の透明度、
+#point_size=点の大きさ、line_size=平均値を結ぶ線の太さ、xlab=横軸ラベルタイトル、ylab=縦軸ラベルタイトル、
+#axis_text_size=軸目盛の文字サイズ、axis_title_size=軸ラベルの文字サイズ、
+#legend_name=凡例のタイトル、legend_labs=凡例のラベル、legend_text_size=凡例のラベルの文字サイズ、
+#legend_title_size=凡例タイトルの文字サイズ、scale_label=横軸目盛りのラベル、
+#white=白抜きするか否か、plot_ave=平均値を結ぶ直線を描くか否か、plot_sd=標準偏差の領域を描くか否か、
+#show_plot=関数実行時にグラフ全体を描画するか否か
 
 plot_success_rates<-
-  function(data, sumry, ylim = c(0, 1), aes_x = "n_points", aes_y,
+  function(data, sumry, aes_x = "n_points", aes_y, ylim = c(0, 1), 
           col_vals = c("black", "royalblue1", "red"), fill_alpha = 0.1, point_size = 3, line_size = 1,
           xlab = "Data density", ylab = "Success rate", axis_text_size = 20, axis_title_size = 25, 
           legend_name = "method", legend_labels = c("conventional", "proposed 1", "proposed 2"), 
@@ -19,7 +26,7 @@ plot_success_rates<-
       sumry<-lapply(data, function(d){
         
         smz<-d %>% group_by(n_points) %>% 
-          dplyr::summarise_each(lst(mean, sd), starts_with("dim"))
+          dplyr::summarise_each(lst(mean, sd), starts_with(aes_y))
         
         return(smz)
         
@@ -67,7 +74,7 @@ plot_success_rates<-
     }
 
     
-    if(plot_sd){
+    if(plot_sd && !( some(sumry, ~{some(.x, ~{NaN %in% .})}) )){
       
       gplt_sd_lst<-lapply(seq_along(sumry), function(i){
         
@@ -102,5 +109,5 @@ plot_success_rates<-
     
     return(gplt_whole)
   
-  }
+}
   
