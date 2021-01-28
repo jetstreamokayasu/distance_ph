@@ -156,49 +156,7 @@ trs300_1_18_inst_hist_H2<-
 
 plot_per_barc(pd = trs300_1_18_inst$get_pd(), dim = 2)
 
-tst_fc<-function(x, z, a){
-  
-  # print(sys.parent())
-  # print(sys.call())
-  
-  print(environment())
-  
-  fill_missing(x = 1, z = 2, a = 4)
-  
-  cat("x =", x, "\n")
-  print(a)
-  
-  return(x+z)
-  
-}
+tst_pd<-trs300_1_18_inst$get_pd()[, 1] %>% equals(2) %>% trs300_1_18_inst$get_pd()[., ]
+tst_pd[, 1]<-6
 
-fill_missing<-function(...){
-  
-  args_list = as.list(match.call(definition = sys.function(-1), call = sys.call(-1)))
-  
-  print(environment())
-  
-  print("sys.frame = ", quote = F)
-  print(sys.frame(-1))
-  
-  print("args_list = ", quote = F)
-  print(args_list)
-  
-  # cat("fill=", sys.parent(2), "\n")
-  # print(sys.function(-1))
-  # print(sys.nframe())
-  
-  #代入されていない引数に初期値を与える
-  elp<-list(...)
-  
-  elp_names<-names(elp)
-  
-  for (elp_n in elp_names) {
-    
-    debugText(elp_n)
-    
-    if(is.null(args_list[[elp_n]])){assign(elp_n, elp[[elp_n]], envir = sys.frame(-1))}
-  
-    }
-  
-}
+plot_per_barc(pd = tst_pd)

@@ -730,7 +730,7 @@ colored_birth_death_cell_hist<-
 #パーシステントバーコードを描く関数------
 #graphicを使い、後からいろいろ操作できるようにする
 
-plot_per_barc<-function(pd, dim, xlim, ylim, col = c(1, 2, 4, 3), lwd = 2, ...){
+plot_per_barc<-function(pd, dim, xlim, ylim, col, lwd = 2, ...){
   
   if( !("dimension" %in% colnames(pd)) ){stop("pd mayn't be persistence diagram.")}
   
@@ -740,8 +740,11 @@ plot_per_barc<-function(pd, dim, xlim, ylim, col = c(1, 2, 4, 3), lwd = 2, ...){
   
   if( !(is.matrix(pd_Hd)) ){pd_Hd<-as.matrix(pd_Hd) %>% t()}
   
-  if(missing(xlim)){xlim <- c(min(pd_Hd[, 2]), max(pd_Hd[, 3]))}
-  if(missing(ylim)){ylim <- c(0, nrow(pd_Hd)+1)}
+  # if(missing(xlim)){xlim <- c(min(pd_Hd[, 2]), max(pd_Hd[, 3]))}
+  # if(missing(ylim)){ylim <- c(0, nrow(pd_Hd)+1)}
+  
+  fill_ifmissing(xlim = c(min(pd_Hd[, 2]), max(pd_Hd[, 3])), ylim = c(0, nrow(pd_Hd)+1), 
+                 col = c(1, 2, 4, 3, 5:(5+max(0, dim-3)) )[1:(dim+1)] )
   
   plot(x = pd_Hd[, 2:3], xlim = xlim, ylim = ylim, type = "n", xlab = "", ylab = "", 
        xaxt = "n", yaxt = "n")
