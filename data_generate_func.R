@@ -148,7 +148,15 @@ save_environment_variale2rdata<-function (){
     }
   }
   
-  vars<-sapply(ls(pos = .GlobalEnv), function(var)save(list = var, file = paste0("./vars/", var, ".RData")))
+  vars<-sapply(ls(pos = .GlobalEnv), function(var){
+    
+      if( class(get(var, envir = .GlobalEnv)) != "function" ){
+        
+        save(list = var, file = paste0("./vars/", var, ".RData"))
+        
+      }
+    
+    })
   
 }
 

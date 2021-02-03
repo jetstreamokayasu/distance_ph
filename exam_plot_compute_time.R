@@ -96,3 +96,17 @@ t2_wvr_time_plt_all<-t2_wvr_time_plt_sd + geom_point(data = t2_wvr_time, aes(x =
           legend.text = element_text(size=25), legend.title = element_text(size=30)) + guides(color = guide_legend(override.aes = list(size = 5))) +
     scale_x_continuous(breaks = seq(300, 350, by=10), labels = c(expression(30/pi^2), expression(31/pi^2), expression(32/pi^2), expression(33/pi^2), expression(34/pi^2), expression(35/pi^2)) )
 }
+
+#ggplotによる300~350点2次元トーラスの計算時間グラフ
+#軸ラベルや凡例の調整
+#スライド用白抜きグラフ
+{t2_time_plt_whole2<-t2_wvr_time_plt_all +labs(x = "The number of points", y = "Computational time [sec]") + theme_bw() +
+    theme(axis.text = element_text(size=25), axis.title = element_text(size=30), 
+          legend.text = element_text(size=25), legend.title = element_text(size=30), panel.border = element_rect(size=2)) + guides(color = guide_legend(override.aes = list(size = 5))) #+
+    #scale_x_continuous(breaks = seq(300, 350, by=10), labels = c(expression(30/pi^2), expression(31/pi^2), expression(32/pi^2), expression(33/pi^2), expression(34/pi^2), expression(35/pi^2)) )
+}
+
+ggsave("./pics/compute_time.pdf", plot = t2_time_plt_whole2, height = 8.5, width = 14, units = "in")
+
+# plot_success_rates(data = lst(t2_ctic_time, t2_inted_time, t2_wvr_time), aes_y = "time", ylim = c(0, NA),
+#                    fill_alpha = 0.1, scale_label = seq(300, 350, by = 10), xlab = "The number of points", ylab = "Computation time", white = T)
