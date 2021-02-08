@@ -61,6 +61,9 @@ trs300_1_10_hist<-
 
 trs300_1_10_pdH2<-trs300_1_10$get_pd()[, 1] %>% equals(2) %>% which() %>% trs300_1_10$get_pd()[., ]
 
+plot_per_barc(trs300_1_10$get_pd(), xlim = c(0, 3.5))
+abline(v = 3.0, col = "orange")
+
 #セルの着色がおかしいので確認
 cell_t2<-seq(0, 7, by=0.1)
 
@@ -127,7 +130,10 @@ t3orus4_list3_47_hist_H3<-
                                 m_title = "original 3d-torus", eta = 6.5, barcode = T)
 
 plot_per_barc(pd = t3orus4_list3_47_inst$get_pd(), dim = 3)
-abline(v = 6.5)
+plot_per_barc(pd = t3orus4_list3_47_inst$get_pd())
+abline(v = 6.5, col = "orange")
+plot_per_barc(pd = t3orus4_list3_47_inst$get_pd(), dim = 2)
+abline(v = 4.0, col = "blueviolet")
 
 t3orus4_list3_47_hist_H2<-
   colored_birth_death_cell_hist(data = t3orus4_list3_47_inst, dim = 2, breaks = seq(0, 28, by=0.5), 
@@ -155,6 +161,9 @@ trs300_1_18_inst_hist_H2<-
                                 m_title = "original 3d-torus", eta = 3.0, barcode = T)
 
 plot_per_barc(pd = trs300_1_18_inst$get_pd(), dim = 2)
+
+plot_per_barc(pd = trs300_1_18_inst$get_pd(), xlim = c(0, 3.5))
+abline(v= 3.0, col ="orange")
 
 #--------------------------------------
 #plot_per_barcで、パーシステンスの次元が3を超えても動作するか確認-----

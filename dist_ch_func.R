@@ -735,7 +735,7 @@ plot_per_barc<-function(pd, dim, xlim, ylim, col, lwd = 2, ...){
   if( !("dimension" %in% colnames(pd)) ){stop("pd mayn't be persistence diagram.")}
   
   if(missing(dim)){dim<-unique(pd[, 1])}
-  if(!(dim %in% pd[, 1])){stop("dim isn't correct dimension in persistence diagram.")}
+  if(!all(dim %in% pd[, 1])){stop("dim isn't correct dimension in persistence diagram.")}
   
   pd_Hd<-pd[pd[, 1] == dim, ]
   

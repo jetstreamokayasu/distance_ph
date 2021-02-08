@@ -35,9 +35,23 @@ save2RData(trs300_col_setB_inted_nei1)
 
 {trs300_col_setB_inted_nei1_time<-system.time(
   trs300_col_setB_inted_nei1_aggr<-
-    smooth_landscape_method_paral(X = trs300_col_setB_inted_allvertx[[1]][1:50], maxdim = 2, maxscale = 3, samples = 10)
+    smooth_landscape_method_paral(X = trs300_col_setB_inted_nei1[1:50], maxdim = 2, maxscale = 3, samples = 10)
 )
   
   save2RData(trs300_col_setB_inted_nei1_time)
   save2RData(trs300_col_setB_inted_nei1_aggr)
+}
+
+#--------------------------
+#隣接する2つのボロノイ領域に対しても、頂点への補間を行う場合------------
+trs300_col_setB_inted_nei2<-lapply(torus300_colle_setB[[1]], function(X){neighbor_voronoi_interpol(figure = X, nvics = 10, neighbor = 2) %>% rbind(X, .)})
+save2RData(trs300_col_setB_inted_nei2)
+
+{trs300_col_setB_inted_nei2_time<-system.time(
+  trs300_col_setB_inted_nei2_aggr<-
+    smooth_landscape_method_paral(X = trs300_col_setB_inted_nei2[1:50], maxdim = 2, maxscale = 3, samples = 10)
+)
+  
+  save2RData(trs300_col_setB_inted_nei2_time)
+  save2RData(trs300_col_setB_inted_nei2_aggr)
 }
