@@ -121,7 +121,7 @@ par(new = T)
 plot_per_barc(pd = t3orus4_list3_81_inst$get_pd(), dim = 2, xlim = c(0, 28), col = "red")
 
 #-------------------------------
-#t3orus4_list3_47
+#t3orus4_list3_47----
 t3orus4_list3_47_inst<-TDAdataset$new(t3orus4_list3[[47]][["noizyX"]])
 t3orus4_list3_47_inst$calc_pd(maxdim = 3, maxscale = 9)
 
@@ -175,4 +175,18 @@ tst_pd2<-trs300_1_18_inst$get_pd()[, 1] %>% equals(1) %>% trs300_1_18_inst$get_p
 
 plot_per_barc(pd = rbind(tst_pd2, tst_pd))
 
+#---------------------------------------------------
+#発生時刻と消滅時刻の中点の中央値を距離減衰度etaとする距離操作-------
+#eta以上の距離に対しては変化を施さない
+#trs300_1_10で試す
 
+trs300_1_10_pdH2<-trs300_1_10$get_pd()[trs300_1_10$get_pd()[,1]==2, ]
+trs300_1_10_pdH2_mid<-apply(trs300_1_10_pdH2, 1, function(x){(x[2]+x[3])/2})
+
+trs300_1_10_pdH2_mid_median<-median(trs300_1_10_pdH2_mid)
+trs300_1_10_altdist<-trs300_1_10$distmat
+
+trs300_1_10_altdist[trs300_1_10_altdist <= trs300_1_10_pdH2_mid_median]<-
+  trs300_1_10_altdist[trs300_1_10_altdist <= trs300_1_10_pdH2_mid_median]*( 1-exp(-(trs300_1_10_altdist[trs300_1_10_altdist <= trs300_1_10_pdH2_mid_median]/trs300_1_10_pdH2_mid_median)^2) )
+
+trs300_1_10_altdist_inst<-DistmatPD$new(trs300_1_10_altdist)

@@ -499,8 +499,10 @@ weighted_homology<-function(X, maxdim, maxscale, l_rate, eta, ...){
 
 #----------------------------------
 #パーシステンス計算関数----
-#seephacmの修正版
+#usephacmの修正版
 calc_per<-function (pd, dim){
+  
+  assertthat::assert_that((length(dim) == 1) && is_numeric(dim))
   
   pers <- pd[pd[, 1] == dim, 3] - pd[pd[, 1] == dim, 2]
   
@@ -737,7 +739,7 @@ plot_per_barc<-function(pd, dim, xlim, ylim, col, lwd = 2, ...){
   if(missing(dim)){dim<-unique(pd[, 1])}
   if(!all(dim %in% pd[, 1])){stop("dim isn't correct dimension in persistence diagram.")}
   
-  pd_Hd<-pd[pd[, 1] == dim, ]
+  pd_Hd<-pd[(pd[, 1] %in% dim), ]
   
   if( !(is.matrix(pd_Hd)) ){pd_Hd<-as.matrix(pd_Hd) %>% t()}
   

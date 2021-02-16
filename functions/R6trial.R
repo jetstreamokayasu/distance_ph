@@ -16,8 +16,10 @@ TDAdataset<-
             subsamples = list(), #サブサンプルのリスト。TDAdatasetクラス
             mat_pds = list(), #alt_distmatの距離行列群から求められたPDのリスト
             mat_pls = list(), #alt_distmatの距離行列群から求められたPLのリスト
+            mat_peaks = NA, #alt_distmatの距離行列群から求められたpekaの行列
             sub_pds = list(), #subsampesのサブサンプル群から求められたPDのリスト
             sub_pls = list(), #subsampesのサブサンプル群から求められたPLのリスト
+            sub_peaks = NA, #subsampesの距離行列群から求められたpekaの行列
             
             initialize = function(data){#点群データを代入して初期化
               self$data <- data       
@@ -39,7 +41,7 @@ TDAdataset<-
             #sub_size=サブサンプルの点数、n_subs=サブサンプルの個数
             create_subsample = function(sub_size, n_subs){
               
-              self$subsamples <- seephacm:::bootstrapper(X = self$data, size = sub_size, samples = n_subs) %>% 
+              self$subsamples <- usephacm:::bootstrapper(X = self$data, size = sub_size, samples = n_subs) %>% 
                 lapply(., function(x)TDAdataset$new(data = x)) %>% append(self$subsamples, .)
               
             },
@@ -91,6 +93,14 @@ TDAdataset<-
               
             },
             
+            #alt_distmatの距離行列群から求められたpeakをリストにまとめる
+            bind_mat_peaks = function(){
+              
+              self$mat_peaks<-lapply(self$alt_distmat, function(X){X$peaks}) %>% do.call(rbind, .) %>% 
+                set_rownames(paste0("alt_mat", seq_along(self$alt_distmat)))
+              
+            },
+            
             #subsamplesのサブサンプル群から求められたPDをリストにまとめる
             bind_sub_pds = function(){
               
@@ -118,6 +128,14 @@ TDAdataset<-
                 return(X$get_pl())
                 
               })
+              
+            },
+            
+            #subsamplesのサブサンプル群から求められたpeakをリストにまとめる
+            bind_sub_peaks = function(){
+              
+              self$sub_peaks<-lapply(self$subsamples, function(X){X$peaks}) %>% do.call(rbind, .) %>% 
+                set_rownames(paste0("sub", seq_along(self$subsamples)))
               
             },
             
@@ -183,7 +201,7 @@ DistmatPD<-
       
       plot_pd = function(){
         
-        if(length(private$pd)==1){stop("pd didn't calcutated.")}
+        if(length(private$pd) == 1){stop("pd didn't calcutated.")}
         
         plot_persist(private$pd)
         
@@ -197,12 +215,50 @@ DistmatPD<-
         
       },
       
-      get_pd = function(){return(private$pd)},#PDを呼び出し
+      #TDAstatの、TDAの、もしくは自作の後からgraphicで編集可能なパーシステントバーコードを描画
+      #gplt=TDAstatの(ggplotで描かれた)バーコードを描画するか否か
+      #edit=自作の編集可能なバーコードを描画するか否か
+      plot_bar = function(dim, xlim, ylim, col, lwd = 2, ggplot = T, edit = F, ...){
+        
+        if(length(private$pd) == 1){stop("pd didn't calcutated.")}
+        
+        if(edit){
+          
+          if(missing(dim)){dim<-0:self$maxdim}
+          
+          fill_ifmissing(xlim = c(min(private$pd[, 2]), max(private$pd[, 3])), ylim = c(0, nrow(private$pd)+1), 
+                         col = c(1, 2, 4, 3, 5:(5+max(0, max(dim)-3)) )[1:(max(dim)+1)] )
+          
+          plot_per_barc(pd = private$pd, dim, xlim, ylim, col, lwd = lwd, ...)
+          
+          }
+        
+        else if(ggplot){TDAstats::plot_barcode(private$pd)}
+        
+        else{as_diag(private$pd) %>% plot(barcode=T)}
+        
+      },
+      
+      #PDを呼び出し
+      #dimで次元指定。missingの場合はすべて返す
+      get_pd = function(dim){
+        
+        if(missing(dim)){return(private$pd)}
+        
+        else{
+          
+          assertthat::assert_that(is.numeric(dim))
+          
+          return(private$pd[(private$pd[,1] %in% dim), ])
+          
+          }
+        
+        },
       
       #pdを外部から代入。すでに計算されている場合はstop
       input_pd = function(pd){
         
-        if( is.matrix(private$pd) && "dimension" %in% colnames(private$pd) ){
+        if( is.matrix(private$pd) && ("dimension" %in% colnames(private$pd)) ){
           stop("pd is already calculated.")
         }
         
@@ -217,7 +273,7 @@ DistmatPD<-
         },
       
       plot_pl = function(dim, xlim, ylim){
-        if(length(private$pl)==1){self$calc_pl()}
+        if(length(private$pl) == 1){self$calc_pl()}
         
         plot_landscape(land = private$pl, dim = dim, xlim = xlim, ylim = ylim)
         
@@ -251,6 +307,18 @@ DistmatPD<-
         
       },
       
+      #計算されたPDから、各次元ごとにパーシステンスを求める
+      calc_persists = function(){
+        
+        if(length(private$pd) == 1){stop("pd didn't calcutated.")}
+        
+        private$persists<-lapply(c(0, seq_len(self$maxdim)), function(i){calc_per(private$pd, dim = i)}) %>% 
+          set_names(paste0("pers_dim", c(0, seq_len(self$maxdim))))
+        
+      },
+      
+      get_persists = function(){return(private$persists)}, #パーシステンスを呼び出し
+      
       get_time = function(){return(private$time)}, #PDの計算時間を呼び出し
       
       is_changed = function(){return(private$changed)}, #距離行列を変化させたか否かを呼び出す
@@ -270,6 +338,7 @@ DistmatPD<-
     private = list(
       pd = NA, #TDAstatsのPD
       pl = NA, #パーシステントランドスケープ
+      persists = list(), #パーシステンス
       time = NA, #PDの計算時間
       l_rate = 0, #ランドマーク点割合
       eta = 1, #1-exp{-(d_ij/eta)^2}のハイパラ
