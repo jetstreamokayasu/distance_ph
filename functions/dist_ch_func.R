@@ -762,3 +762,29 @@ plot_per_barc<-function(pd, dim, xlim, ylim, col, lwd = 2, ...){
   
   
 }
+
+#-----------------------------------------------
+#距離減衰度etaを「発生時刻と消滅時刻の中点」の中央値として距離行列操作----
+#dim=指定次元。1つのみ指定
+mid_median_attenu<-function(pd, dim, distmat, type = c("median", "mean")){
+  
+  assertthat::assert_that((length(dim)==1) && is.numeric(dim))
+  
+  pd_Hd<-pd[pd[,1]==dim, ]
+  
+  pd_Hd_mid<-apply(pd_Hd, 1, function(x){(x[2]+x[3])/2})
+  
+  pd_Hd_mid_med<-median(pd_Hd_mid)
+  pd_Hd_mid_mean<-mean(pd_Hd_mid)
+  
+  type<-match.arg(type)
+  eta<-switch(type,
+              median = pd_Hd_mid_med,
+              mean = pd_Hd_mid_mean
+              )
+  
+  distmat[distmat <= eta] <- distmat[distmat <= eta]*( 1-exp(-(distmat[distmat <= eta]/eta)^2) )
+  
+  return(lst(median=pd_Hd_mid_med, mean=pd_Hd_mid_mean, altdist=distmat, type=type))
+  
+}

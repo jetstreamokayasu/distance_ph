@@ -167,4 +167,13 @@ ggsave("./pics/modified_dist_plt_2B.png", height = 20, width = 20, plot = modifi
 
 
 plot(domain2, domain2*( 1-exp( -(domain2/3.0)^2)) )
+
+#-----------------------------------
+#
+
+domain<-seq(0, 6.5, length = 100)
+plot(domain, domain*( 1-exp( -(domain/6.5)^2) ), type = "l", xlim = c(0, 10), ylim = c(0, 10), lwd = 2)
+draw_line(x = c(6.5, 6.5), y = c(10, 10), lwd = 2)
+points(x= 6.5, y = 6.5*(1-exp(-1)), pch = 21, cex = 1.5)
+points(x = 6.5, y = 6.5, pch = 16, cex = 1.5)
      

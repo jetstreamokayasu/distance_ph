@@ -151,6 +151,11 @@ t3orus4_list3_20to24_list<-lapply(t3orus4_list3[20:24], function(X){
   
 })
 
+for (pd in t3orus4_list3_20to24_list) {
+  plot_per_barc(pd$get_pd())
+  abline(v = 6.5, col = "orange")
+}
+
 #------------------
 #2次元トーラスtrs300_1_18_inst-----
 trs300_1_18_inst<-TDAdataset$new(torus300_colle_set[[1]][[10]][["noizyX"]])
@@ -190,3 +195,107 @@ trs300_1_10_altdist[trs300_1_10_altdist <= trs300_1_10_pdH2_mid_median]<-
   trs300_1_10_altdist[trs300_1_10_altdist <= trs300_1_10_pdH2_mid_median]*( 1-exp(-(trs300_1_10_altdist[trs300_1_10_altdist <= trs300_1_10_pdH2_mid_median]/trs300_1_10_pdH2_mid_median)^2) )
 
 trs300_1_10_altdist_inst<-DistmatPD$new(trs300_1_10_altdist)
+
+trs300_1_10_altdist2<-mid_median_attenu(pd = trs300_1_10$get_pd(), dim = 2, distmat = trs300_1_10$distmat)
+
+#発生時刻と消滅時刻の中点の中央値を距離減衰度etaとする距離操作-------
+#eta以上の距離に対しては変化を施さない
+#3次元トーラスt3orus4_list3_20to24_listで試す
+#3次ベッチ数について
+
+#t3orus4_list3_20
+t3rs4_lst3_20_pdH3<-t3orus4_list3_20to24_list[[1]]$get_pd()[, 1] %>% equals(3) %>% t3orus4_list3_20to24_list[[1]]$get_pd()[., ]
+
+t3rs4_lst3_20_pdH3_mid_med<-apply(t3rs4_lst3_20_pdH3, 1, function(x){(x[2]+x[3])/2}) %>% median()
+
+t3rs4_lst3_20_altdist<-t3orus4_list3_20to24_list[[1]]$distmat
+
+t3rs4_lst3_20_altdist[t3rs4_lst3_20_altdist <= t3rs4_lst3_20_pdH3_mid_med]<-
+  t3rs4_lst3_20_altdist[t3rs4_lst3_20_altdist <= t3rs4_lst3_20_pdH3_mid_med]*( 1-exp(-(t3rs4_lst3_20_altdist[t3rs4_lst3_20_altdist <= t3rs4_lst3_20_pdH3_mid_med]/t3rs4_lst3_20_pdH3_mid_med)^2) )
+
+t3rs4_lst3_20_altdist_inst<-DistmatPD$new(t3rs4_lst3_20_altdist)
+t3rs4_lst3_20_altdist_inst$calc_pd(maxdim = 3, maxscale = 9)
+
+t3rs4_lst3_20_altdist2<-mid_median_attenu(pd = t3orus4_list3_20to24_list[[1]]$get_pd(), dim = 3, distmat = t3orus4_list3_20to24_list[[1]]$distmat)
+
+t3rs4_lst3_20_altdist2_inst<-DistmatPD$new(t3rs4_lst3_20_altdist2$altdist)
+t3rs4_lst3_20_altdist2_inst$calc_pd(maxdim = 3, maxscale = 9)
+
+
+#t3orus4_list3_20
+#中点の平均でやってみる
+#うまくいかない
+t3rs4_lst3_20_altdist_mean<-mid_median_attenu(pd = t3orus4_list3_20to24_list[[1]]$get_pd(), dim = 3, distmat = t3orus4_list3_20to24_list[[1]]$distmat, type = "mean")
+
+t3rs4_lst3_20_altdist_mean_inst<-DistmatPD$new(t3rs4_lst3_20_altdist_mean$altdist)
+t3rs4_lst3_20_altdist_mean_inst$calc_pd(maxdim = 3, maxscale = 9)
+
+#t3orus4_list3_21
+#これはうまくいく
+t3rs4_lst3_21_altdist<-mid_median_attenu(pd = t3orus4_list3_20to24_list[[2]]$get_pd(), dim = 3, distmat = t3orus4_list3_20to24_list[[2]]$distmat)
+
+t3rs4_lst3_21_altdist_inst<-DistmatPD$new(t3rs4_lst3_21_altdist$altdist)
+t3rs4_lst3_21_altdist_inst$calc_pd(maxdim = 3, maxscale = 9)
+
+#t3orus4_list3_22
+#うまくいく
+t3rs4_lst3_22_altdist<-mid_median_attenu(pd = t3orus4_list3_20to24_list[[3]]$get_pd(), dim = 3, distmat = t3orus4_list3_20to24_list[[3]]$distmat)
+
+t3rs4_lst3_22_altdist_inst<-DistmatPD$new(t3rs4_lst3_22_altdist$altdist)
+t3rs4_lst3_22_altdist_inst$calc_pd(maxdim = 3, maxscale = 9)
+
+#t3orus4_list3_23
+#うまくいかない
+t3rs4_lst3_23_altdist<-mid_median_attenu(pd = t3orus4_list3_20to24_list[[4]]$get_pd(), dim = 3, distmat = t3orus4_list3_20to24_list[[4]]$distmat)
+
+t3rs4_lst3_23_altdist_inst<-DistmatPD$new(t3rs4_lst3_23_altdist$altdist)
+t3rs4_lst3_23_altdist_inst$calc_pd(maxdim = 3, maxscale = 9)
+
+#t3orus4_list3_24
+#うまくいく
+t3rs4_lst3_24_altdist<-mid_median_attenu(pd = t3orus4_list3_20to24_list[[5]]$get_pd(), dim = 3, distmat = t3orus4_list3_20to24_list[[5]]$distmat)
+
+t3rs4_lst3_24_altdist_inst<-DistmatPD$new(t3rs4_lst3_24_altdist$altdist)
+t3rs4_lst3_24_altdist_inst$calc_pd(maxdim = 3, maxscale = 9)
+
+
+#変化したデータ点数をカウント
+t3rs4_lst3_20_dist_low<-t3orus4_list3_20to24_list[[1]]$distmat
+t3rs4_lst3_20_dist_low[upper.tri(t3rs4_lst3_20_dist_low)]<-0
+mdfy_idx<-which(t3rs4_lst3_20_dist_low <= t3rs4_lst3_20_pdH3_mid_med, arr.ind = T)
+mdfy_idx<-c(mdfy_idx[, 1], mdfy_idx[, 2]) %>% unique()
+
+#修論距離操作と比較
+t3orus4_list3_20to24_list[[1]]$create_changed_distmat(l_rate = 0.5, eta = 6.5)
+
+t3orus4_list3_20to24_list[[1]]$alt_distmat[[1]]$calc_pd(maxdim = 3, maxscale = 9)
+
+#減衰度を中点の中央値にしてみる
+t3orus4_list3_20to24_list[[1]]$create_changed_distmat(l_rate = 0.5, eta = t3rs4_lst3_20_altdist2$median)
+
+t3orus4_list3_20to24_list[[1]]$alt_distmat[[2]]$calc_pd(maxdim = 3, maxscale = 9)
+
+#全体に適用
+t3rs4_lst3_20_altdist3<-t3orus4_list3_20to24_list[[1]]$distmat
+t3rs4_lst3_20_altdist3<-t3rs4_lst3_20_altdist3*( 1-exp( -((t3rs4_lst3_20_altdist3/t3rs4_lst3_20_pdH3_mid_med)^2) ) )
+
+t3rs4_lst3_20_altdist3_inst<-DistmatPD$new(t3rs4_lst3_20_altdist3)
+t3rs4_lst3_20_altdist3_inst$calc_pd(maxdim = 3, maxscale = 9)
+
+#発生時刻と消滅時刻の中点の中央値を距離減衰度etaとする距離操作-------
+#eta以上の距離に対しては変化を施さない
+#3次元トーラスt3orus4_list3_20to24_listで試す
+#2次ベッチ数について
+
+#t3orus4_list3_20
+#うまくいかない
+t3rs4_lst3_20_altdist_H2<-mid_median_attenu(pd = t3orus4_list3_20to24_list[[1]]$get_pd(), dim = 2, distmat = t3orus4_list3_20to24_list[[1]]$distmat)
+
+t3rs4_lst3_20_altdist_H2_inst<-DistmatPD$new(t3rs4_lst3_20_altdist_H2$altdist)
+t3rs4_lst3_20_altdist_H2_inst$calc_pd(maxdim = 3, maxscale = 9)
+
+#t3orus4_list3_21
+t3rs4_lst3_21_altdist_H2<-mid_median_attenu(pd = t3orus4_list3_20to24_list[[2]]$get_pd(), dim = 2, distmat = t3orus4_list3_20to24_list[[2]]$distmat)
+
+t3rs4_lst3_21_altdist_H2_inst<-DistmatPD$new(t3rs4_lst3_21_altdist_H2$altdist)
+t3rs4_lst3_21_altdist_H2_inst$calc_pd(maxdim = 3, maxscale = 9)
