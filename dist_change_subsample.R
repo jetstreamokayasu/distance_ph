@@ -13,7 +13,7 @@ trs300_1_1subs_th<-unlist(lapply(trs300_1_1subs, function(X)quantile_threshold(0
 trs300_1_1subs_pl<-lapply(trs300_1_1subs_pd, function(X)calc_landscape(diag = X, maxscale = 3))
 
 #サブサンプルのパーシステンスの平均
-trs300_1_1subs_mpc<-unlist(lapply(trs300_1_1subs_pd, function(X)seephacm:::calc_diag_centroid(diag = X)[[1]]))
+trs300_1_1subs_mpc<-unlist(lapply(trs300_1_1subs_pd, function(X)usephacm:::calc_diag_centroid(diag = X)[[1]]))
 
 #------------------------------------------------
 #距離変化0.4固定、変化点の割合を変えてPDを計算

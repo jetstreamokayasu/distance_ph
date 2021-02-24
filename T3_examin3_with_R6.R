@@ -45,3 +45,6 @@ some(rfile, ~{str_detect(string = ., pattern = "usephacm")}) %>% any()
 #seephacmパッケージから関数が用いられているファイルを探す
 seephacm_files<-map(list.files(pattern = ".R"), ~{scan(file = ., what = "")}) %>% 
   map_lgl(., ~{some(., ~str_detect(string = ., pattern = "seephacm"))}) %>% which() %>% list.files(pattern = ".R")[.]
+
+seephacm_files2<-map(list.files(pattern = ".R"), ~{read_file(file = .)}) %>% 
+  map_lgl(., ~{str_detect(string = ., pattern = "seephacm")}) %>% which() %>% list.files(pattern = ".R")[.]
