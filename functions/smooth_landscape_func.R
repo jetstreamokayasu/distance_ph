@@ -23,7 +23,7 @@ smooth_landscape_method<-function(X,maxdim,maxscale,samples, const.size=0, spar=
     if(const.size==0){size<-nrow(X[[t]])*(0.8)}
     else{size<-const.size}
     
-    B <- seephacm:::bootstrapper(X[[t]],size,samples)
+    B <- usephacm:::bootstrapper(X[[t]],size,samples)
     speak <- smoothed_landscape_homology(X = B, maxdim = maxdim, maxscale = maxscale, spar = spar)
     m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]])
     
@@ -128,15 +128,15 @@ persistence_weighted_mean<-function(diag){
 #parallel使用
 #cluster設定をこちらで行うようにした
 #この関数でparLapplyによりsmoothed_landscape_homologyを実行するようにした
-smooth_landscape_method_paral<-function(X,maxdim,maxscale,samples, const.size=0, spar=seq(0, 1, 0.1)){
+smooth_landscape_method_paral<-function(X,maxdim,maxscale,samples, const.size=0, spar=seq(0, 1, 0.1), ncl = 4){
   
-  cl <- makeCluster(4, outfile="")
+  cl <- makeCluster(ncl, outfile="")
   
   clusterEvalQ(cl,{
     library(phacm)
     library(tidyverse)
     library(myfs)
-    library(seephacm)
+    library(usephacm)
     library(TDAstats)
     library(parallel)
     library(TDA)
@@ -162,7 +162,7 @@ smooth_landscape_method_paral<-function(X,maxdim,maxscale,samples, const.size=0,
     if(const.size==0){size<-nrow(Y)*(0.8)}
     else{size<-const.size}
     
-    B<-seephacm:::bootstrapper(Y,size,samples)
+    B<-usephacm:::bootstrapper(Y,size,samples)
     
     return(B)
     

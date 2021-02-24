@@ -368,11 +368,12 @@ maxmin_dist_changed_pd<-function(X, maxdim, maxscale, l_rate=0.15, n_vic=10){
 
 #-----------------------------------------------
 #TDAstasのPDからTDAのPD(diagramクラス)へ変換
-pd_conv_stats2tda<-function(pd){
+as_diag<-function(pd){
   
   class(pd)<-"diagram"
   attr(pd, "maxdimension")<-max(pd[,1])
   attr(pd, "scale")<-c(0, max(pd[,3]))
+  colnames(pd)<-c("dimension", "Birth", "Death")
   
   return(pd)
   
@@ -501,6 +502,8 @@ weighted_homology<-function(X, maxdim, maxscale, l_rate, eta, ...){
 #usephacmの修正版
 calc_per<-function (pd, dim){
   
+  assertthat::assert_that((length(dim) == 1) && is_numeric(dim))
+  
   pers <- pd[pd[, 1] == dim, 3] - pd[pd[, 1] == dim, 2]
   
   attr(pers, "pers_dim") <- dim
@@ -512,7 +515,7 @@ calc_per<-function (pd, dim){
 
 #---------------------------------------
 #試験的な関数-------------
-#上から順に距離を入れ替える
+#上から順に距離を入れ替える----------
 dist_element_replace1<-function(pd, dim, distmat){
   
   h2_rows<-which(pd[,1]==dim)
@@ -613,5 +616,175 @@ dist_element_replace_nodupl<-function(pd, dim, distmat){
   }
   
   return(dist_cp)
+  
+}
+
+
+#------------------------------
+#発生時刻と消滅時刻が入ったセルが塗られた、データ点間距離のヒストグラムを描画----
+#breaks=ヒストグラムの
+colored_birth_death_cell_hist<-
+  function(data, pd, dim, breaks, m_title, distmat = F, eta_line = T, eta, barcode = F,
+           inflec_line = F, inflec = eta*sqrt(3/2), tile_line = F, ninty_tile=eta*sqrt(log(10)), pd_line = F){
+
+  if(inherits(data, "DistmatPD")){
+    
+    pd<-data$get_pd()
+    data<-data$distmat
+    distmat<-T
+    
+  }
+    
+  if(missing(breaks)){stop("breaks is missing.")}
+  if( !("dimension" %in% colnames(pd)) ){stop("pd isn't diagram.")}
+  
+  if(missing(m_title)){m_title<-substitute(data)}
+  
+  #dim次元のパーシステントホモロジー群を抽出
+  pd_Hd<-pd[pd[,1]==dim, ]
+  
+  if( !(is.matrix(pd_Hd)) ){pd_Hd<-as.matrix(pd_Hd) %>% t()}
+  
+  #発生時刻の距離が含まれるセルを求める
+  birth_cell<-map_lgl(seq_along(breaks[-1]), function(i){some(pd_Hd[, 2], ~{(.x > breaks[i]) & (.x <= breaks[i+1])})}) %>% which()
+  
+  #消滅時刻の距離が含まれるセルを求める
+  death_cell<-map_lgl(seq_along(breaks[-1]), function(i){some(pd_Hd[, 3], ~{(.x > breaks[i]) & (.x <= breaks[i+1])})}) %>% which()
+  
+  #cell_col_birth=発生時刻の距離が含まれるセルの色。NAは無色
+  #"#e4007f=マゼンダ"、4D＝アルファ値30%
+  birth_cell_col<-rep(NA, length = (length(breaks)-1))
+  birth_cell_col[birth_cell]<-"#e4007f4d"
+  
+  #cell_col_death=発生時刻の距離が含まれるセルの色。NAは無色。
+  #"#00a0e94d"=シアン、4D＝アルファ値30%
+  death_cell_col<-rep(NA, length = (length(breaks)-1))
+  death_cell_col[death_cell]<-"#00a0e94d"
+  
+  #ヒストグラムを作成する
+  if(distmat){
+    
+    #発生時刻が含まれるセルをマゼンダで塗る
+    hist_birth<-data %>% as.dist() %>% hist(breaks = breaks, col = birth_cell_col, main = m_title)
+    
+    #消滅時刻が含まれるセルをマゼンダで塗る
+    hist_death<-data %>% as.dist() %>% hist(breaks = breaks, col = death_cell_col, main = "", add = T)
+    
+    }
+  
+  else{
+    
+    #発生時刻が含まれるセルをマゼンダで塗る
+    hist_birth<-data %>% dist() %>% hist(breaks = breaks, col = birth_cell_col, main = m_title)
+    
+    #消滅時刻が含まれるセルをマゼンダで塗る
+    hist_death<-data %>% dist() %>% hist(breaks = breaks, col = death_cell_col, main = "", add = T)
+    
+  }
+  
+  #距離がetaと等しい
+  if(eta_line && !missing(eta)){
+    
+    abline(v = eta, col = "green3", lwd = 2)
+    text(x = eta*1.1, y = max(hist_birth$counts)*0.9, labels = expression(plain(distance) == eta), pos = 3)
+    
+  }
+  
+  #距離が変曲点
+  if(inflec_line){
+    
+    abline(v = inflec, col = "deeppink", lwd = 2)
+    text(x = inflec*1.1, y = max(hist_birth$counts)*0.8, labels = "inflection point", pos = 3)
+    
+  }
+  
+  #距離が90%点
+  if(tile_line){
+    
+    abline(v = ninty_tile, col = "darkviolet", lwd = 2)
+    text(x = ninty_tile*1.1, y = max(hist_birth$counts)*0.7, labels = "90% point", pos = 3)
+    
+  }
+  
+  
+  #生成時刻と消滅時刻をセットで垂直線をプロット
+  if(pd_line){
+    
+      for (i in seq_len(nrow(pd_Hd))) {
+        draw_line(x = c(pd_Hd[i, 2], 0), y = c(pd_Hd[i, 2], max(hist_birth$counts)*0.6), col = rainbow(nrow(pd_Hd))[i] )
+        draw_line(x = c(pd_Hd[i, 3], 0), y = c(pd_Hd[i, 3], max(hist_birth$counts)*0.6), col = rainbow(nrow(pd_Hd))[i] )
+      }
+    
+  }
+  
+  if(barcode){
+    
+    par(new = T)
+    plot_per_barc(pd = pd, dim = dim, xlim = range(breaks), col = "red")
+    
+  }
+  
+  return(lst(hist_birth, hist_death))
+  
+}
+
+#---------------------------------------
+#パーシステントバーコードを描く関数------
+#graphicを使い、後からいろいろ操作できるようにする
+
+plot_per_barc<-function(pd, dim, xlim, ylim, col, lwd = 2, ...){
+  
+  if( !("dimension" %in% colnames(pd)) ){stop("pd mayn't be persistence diagram.")}
+  
+  if(missing(dim)){dim<-unique(pd[, 1])}
+  if(!all(dim %in% pd[, 1])){stop("dim isn't correct dimension in persistence diagram.")}
+  
+  pd_Hd<-pd[(pd[, 1] %in% dim), ]
+  
+  if( !(is.matrix(pd_Hd)) ){pd_Hd<-as.matrix(pd_Hd) %>% t()}
+  
+  # if(missing(xlim)){xlim <- c(min(pd_Hd[, 2]), max(pd_Hd[, 3]))}
+  # if(missing(ylim)){ylim <- c(0, nrow(pd_Hd)+1)}
+  
+  fill_ifmissing(xlim = c(min(pd_Hd[, 2]), max(pd_Hd[, 3])), ylim = c(0, nrow(pd_Hd)+1), 
+                 col = c(1, 2, 4, 3, 5:(5+max(0, max(dim)-3)) )[1:(max(dim)+1)] )
+  
+  plot(x = pd_Hd[, 2:3], xlim = xlim, ylim = ylim, type = "n", xlab = "", ylab = "", 
+       xaxt = "n", yaxt = "n")
+  graphics::axis(1)
+  graphics::title(xlab = "time")
+  
+  if(length(col) == 1){col<-rep(col, max(dim)+1)}
+  
+  for (j in seq_len(nrow(pd_Hd))) {
+    draw_line(x = c(pd_Hd[j, 2], j), y = c(pd_Hd[j, 3], j), col = col[pd_Hd[j, 1]+1], lwd = lwd, ...)
+  }
+  
+  
+}
+
+#-----------------------------------------------
+#距離減衰度etaを「発生時刻と消滅時刻の中点」の中央値として距離行列操作----
+#dim=指定次元。1つのみ指定
+mid_median_attenu<-function(pd, dim, distmat, type = c("median", "mean")){
+  
+  assertthat::assert_that((length(dim)==1) && is.numeric(dim))
+  
+  pd_Hd<-pd[pd[,1]==dim, ]
+  
+  pd_Hd_mid<-apply(pd_Hd, 1, function(x){(x[2]+x[3])/2})
+  
+  pd_Hd_mid_med<-median(pd_Hd_mid)
+  pd_Hd_mid_mean<-mean(pd_Hd_mid)
+  
+  type<-match.arg(type)
+  eta<-switch(type,
+              median = pd_Hd_mid_med,
+              mean = pd_Hd_mid_mean
+              )
+  
+  distmat[distmat <= eta] <- distmat[distmat <= eta]*( 1-exp(-(distmat[distmat <= eta]/eta)^2) )
+  
+  return(lst(median=pd_Hd_mid_med, mean=pd_Hd_mid_mean, altdist=distmat, type=type))
   
 }

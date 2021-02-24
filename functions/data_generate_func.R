@@ -148,17 +148,33 @@ save_environment_variale2rdata<-function (){
     }
   }
   
-  vars<-sapply(ls(pos = .GlobalEnv), function(var)save(list = var, file = paste0("./vars/", var, ".RData")))
+  vars<-sapply(ls(pos = .GlobalEnv), function(var){
+    
+      if( class(get(var, envir = .GlobalEnv)) != "function" ){
+        
+        save(list = var, file = paste0("./vars/", var, ".RData"))
+        
+      }
+    
+    })
   
 }
 
 #-----------------------------------------------------
 #pathで指定したディレクトリ内に、引数で指定した変数のRDataがあれば
 #.GlobalEnvにロードする
+#指定した変数が.GlobalEnvにあればロードしない
+#overwite=TRUEならば.GlobalEnvに変数が既ににあっても上書きする
 
-search_load<-function(var, path="./data"){
+search_load<-function(var, path="./data", overwite = F){
   
   elname <- substitute(var) %>% as.character()
+  
+  if(elname %in% ls(name = ".GlobalEnv")){
+    
+    if(!overwite){stop(paste0("'", elname, "' is already exit in '.GlobalEnv'." ))}
+    
+  }
   
   if(file.exists(paste0(path, "/", elname, ".RData"))){
 
@@ -188,3 +204,45 @@ xBall_unif<-function(n, r = 1){
   
 }
 
+#--------------------------------------------
+#楕円体表面積近似値算出関数----
+#a=x軸方向の径、b=y軸方向の径、c=z軸方向の径
+#p = 1.6075 のとき最大誤差は1.061% の近似式
+ellip_surface<-function(a, b, c, p = 1.6075){
+  
+  s<-4*pi * ( ((a*b)^p + (a*c)^p + (b*c)^p)/3 )^(1/p)
+  
+  return(s)
+  
+}
+
+#-------------------------------------------
+#呼び出し元の関数で、引数に値が渡されていない(missingの)場合に予め定めた値を一括して代入する関数----
+#...にmissingの場合に予め定めた値を代入したい変数と、代入したい値をセットで入れる
+#例えば、fill_ifmissing(x = 1, y = 2)とすると、fill_missingを呼び出した関数内でx,yがmissingのとき、
+#xに1が、yに2が代入される
+
+fill_ifmissing<-function(...){
+  
+  args_list = as.list(match.call(definition = sys.function(-1), call = sys.call(-1)))
+  
+  #代入されていない引数に初期値を与える
+  elp<-list(...)
+  
+  elp_names<-names(elp)
+  arg_names<-names(formals(fun = sys.function(-1)))
+  
+  for (elp_n in elp_names) {
+    
+    #もし引数以外の値が指定されていたらエラーを出して止まる
+    if(!(elp_n %in% arg_names)){stop(paste0(elp_n, " isn't the argument of ", args_list[[1]], "."))}
+    
+    if(is.null(args_list[[elp_n]])){
+      
+        assign(elp_n, elp[[elp_n]], envir = sys.frame(-1))
+      
+      }
+    
+  }
+  
+}

@@ -43,8 +43,16 @@ rfile<-scan(file = "./pack.R", what = "")
 some(rfile, ~{str_detect(string = ., pattern = "usephacm")}) %>% any()
 
 #seephacmパッケージから関数が用いられているファイルを探す
+<<<<<<< HEAD:T3_examin3_with_R6.R
 seephacm_files<-map(list.files(pattern = ".R"), ~{scan(file = ., what = "")}) %>% 
   map_lgl(., ~{some(., ~str_detect(string = ., pattern = "seephacm"))}) %>% which() %>% list.files(pattern = ".R")[.]
 
 seephacm_files2<-map(list.files(pattern = ".R"), ~{read_file(file = .)}) %>% 
   map_lgl(., ~{str_detect(string = ., pattern = "seephacm")}) %>% which() %>% list.files(pattern = ".R")[.]
+=======
+seephacm_files<-map(list.files(pattern = ".R"), ~{read_file(file = .)}) %>% 
+  map_lgl(., ~str_detect(string = ., pattern = "usephacm")) %>% which() %>% list.files(pattern = ".R")[.]
+
+missing_writed_files<-map(list.files(pattern = ".R"), ~{read_file(file = .)}) %>% 
+  map_lgl(., ~str_detect(string = ., pattern = "missing")) %>% which() %>% list.files(pattern = ".R")[.]
+>>>>>>> 1fe9ef4e15d61dac4238daefc1528d976ac365c8:experiments/T3_examin3_with_R6.R

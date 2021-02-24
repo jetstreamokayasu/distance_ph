@@ -133,3 +133,28 @@ library(nleqslv)
 
 ans<-nleqslv(x = c(1, 1, 1), fn = triple_circle_specify, control = list(allowSingular = T))
 
+#--------------------------------
+#AppendixのPH説明用フィルトレーション図作成
+#点を反時計回り順で配置
+y1<-c(1, 0)
+y2<-c(0, 1)
+y3<-c(-1/sqrt(3), 0)
+y4<-c(0, -1)
+
+plot(rbind(y1, y2, y3, y4), pch=16, cex=4, ann = F, axes = F, ylim = c(-1.5, 1.5), xlim = c(-1, 1.5))
+#text(rbind(y1, y2, y3, y4), labels = c(expression(v[3]), expression(v[4]), expression(v[0]), expression(v[2])), pos = 1, cex = 3)
+
+draw_line(y2, y3, lwd = 4)
+draw_line(y4, y3, lwd = 4)
+draw_line(y2, y1, lwd = 4)
+draw_line(y1, y4, lwd = 4)
+draw_line(y2, y4, lwd = 4)
+
+polygon(rbind(y2, y3, y4), density = 10)
+
+pdf("./pics/appen_filt0.pdf", height = 8, width = 7)
+pdf("./pics/appen_y2y3_y3y4.pdf", height = 8, width = 7)
+pdf("./pics/appen_y1y2_y1y4.pdf", height = 8, width = 7)
+pdf("./pics/appen_y2y4.pdf", height = 8, width = 7)
+pdf("./pics/appen_y2y3y4.pdf", height = 8, width = 7)
+dev.off()
