@@ -34,6 +34,15 @@ t2_ctic_time_plt_sd<-t2_ctic_time_plt_ave + geom_ribbon(aes(ymin = mean - sd, ym
                                     labels = c("conventional", "proposed 1", "proposed 2"))
 }
 
+{
+  t2_ctic_time_plt_all<-t2_ctic_time_plt_all + 
+  labs(x = "Data density", y = "Computational time [sec]") + 
+    theme(axis.text = element_text(size=25), axis.title = element_text(size=30), 
+          legend.text = element_text(size=25), legend.title = element_text(size=30)) + guides(color = guide_legend(override.aes = list(size = 5))) +
+    scale_x_continuous(breaks = seq(300, 350, by=10), labels = c(expression(30/pi^2), expression(31/pi^2), expression(32/pi^2), expression(33/pi^2), expression(34/pi^2), expression(35/pi^2)) )
+  
+  
+}
 
 #補間手法
 trs350_inted_time<-map_dbl(trs350_list1to5_inted_aggr, ~sum(.[["times"]]))
@@ -61,6 +70,10 @@ t2_inted_time_smz<-t2_inted_time %>% group_by(n_points) %>%
 t2_inted_time_plt_ave<-t2_ctic_time_plt_all + geom_line(data = t2_inted_time_smz, aes(x = n_points, y = mean), color = "royalblue1")
 t2_inted_time_plt_sd<-t2_inted_time_plt_ave + geom_ribbon(data = t2_inted_time_smz, aes(ymin = mean - sd, ymax = mean + sd), fill = "royalblue1", alpha = 0.1)
 t2_inted_time_plt_all<-t2_inted_time_plt_sd + geom_point(data = t2_inted_time, aes(x = n_points, y = time, color = "proposed1"), size = 2)
+
+#-----------------------
+#CTIC手法と補間手法の計算時間プロット------
+ggsave("./pics/compute_time_ctic_interp.pdf", plot = t2_inted_time_plt_all, height = 8.5, width = 14, units = "in")
 
 #exp距離変化手法
 trs350_wvr_time<-c(trs350_colle1_wvr_time[3], map_dbl(trs350_colle2to3_wvr_aggr, ~{.[["time"]][3]}), map_dbl(trs350_colle4to5_wvr_aggr, ~{.[["time"]][3]}))

@@ -48,3 +48,29 @@ seephacm_files<-map(list.files(pattern = ".R"), ~{read_file(file = .)}) %>%
 
 missing_writed_files<-map(list.files(pattern = ".R"), ~{read_file(file = .)}) %>% 
   map_lgl(., ~str_detect(string = ., pattern = "missing")) %>% which() %>% list.files(pattern = ".R")[.]
+
+
+#----------------------------
+
+torus1<-torusUnif(500, 1, 2.5)
+plot3d(torus1)
+aspect3d("iso")
+
+torus1_inst<-TDAdataset$new(torus1)
+
+torus1_inst$plot_data()
+
+torus1_inst$calc_pd(maxdim = 2, maxscale = 3)
+torus1_inst$plot_pd()
+torus1_inst$plot_bar()
+torus1_inst$plot_pl()
+torus1_inst$pl_peak_count()
+
+torus1_inst$plot_diag()
+
+#---------------------------
+#立方体表面上一様分布関数テスト
+
+cuboid1<-xRect_unif(n = 500, sides = 1)
+
+cuboid2<-xRect_unif(n = 500, sides = 1:3)

@@ -116,6 +116,13 @@ t2_300lv_inted_plt_ave<-t2_300lv_ctic_plt_whole + geom_line(data = t2_300lv_inte
 t2_300lv_inted_plt_sd<-t2_300lv_inted_plt_ave + geom_ribbon(data = t2_300lv_inted_smz, aes(ymin = dim2rate_mean - dim2rate_sd, ymax = dim2rate_mean + dim2rate_sd), fill = "royalblue1", alpha = 0.1)
 t2_300lv_inted_plt_all<-t2_300lv_inted_plt_sd + geom_point(data = t2_300lv_inted_rate, aes(x = n_points, y = dim2rate, color = "proposed1"), size = 2)
 
+#-----------------------
+#CTIC手法と補間手法の成功率プロット------
+ggsave("./pics/success_T2H2_ctic_interp.pdf", plot = t2_300lv_inted_plt_all, height = 8.5, width = 14, units = "in")
+
+plot_success_rates(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate), 
+                   sumry = lst(t2_300lv_ctic_smz, t2_300lv_inted_smz), white = F, aes_y = "dim2rate")
+
 #ggplotによるexp距離変化手法のプロット
 t2_300lv_wvr_plt_ave<-t2_300lv_inted_plt_all + geom_line(data = wvr_rates_smz, aes(x = n_points, y = dim2rate_mean), color = "red")
 t2_300lv_wvr_plt_sd<-t2_300lv_wvr_plt_ave + geom_ribbon(data = wvr_rates_smz, aes(ymin = dim2rate_mean - dim2rate_sd, ymax = dim2rate_mean + dim2rate_sd), fill = "red", alpha = 0.1)

@@ -153,7 +153,18 @@ t3orus4_list3_20to24_list<-lapply(t3orus4_list3[20:24], function(X){
 
 for (pd in t3orus4_list3_20to24_list) {
   plot_per_barc(pd$get_pd())
-  abline(v = 6.5, col = "orange")
+  abline(v = 6.5, col = "violet")#H3
+  abline(v = 4.0, col = "orange")#H2
+}
+
+for (pd in t3orus4_list3_20to24_list) {
+  plot_per_barc(pd$get_pd(), dim = 2)
+  abline(v = 4.0, col = "orange")
+}
+
+for (pd in t3orus4_list3_20to24_list) {
+  plot_per_barc(pd$get_pd(), dim = 3, lwd = 4)
+  abline(v = 6.5, col = "violet")
 }
 
 #------------------
@@ -221,9 +232,8 @@ t3rs4_lst3_20_altdist2<-mid_median_attenu(pd = t3orus4_list3_20to24_list[[1]]$ge
 t3rs4_lst3_20_altdist2_inst<-DistmatPD$new(t3rs4_lst3_20_altdist2$altdist)
 t3rs4_lst3_20_altdist2_inst$calc_pd(maxdim = 3, maxscale = 9)
 
-
 #t3orus4_list3_20
-#中点の平均でやってみる
+#平均値でやってみる
 #うまくいかない
 t3rs4_lst3_20_altdist_mean<-mid_median_attenu(pd = t3orus4_list3_20to24_list[[1]]$get_pd(), dim = 3, distmat = t3orus4_list3_20to24_list[[1]]$distmat, type = "mean")
 
@@ -295,7 +305,118 @@ t3rs4_lst3_20_altdist_H2_inst<-DistmatPD$new(t3rs4_lst3_20_altdist_H2$altdist)
 t3rs4_lst3_20_altdist_H2_inst$calc_pd(maxdim = 3, maxscale = 9)
 
 #t3orus4_list3_21
+#うまくいく
 t3rs4_lst3_21_altdist_H2<-mid_median_attenu(pd = t3orus4_list3_20to24_list[[2]]$get_pd(), dim = 2, distmat = t3orus4_list3_20to24_list[[2]]$distmat)
 
 t3rs4_lst3_21_altdist_H2_inst<-DistmatPD$new(t3rs4_lst3_21_altdist_H2$altdist)
 t3rs4_lst3_21_altdist_H2_inst$calc_pd(maxdim = 3, maxscale = 9)
+
+#t3orus4_list3_22
+t3rs4_lst3_22_altdist_H2<-mid_median_attenu(pd = t3orus4_list3_20to24_list[[3]]$get_pd(), dim = 2, distmat = t3orus4_list3_20to24_list[[3]]$distmat)
+
+t3rs4_lst3_22_altdist_H2_inst<-DistmatPD$new(t3rs4_lst3_22_altdist_H2$altdist)
+t3rs4_lst3_22_altdist_H2_inst$calc_pd(maxdim = 3, maxscale = 9)
+
+#-------------------------------------
+#2次元トーラスで中点の中央値を距離減衰度etaとするfiltlation速度変化---------
+#バーコードにeta垂直線を追加した図も描く
+#trs300_1_10, torus300_colle_set[[1]][10:15]を使う
+
+trs300_lst3_10to15_list<-lapply(torus300_colle_set[[1]][10:15], function(X){
+  
+  X_inst<-TDAdataset$new(X$noizyX)
+  X_inst$calc_pd(maxdim = 2, maxscale = 3)
+  
+  return(X_inst)
+  
+})
+
+for (pd in trs300_lst3_10to15_list) {
+  plot_per_barc(pd$get_pd(), xlim = c(0, 3.5))
+  abline(v = 3.0, col = "orange")
+}
+
+for (pd in trs300_lst3_10to15_list) {
+  plot_per_barc(pd$get_pd(), xlim = c(0, 3.5), dim = 2)
+  abline(v = 3.0, col = "orange")
+}
+
+trs300_lst3_10to15_velo_mdfys<-lapply(trs300_lst3_10to15_list, function(Y){
+  
+  alt_dist<-mid_median_attenu(pd = Y$get_pd(), dim = 2, distmat = Y$distmat)
+  alt_dist_inst<-DistmatPD$new(alt_dist$altdist)
+  alt_dist_inst$calc_pd(maxdim = 2, maxscale = 3)
+  
+  return(alt_dist_inst)
+  
+})
+  
+
+
+#日誌用グラフ作成----------
+#3次元トーラスのフィルトレーション速度変化に関するグラフ
+for (i in 1:4) {
+  t3orus4_list3_20to24_list[[i]]$calc_pl()
+}
+
+for (i in 1:4) {#オリジナルのPL
+  png(paste0("./pics/T3_pl_H3_origi_0", i, ".png"))
+  t3orus4_list3_20to24_list[[i]]$plot_pl(dim = 3, ylim = c(0, 1.2))
+  dev.off()
+}
+
+for (i in 1:3) {
+  X<-get(paste0("t3rs4_lst3_2", i, "_altdist_inst"))
+  X$calc_pl()
+}
+
+for (i in 1:3) {#filtlation速度変化後のPL
+  png(paste0("./pics/T3_pl_H3_velo_mdfy_0", i+1, ".png"))
+  X<-get(paste0("t3rs4_lst3_2", i, "_altdist_inst"))
+  X$plot_pl(dim = 3, ylim = c(0, 1.2))
+  dev.off()
+}
+
+for (i in 1:3) {#filtlation速度変化後のPD
+  X<-get(paste0("t3rs4_lst3_2", i, "_altdist_inst"))
+  X$plot_pd()
+  ggsave(paste0("./pics/T3_pd_H3_velo_mdfy_0", i+1, ".png"), width = 6.7, height = 6.97)
+}
+
+
+#2次元トーラスのフィルトレーション速度変化に関するグラフ
+for (i in seq_along(trs300_lst3_10to15_velo_mdfys)) {
+  trs300_lst3_10to15_velo_mdfys[[i]]$calc_pl()
+}
+
+#filtlation速度変化前のPD
+for (i in 1:4) {
+  trs300_lst3_10to15_list[[i]]$plot_pd()
+  ggsave(paste0("./pics/T2_pd_orig_0", i, ".png"), width = 6.7, height = 6.97)
+  
+}
+
+#filtlation速度変化前のPL
+for (i in 1:4) {
+  trs300_lst3_10to15_list[[i]]$calc_pl()
+}
+
+for (i in 1:4) {
+  png(paste0("./pics/T2_pl_H2_orig_0", i, ".png"))
+  trs300_lst3_10to15_list[[i]]$plot_pl(dim = 2, ylim = c(0, 0.5))
+  dev.off()  
+}
+
+#filtlation速度変化後のPD
+for (i in 1:4) {
+  trs300_lst3_10to15_velo_mdfys[[i]]$plot_pd()
+  ggsave(paste0("./pics/T2_pd_velo_mdfy_0", i, ".png"), width = 6.7, height = 6.97)
+  
+}
+
+#filtlation速度変化後のPL
+for (i in 1:4) {
+  png(paste0("./pics/T2_pl_H2_velo_mdfy_0", i, ".png"))
+  trs300_lst3_10to15_velo_mdfys[[i]]$plot_pl(dim = 2, ylim = c(0, 0.5))
+  dev.off()  
+}

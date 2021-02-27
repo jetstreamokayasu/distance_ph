@@ -27,6 +27,40 @@ cube_xunif<-function(l=1, fp=100){
   
 }
 
+#-----------------------------------
+#N次元直方体・立方体表面に一様分布する点群を作成
+#n=データ点数、sides=各辺の長さ、dim=直方体の次元
+#rep(1, length = 6) %>% divide_by(., sum(.)) %>% accumulate(sum)
+xRect_unif<-function(n, sides = rep(1, length = 3)){
+  
+  face <- combn(x = sides, m = 2)
+  face_area<- apply(face, 2, function(x)multiply_by(x[1], x[2])) %>% rep(each = 2)
+  prob<-divide_by(face_area, sum(face_area)) %>% accumulate(sum)
+  
+  debugText(face)
+  debugText(face_area)
+  debugText(prob)
+  
+  unif_num<-runif(n)
+  
+  n_xy1<-which(unif_num < prob[1]) %>% length() 
+  n_xy2<-range_index(unif_num, prob[1], prob[2]) %>% length()
+  n_yz1<-range_index(unif_num, prob[2], prob[3]) %>% length() 
+  n_yz2<-range_index(unif_num, prob[3], prob[4]) %>% length() 
+  n_zx1<-range_index(unif_num, prob[4], prob[5]) %>% length() 
+  n_zx2<-range_index(unif_num, prob[5], prob[6]) %>% length() 
+  
+  xy1<-cbind(runif(n_xy1, 0, sides[1]), runif(n_xy1, 0, sides[2]), rep(0, length = n_xy1)) 
+  xy2<-cbind(runif(n_xy2, 0, sides[1]), runif(n_xy2, 0, sides[2]), rep(sides[3], length = n_xy2))
+  yz1<-cbind(rep(0, length = n_yz1), runif(n_yz1, 0, sides[2]), runif(n_yz1, 0, sides[3]))
+  yz2<-cbind(rep(sides[1], length = n_yz2), runif(n_yz2, 0, sides[2]), runif(n_yz2, 0, sides[3]))
+  zx1<-cbind(runif(n_zx1, 0, sides[1]), rep(0, length = n_zx1), runif(n_zx1, 0, sides[3]))
+  zx2<-cbind(runif(n_zx1, 0, sides[1]), rep(sides[2], length = n_zx1), runif(n_zx1, 0, sides[3]))
+  
+  return(lst(cube=rbind(xy1, xy2, yz1, yz2, zx1, zx2), n_point=c(n_xy1, n_xy2, n_yz1, n_yz2, n_zx1, n_zx2)))
+  
+}
+
 #-------------------------------------------------
 #楕円体状の一様分布(仮)
 #ヤコビアンを使っている(一応)
