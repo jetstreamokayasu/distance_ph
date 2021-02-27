@@ -43,11 +43,19 @@ rfile<-scan(file = "./pack.R", what = "")
 some(rfile, ~{str_detect(string = ., pattern = "usephacm")}) %>% any()
 
 #seephacmパッケージから関数が用いられているファイルを探す
+
+seephacm_files<-map(list.files(pattern = ".R"), ~{scan(file = ., what = "")}) %>% 
+  map_lgl(., ~{some(., ~str_detect(string = ., pattern = "seephacm"))}) %>% which() %>% list.files(pattern = ".R")[.]
+
+seephacm_files2<-map(list.files(pattern = ".R"), ~{read_file(file = .)}) %>% 
+  map_lgl(., ~{str_detect(string = ., pattern = "seephacm")}) %>% which() %>% list.files(pattern = ".R")[.]
+
 seephacm_files<-map(list.files(pattern = ".R"), ~{read_file(file = .)}) %>% 
   map_lgl(., ~str_detect(string = ., pattern = "usephacm")) %>% which() %>% list.files(pattern = ".R")[.]
 
 missing_writed_files<-map(list.files(pattern = ".R"), ~{read_file(file = .)}) %>% 
   map_lgl(., ~str_detect(string = ., pattern = "missing")) %>% which() %>% list.files(pattern = ".R")[.]
+
 
 
 #----------------------------
@@ -74,3 +82,7 @@ torus1_inst$plot_diag()
 cuboid1<-xRect_unif(n = 500, sides = 1)
 
 cuboid2<-xRect_unif(n = 500, sides = 1:3)
+
+cuboid3<-xRect_unif(n = 500, sides = 1, d = 3)
+
+cuboid4<-xRect_unif(n = 500, sides = 1:3, d = 3)

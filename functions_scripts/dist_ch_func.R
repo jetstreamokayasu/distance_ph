@@ -264,7 +264,7 @@ maxmin_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=
     if(const.size==0){size<-X[[t]]$nsample*(4/5)}
     else{size<-const.size}
     
-    B <- seephacm:::bootstrapper(X[[t]]$noizyX,size,samples)
+    B <- usephacm:::bootstrapper(X[[t]]$noizyX,size,samples)
     speak <- maxmin_dist_changed_pl_peak_count(X = B, maxdim = maxdim, maxscale = maxscale, l_rate = l_rate, n_vic = n_vic, spar = spar)
     m5 <- sapply(1:maxdim,function(d)speak[[paste0("dim",d,"mhole")]])
     
@@ -290,7 +290,7 @@ maxmin_distance_change_method <- function(X,maxdim,maxscale,samples, const.size=
 #bootstrap.homology.mk2から変形
 #witness複体のランドマーク点を使用
 #calc.landscape.peak(BootstrapHomology-mk1.R)をパッケージ化して置き換えるべし
-#seephacm:::calc_diag_centroid(diag)からpersistence_weighted_mean(diag)へ変更
+#usephacm:::calc_diag_centroid(diag)からpersistence_weighted_mean(diag)へ変更
 maxmin_dist_changed_pl_peak_count <-function(X, maxdim, maxscale, const.band=0, maximum.thresh = F, l_rate=0.15, n_vic=10, spar = seq(0,1,0.1)){
   require(TDA)
   

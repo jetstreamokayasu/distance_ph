@@ -29,35 +29,72 @@ cube_xunif<-function(l=1, fp=100){
 
 #-----------------------------------
 #N次元直方体・立方体表面に一様分布する点群を作成
-#n=データ点数、sides=各辺の長さ、dim=直方体の次元
+#n=データ点数、sides=各辺の長さ、d=直方体の次元
 #rep(1, length = 6) %>% divide_by(., sum(.)) %>% accumulate(sum)
-xRect_unif<-function(n, sides = rep(1, length = 3)){
+xRect_unif<-function(n, sides = rep(1, length = 3), d = 3){
   
-  face <- combn(x = sides, m = 2)
-  face_area<- apply(face, 2, function(x)multiply_by(x[1], x[2])) %>% rep(each = 2)
-  prob<-divide_by(face_area, sum(face_area)) %>% accumulate(sum)
+  if(length(sides)==1){sides<-rep(sides, length=d)}
+  assertthat::assert_that(length(sides)==d)
   
-  debugText(face)
-  debugText(face_area)
-  debugText(prob)
+  face<-combn(x = 1:d, m = d-1)
+  face_area<-combn(x = sides, m = d-1) %>%  apply(2, function(x)multiply_by(x[1], x[2])) %>% rep(each = 2)
+  prob<-divide_by(face_area, sum(face_area)) %>% accumulate(sum) %>% c(0, .)
   
   unif_num<-runif(n)
   
-  n_xy1<-which(unif_num < prob[1]) %>% length() 
-  n_xy2<-range_index(unif_num, prob[1], prob[2]) %>% length()
-  n_yz1<-range_index(unif_num, prob[2], prob[3]) %>% length() 
-  n_yz2<-range_index(unif_num, prob[3], prob[4]) %>% length() 
-  n_zx1<-range_index(unif_num, prob[4], prob[5]) %>% length() 
-  n_zx2<-range_index(unif_num, prob[5], prob[6]) %>% length() 
+  rect<-lapply(1:d, function(i){
+    
+    n1<-range_index(unif_num, prob[2*i-1], prob[2*i]) %>% length()
+    n2<-range_index(unif_num, prob[2*i], prob[2*i+1]) %>% length()
+    
+    coord_mat1<-matrix(0, nrow = n1, ncol = d)
+    coord_mat2<-matrix(0, nrow = n2, ncol = d)
+    
+    for (j in face[, i]) {
+      debugText(face[, i])
+      coord_mat1[, j]<-runif(n1, min = 0, max = sides[j])
+      coord_mat2[, j]<-runif(n2, min = 0, max = sides[j])
+      
+    }
+    
+    remain_axis<-setdiff(1:d, face[, i])
+    debugText(remain_axis)
+    coord_mat1[, remain_axis]<-rep(0, length = n1)
+    coord_mat2[, remain_axis]<-rep(sides[remain_axis], length = n2)
+    
+    return(rbind(coord_mat1, coord_mat2))
+    
+  }) %>% do.call(rbind, .)
   
-  xy1<-cbind(runif(n_xy1, 0, sides[1]), runif(n_xy1, 0, sides[2]), rep(0, length = n_xy1)) 
-  xy2<-cbind(runif(n_xy2, 0, sides[1]), runif(n_xy2, 0, sides[2]), rep(sides[3], length = n_xy2))
-  yz1<-cbind(rep(0, length = n_yz1), runif(n_yz1, 0, sides[2]), runif(n_yz1, 0, sides[3]))
-  yz2<-cbind(rep(sides[1], length = n_yz2), runif(n_yz2, 0, sides[2]), runif(n_yz2, 0, sides[3]))
-  zx1<-cbind(runif(n_zx1, 0, sides[1]), rep(0, length = n_zx1), runif(n_zx1, 0, sides[3]))
-  zx2<-cbind(runif(n_zx1, 0, sides[1]), rep(sides[2], length = n_zx1), runif(n_zx1, 0, sides[3]))
+  # n_xy1<-which(unif_num < prob[1]) %>% length() 
+  # n_xy2<-range_index(unif_num, prob[1], prob[2]) %>% length()
+  # n_yz1<-range_index(unif_num, prob[2], prob[3]) %>% length() 
+  # n_yz2<-range_index(unif_num, prob[3], prob[4]) %>% length() 
+  # n_zx1<-range_index(unif_num, prob[4], prob[5]) %>% length() 
+  # n_zx2<-range_index(unif_num, prob[5], prob[6]) %>% length() 
+  # 
+  # xy1<-cbind(runif(n_xy1, 0, sides[1]), runif(n_xy1, 0, sides[2]), rep(0, length = n_xy1)) 
+  # xy2<-cbind(runif(n_xy2, 0, sides[1]), runif(n_xy2, 0, sides[2]), rep(sides[3], length = n_xy2))
+  # yz1<-cbind(rep(0, length = n_yz1), runif(n_yz1, 0, sides[2]), runif(n_yz1, 0, sides[3]))
+  # yz2<-cbind(rep(sides[1], length = n_yz2), runif(n_yz2, 0, sides[2]), runif(n_yz2, 0, sides[3]))
+  # zx1<-cbind(runif(n_zx1, 0, sides[1]), rep(0, length = n_zx1), runif(n_zx1, 0, sides[3]))
+  # zx2<-cbind(runif(n_zx1, 0, sides[1]), rep(sides[2], length = n_zx1), runif(n_zx1, 0, sides[3]))
   
-  return(lst(cube=rbind(xy1, xy2, yz1, yz2, zx1, zx2), n_point=c(n_xy1, n_xy2, n_yz1, n_yz2, n_zx1, n_zx2)))
+  # return(lst(cube=rbind(xy1, xy2, yz1, yz2, zx1, zx2), n_point=c(n_xy1, n_xy2, n_yz1, n_yz2, n_zx1, n_zx2), 
+  #            face=face, face_area=face_area, prob=prob))
+  
+  #各面のデータ点数算出
+  #表現方法要修正
+  face_point<-lapply(1:d, function(k){
+    
+    low<-which(rect[, k] == 0) %>% length()
+    high<-which(rect[, k] == sides[k]) %>% length()
+    
+    return(lst(low, high))
+    
+  }) %>% flatten() %>% as_vector() %>% tibble(axis=paste0(rep(paste0("axis", 1:d), each=2), names(.)), n_point=.)
+  
+  return(lst(rect=rect, face_point=face_point, face=face, face_area=face_area, prob=prob))
   
 }
 
