@@ -788,3 +788,36 @@ mid_median_attenu<-function(pd, dim, distmat, type = c("median", "mean")){
   return(lst(median=pd_Hd_mid_med, mean=pd_Hd_mid_mean, altdist=distmat, type=type))
   
 }
+
+#---------------------------------------
+#フィルトレーション距離速度変化のための関数------
+#d*(1-exp(-(d/eta)^2))
+
+mph_exp<-function(d, eta){
+  
+  return(d*(1-exp(-(d/eta)^2)))
+  
+}
+
+#-----------------------------------------------
+#距離減衰度etaを「発生時刻と消滅時刻の中点」の平均値として距離行列操作----
+#dim=指定次元。1つのみ指定
+mid_mean_attenu_slope<-function(pd, dim, distmat){
+  
+  assertthat::assert_that((length(dim)==1) && is.numeric(dim))
+  
+  pd_Hd<-pd[pd[,1]==dim, ]
+  
+  pd_Hd_mid<-apply(pd_Hd, 1, function(x){(x[2]+x[3])/2})
+  
+  eta<-mean(pd_Hd_mid)
+  pd_Hd_death_mean<-mean(pd_Hd[, 3])
+  
+  slp_seg<-solve(matrix(c(eta, pd_Hd_death_mean, 1, 1), 2, 2), matrix(c(mph_exp(eta, eta), pd_Hd_death_mean)))
+  
+  distmat[distmat <= eta] %<>% mph_exp(eta) 
+  distmat[(distmat > eta) & (distmat <= pd_Hd_death_mean)] %<>% multiply_by(slp_seg[1]) %>% add(slp_seg[2])
+  
+  return(lst(altdist=distmat, mean=eta, death_mean=pd_Hd_death_mean))
+  
+}

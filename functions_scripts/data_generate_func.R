@@ -37,7 +37,7 @@ xRect_unif<-function(n, sides = rep(1, length = 3), d = 3){
   assertthat::assert_that(length(sides)==d)
   
   face<-combn(x = 1:d, m = d-1)
-  face_area<-combn(x = sides, m = d-1) %>%  apply(2, function(x)multiply_by(x[1], x[2])) %>% rep(each = 2)
+  face_area<-combn(x = sides, m = d-1) %>%  apply(2, prod) %>% rep(each = 2)
   prob<-divide_by(face_area, sum(face_area)) %>% accumulate(sum) %>% c(0, .)
   
   unif_num<-runif(n)
@@ -51,37 +51,19 @@ xRect_unif<-function(n, sides = rep(1, length = 3), d = 3){
     coord_mat2<-matrix(0, nrow = n2, ncol = d)
     
     for (j in face[, i]) {
-      debugText(face[, i])
+      
       coord_mat1[, j]<-runif(n1, min = 0, max = sides[j])
       coord_mat2[, j]<-runif(n2, min = 0, max = sides[j])
       
     }
     
     remain_axis<-setdiff(1:d, face[, i])
-    debugText(remain_axis)
     coord_mat1[, remain_axis]<-rep(0, length = n1)
     coord_mat2[, remain_axis]<-rep(sides[remain_axis], length = n2)
     
     return(rbind(coord_mat1, coord_mat2))
     
   }) %>% do.call(rbind, .)
-  
-  # n_xy1<-which(unif_num < prob[1]) %>% length() 
-  # n_xy2<-range_index(unif_num, prob[1], prob[2]) %>% length()
-  # n_yz1<-range_index(unif_num, prob[2], prob[3]) %>% length() 
-  # n_yz2<-range_index(unif_num, prob[3], prob[4]) %>% length() 
-  # n_zx1<-range_index(unif_num, prob[4], prob[5]) %>% length() 
-  # n_zx2<-range_index(unif_num, prob[5], prob[6]) %>% length() 
-  # 
-  # xy1<-cbind(runif(n_xy1, 0, sides[1]), runif(n_xy1, 0, sides[2]), rep(0, length = n_xy1)) 
-  # xy2<-cbind(runif(n_xy2, 0, sides[1]), runif(n_xy2, 0, sides[2]), rep(sides[3], length = n_xy2))
-  # yz1<-cbind(rep(0, length = n_yz1), runif(n_yz1, 0, sides[2]), runif(n_yz1, 0, sides[3]))
-  # yz2<-cbind(rep(sides[1], length = n_yz2), runif(n_yz2, 0, sides[2]), runif(n_yz2, 0, sides[3]))
-  # zx1<-cbind(runif(n_zx1, 0, sides[1]), rep(0, length = n_zx1), runif(n_zx1, 0, sides[3]))
-  # zx2<-cbind(runif(n_zx1, 0, sides[1]), rep(sides[2], length = n_zx1), runif(n_zx1, 0, sides[3]))
-  
-  # return(lst(cube=rbind(xy1, xy2, yz1, yz2, zx1, zx2), n_point=c(n_xy1, n_xy2, n_yz1, n_yz2, n_zx1, n_zx2), 
-  #            face=face, face_area=face_area, prob=prob))
   
   #各面のデータ点数算出
   #表現方法要修正
@@ -94,7 +76,11 @@ xRect_unif<-function(n, sides = rep(1, length = 3), d = 3){
     
   }) %>% flatten() %>% as_vector() %>% tibble(axis=paste0(rep(paste0("axis", 1:d), each=2), names(.)), n_point=.)
   
-  return(lst(rect=rect, face_point=face_point, face=face, face_area=face_area, prob=prob))
+  attr(rect, "face_point")<-face_point
+  attr(rect, "face")<-face
+  attr(rect, "prob")<-prob
+  
+  return(rect)
   
 }
 
