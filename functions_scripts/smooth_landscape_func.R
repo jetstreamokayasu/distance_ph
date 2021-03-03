@@ -143,7 +143,7 @@ smooth_landscape_method_paral<-function(X,maxdim,maxscale,samples, const.size=0,
   })
   
   clusterEvalQ(cl, {
-    source('~/R/distance_ph/smooth_landscape_func.R', encoding = 'UTF-8')
+    source(list.files(path = getwd(), recursive=T, pattern="smooth_landscape_func.R", full.names = T), encoding = 'UTF-8')
     source('~/R/ph_jikken2/new-okayasu/BootstrapHomology-mk1.R', encoding = 'UTF-8')
   })
   

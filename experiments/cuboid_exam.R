@@ -78,3 +78,40 @@ cuboid4d_4<-xRect_unif(n = 180, sides = c(rep(1, length = 4), 5), d = 5)
 
 cuboid4d_4_inst<-TDAdataset$new(cuboid4d_4)
 cuboid4d_4_inst$calc_pd(maxdim = 4, maxscale = 2)
+
+cuboid4d_4_inst$create_changed_distmat(l_rate = 0.5, eta = 1.2)
+cuboid4d_4_inst$alt_distmat[[1]]$calc_pd(maxdim = 4, maxscale = 2)
+
+cuboid4d_4_inst$get_pd() %>% as_diag() %>% plot(diagLim=c(0, 1.5))
+cuboid4d_4_inst$alt_distmat[[1]]$get_pd() %>% as_diag() %>% plot(diagLim=c(0, 1.5))
+
+cuboid4d_4_inst$plot_pl(dim = 4, ylim = c(0, 0.1))
+cuboid4d_4_inst$alt_distmat[[1]]$plot_pl(dim = 4, ylim = c(0, 0.1))
+
+
+#------------------------------------
+#CTIC手法で４次元直方体成功率実験----------
+
+cube4d_180_list1<-map(1:100, ~xRect_unif(n = 180, sides = c(rep(1, length = 4), 5), d = 5))
+save2RData(cube4d_180_list1)
+
+{
+cube4d_180_lst1_1to50_time<-system.time(
+cube4d_180_lst1_1to50_aggr<-smooth_landscape_method(X = cube4d_180_list1[1:50], maxdim = 4, maxscale = 2, samples = 10)
+)
+
+save2RData(cube4d_180_lst1_1to50_time)
+save2RData(cube4d_180_lst1_1to50_aggr)
+}
+
+{
+  cube4d_180_lst1_51to100_time<-system.time(
+    cube4d_180_lst1_51to100_aggr<-smooth_landscape_method_paral(X = cube4d_180_list1[51:100], maxdim = 4, maxscale = 2, samples = 10, ncl = 4)
+  )
+  
+  save2RData(cube4d_180_lst1_51to100_time)
+  save2RData(cube4d_180_lst1_51to100_aggr)
+}
+
+#-------------------------
+

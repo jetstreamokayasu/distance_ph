@@ -765,8 +765,9 @@ plot_per_barc<-function(pd, dim, xlim, ylim, col, lwd = 2, ...){
 
 #-----------------------------------------------
 #距離減衰度etaを「発生時刻と消滅時刻の中点」の中央値として距離行列操作----
+#中央値・平均値、さらに発生時刻の平均値、消滅時刻の平均値を選択できるようにする
 #dim=指定次元。1つのみ指定
-mid_median_attenu<-function(pd, dim, distmat, type = c("median", "mean")){
+mid_median_attenu<-function(pd, dim, distmat, type = c("median", "mean", "birth", "death")){
   
   assertthat::assert_that((length(dim)==1) && is.numeric(dim))
   
@@ -777,15 +778,20 @@ mid_median_attenu<-function(pd, dim, distmat, type = c("median", "mean")){
   pd_Hd_mid_med<-median(pd_Hd_mid)
   pd_Hd_mid_mean<-mean(pd_Hd_mid)
   
+  pd_Hd_birth_mean<-mean(pd_Hd[, 2])
+  pd_Hd_death_mean<-mean(pd_Hd[, 3])
+  
   type<-match.arg(type)
   eta<-switch(type,
               median = pd_Hd_mid_med,
-              mean = pd_Hd_mid_mean
+              mean = pd_Hd_mid_mean,
+              birth = pd_Hd_birth_mean,
+              death = pd_Hd_death_mean
               )
   
   distmat[distmat <= eta] <- distmat[distmat <= eta]*( 1-exp(-(distmat[distmat <= eta]/eta)^2) )
   
-  return(lst(median=pd_Hd_mid_med, mean=pd_Hd_mid_mean, altdist=distmat, type=type))
+  return(lst(altdist=distmat, median=pd_Hd_mid_med, mean=pd_Hd_mid_mean, birth = pd_Hd_birth_mean, death = pd_Hd_death_mean, type=type))
   
 }
 
@@ -802,22 +808,27 @@ mph_exp<-function(d, eta){
 #-----------------------------------------------
 #距離減衰度etaを「発生時刻と消滅時刻の中点」の平均値として距離行列操作----
 #dim=指定次元。1つのみ指定
-mid_mean_attenu_slope<-function(pd, dim, distmat){
+mid_mean_attenu_slope<-function(pd, dim, distmat, type = c("mean", "birth")){
   
   assertthat::assert_that((length(dim)==1) && is.numeric(dim))
   
   pd_Hd<-pd[pd[,1]==dim, ]
   
   pd_Hd_mid<-apply(pd_Hd, 1, function(x){(x[2]+x[3])/2})
-  
-  eta<-mean(pd_Hd_mid)
   pd_Hd_death_mean<-mean(pd_Hd[, 3])
+  pd_Hd_birth_mean<-mean(pd_Hd[, 2])
+  
+  type<-match.arg(type)
+  eta<-switch (type,
+    mean = mean(pd_Hd_mid),
+    birth = pd_Hd_birth_mean
+  )
   
   slp_seg<-solve(matrix(c(eta, pd_Hd_death_mean, 1, 1), 2, 2), matrix(c(mph_exp(eta, eta), pd_Hd_death_mean)))
   
   distmat[distmat <= eta] %<>% mph_exp(eta) 
   distmat[(distmat > eta) & (distmat <= pd_Hd_death_mean)] %<>% multiply_by(slp_seg[1]) %>% add(slp_seg[2])
   
-  return(lst(altdist=distmat, mean=eta, death_mean=pd_Hd_death_mean))
+  return(lst(altdist=distmat, mid_mean=mean(pd_Hd_mid), birth_mean=pd_Hd_birth_mean, death_mean=pd_Hd_death_mean, type=type))
   
 }
