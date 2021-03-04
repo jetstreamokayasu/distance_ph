@@ -14,7 +14,7 @@ plot_success_rates<-
           xlab = "Data density", ylab = "Success rate", axis_text_size = 20, axis_title_size = 25, 
           legend_name = "method", legend_labels = c("conventional", "proposed 1", "proposed 2"), 
           legend_text_size = 20, legend_title_size = 25,
-          scale_label = sapply(seq(30, 35, by=1), function(i){bquote(.(i)/pi^2)}),
+          scale_label = sapply(seq(30, 35, by=1), function(i){parse(text=paste0(i, "/pi^2"))}),
           white = F, plot_ave = T, plot_sd = T, show_plot = T){
     #-----------------------------------------------------------------
     
@@ -26,11 +26,12 @@ plot_success_rates<-
       sumry<-lapply(data, function(d){
         
         smz<-d %>% group_by(n_points) %>% 
-          dplyr::summarise_each(lst(mean, sd), starts_with(aes_y))
+          dplyr::summarise(across(.fns = lst(mean, sd)))
         
         return(smz)
         
       })
+      
     }
     
     if(!is_list(sumry[[1]]) || length(sumry) == 1){sumry<-lst(sumry)}
@@ -110,4 +111,4 @@ plot_success_rates<-
     return(gplt_whole)
   
 }
-  
+T  

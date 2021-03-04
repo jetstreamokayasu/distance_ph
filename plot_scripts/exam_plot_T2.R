@@ -140,14 +140,16 @@ plot_success_rates(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate),
 
 plot_success_rates(data = lst(t2_300lv_ctic_rate), sumry = lst(t2_300lv_ctic_smz))
 sucs_plt2<-plot_success_rates(data = lst(t2_300lv_ctic_rate), plot_sd = F)
-sucs_plt<-plot_success_rates(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate))
+sucs_plt<-plot_success_rates(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate), aes_y = "dim2rate")
+
+plot_success_rates(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate), sumry = lst(t2_300lv_ctic_smz, t2_300lv_inted_smz), aes_y = "dim2rate")
 
 plot_success_rates(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate, wvr_rates_tbl), aes_y = "dim2rate")
 
 plot_success_rates(data = lst(t3_H3rate, t3_wvr_H3rateA, t3_wvr_H3rateB), aes_y = "dim3rate", plot_sd = F, point_size = 5, line_size = 2, white = T,
                    legend_labels = c("conventional", expression(paste(eta==6.5, ~~epsilon==0.5)), expression(paste(eta==4.0, ~~epsilon==0.5))), 
                    col_vals = c("black","darkorange1", "maroon1"), 
-                   scale_label = sapply(seq(450, 500, by=10), function(i){bquote(.(i)/(512*pi^3))}))
+                   scale_label = sapply(seq(450, 500, by=10), function(i){parse(text=paste0(i, "/(512*pi^3)"))}))
 
 #plot_success_rates(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate), xlab = "The number of points", scale_label = unique(t2_300lv_ctic_rate$n_points))
 
@@ -165,4 +167,10 @@ plot_success_rates(data = lst(ellip_rates_tbl, ellip_inted_rates_tbl, ellip_wvr_
                    scale_label = round(seq(150, 200, by=10)/e_surf, digits = 3))
 
 
+plot_success_rates(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate), sumry = lst(t2_300lv_ctic_smz, t2_300lv_inted_smz), aes_y = "dim2rate")
 
+t2_300lv_ctic_rate %>% group_by(n_points) %>% 
+  dplyr::summarise(across(.fns = lst(mean, sd)))
+
+t3_H3rate %>% group_by(n_points) %>% 
+  dplyr::summarise(across(.fns = lst(mean, sd)))
