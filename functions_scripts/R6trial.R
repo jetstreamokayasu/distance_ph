@@ -317,7 +317,13 @@ DistmatPD<-
         
       },
       
-      get_persists = function(){return(private$persists)}, #パーシステンスを呼び出し
+      get_persists = function(){#パーシステンスを呼び出し
+        
+        if(length(private$persists)==0){self$calc_persists()}
+        
+        return(private$persists)
+        
+        },
       
       get_time = function(){return(private$time)}, #PDの計算時間を呼び出し
       

@@ -192,9 +192,9 @@ distmat_changed_pl_peak_count <-function(X, maxdim, maxscale, const.band=0, maxi
 #parallel使用
 #cluster設定をこちらで行うようにした
 #この関数でparLapplyによりdistmat_changed_pl_peak_countを実行するようにした
-calc_distance_change_betti_paral <- function(X,maxdim,maxscale,samples, const.size=0, spar = seq(0,1,0.1), ph_func, ...){
+calc_distance_change_betti_paral <- function(X,maxdim,maxscale,samples, const.size=0, spar = seq(0,1,0.1), ncl = 4, ph_func, ...){
   
-  cl <- makeCluster(4, outfile="")
+  cl <- makeCluster(ncl, outfile="")
   
   clusterEvalQ(cl,{
     library(phacm)
@@ -206,10 +206,10 @@ calc_distance_change_betti_paral <- function(X,maxdim,maxscale,samples, const.si
   })
   
   clusterEvalQ(cl, {
-    source('~/R/distance_ph/auto_estimate_betti_functions.R', encoding = 'UTF-8')
-    source('~/R/distance_ph/dist_ch_func.R', encoding = 'UTF-8')
     source('~/R/ph_jikken2/new-okayasu/BootstrapHomology-mk1.R', encoding = 'UTF-8')
-    source('~/R/distance_ph/smooth_landscape_func.R', encoding = 'UTF-8')
+    source(list.files(path = getwd(), recursive=T, pattern="smooth_landscape_func.R", full.names = T), encoding = 'UTF-8')
+    source(list.files(path = getwd(), recursive=T, pattern="auto_estimate_betti_functions.R", full.names = T), encoding = 'UTF-8')
+    source(list.files(path = getwd(), recursive=T, pattern="dist_ch_func.R", full.names = T), encoding = 'UTF-8')
   })
   
   aggrs<-lapply(1:maxdim, function(k){
