@@ -32,6 +32,8 @@ plot_success_rates<-
         
       })
       
+      debugText(sumry)
+      
     }
     
     if(!is_list(sumry[[1]]) || length(sumry) == 1){sumry<-lst(sumry)}
@@ -59,12 +61,12 @@ plot_success_rates<-
       
       gplt_ave_lst<-lapply(seq_along(sumry), function(i){
         
-        if(ncol(sumry[[i]])==3){
-          
-          colnames(sumry[[i]])[2] %<>% paste0(aes_y, "_", .)
-          
-        }        
-
+        # if(ncol(sumry[[i]])==3){
+        #   
+        #   colnames(sumry[[i]])[2] %<>% paste0(aes_y, "_", .)
+        #   
+        # }        
+        
         gplt_ave<-geom_line(data = sumry[[i]], aes(x = sumry[[i]][[aes_x]], y = sumry[[i]][[paste0(aes_y, "_mean")]]), color = col_vals[i], size = line_size)
         return(gplt_ave)
 
@@ -79,11 +81,11 @@ plot_success_rates<-
       
       gplt_sd_lst<-lapply(seq_along(sumry), function(i){
         
-        if(ncol(sumry[[i]])==3){
-          
-          colnames(sumry[[i]])[3] %<>% paste0(aes_y, "_",  .)
-          
-        }
+        # if(ncol(sumry[[i]])==3){
+        #   
+        #   colnames(sumry[[i]])[3] %<>% paste0(aes_y, "_",  .)
+        #   
+        # }
   
         gplt_sd<-geom_ribbon(data = sumry[[i]], aes(x = sumry[[i]][[aes_x]], ymin = sumry[[i]][[paste0(aes_y, "_mean")]] - sumry[[i]][[paste0(aes_y, "_sd")]], ymax = sumry[[i]][[paste0(aes_y, "_mean")]] + sumry[[i]][[paste0(aes_y, "_sd")]]), fill = col_vals[i], alpha = fill_alpha)
         return(gplt_sd)

@@ -166,11 +166,9 @@ plot_success_rates(data = lst(ellip_rates_tbl, ellip_inted_rates_tbl, ellip_wvr_
                     sumry = lst(ellip_rates_smz, ellip_inted_rates_smz, ellip_wvr_rates_smz), aes_y = "dim2rate", 
                    scale_label = round(seq(150, 200, by=10)/e_surf, digits = 3))
 
+#-----------------------------------
+#雑誌論文用グラフ-------
+t2_300lv_inted_plt_all2<-plot_success_rates(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate), sumry = lst(t2_300lv_ctic_smz, t2_300lv_inted_smz), aes_y = "dim2rate", 
+                   legend_labels = c("Futagami", "Yamada", "Proposed"))
 
-plot_success_rates(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate), sumry = lst(t2_300lv_ctic_smz, t2_300lv_inted_smz), aes_y = "dim2rate")
-
-t2_300lv_ctic_rate %>% group_by(n_points) %>% 
-  dplyr::summarise(across(.fns = lst(mean, sd)))
-
-t3_H3rate %>% group_by(n_points) %>% 
-  dplyr::summarise(across(.fns = lst(mean, sd)))
+ggsave("./pics/success_ctic_intr_T2H2.pdf", plot = t2_300lv_inted_plt_all2, height = 8.5, width = 14, units = "in")

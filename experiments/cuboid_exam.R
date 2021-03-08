@@ -198,12 +198,12 @@ colnames(cube_para1)<-c("eta", "l_rate")
 
 
 #4D直方体のサブサンプルリスト
-cube4d_180_lst1_84_subs<-usephacm:::bootstrapper(X = cube4d_180_list1[[84]], size = nrow(cube4d_180_list1[[84]])*0.8, samples = 5)
+#cube4d_180_lst1_84_subs<-usephacm:::bootstrapper(X = cube4d_180_list1[[84]], size = nrow(cube4d_180_list1[[84]])*0.8, samples = 5)
 
 #parallelで並列計算時に使うオジェクト読み込み
 clusterExport(cl, varlist = c("cube4d_180_lst1_84_subs", "cube_para1"))
 
-#サブセット1~10をグリッドサーチ
+#サブセット1~5をグリッドサーチ
 cube4d_180_lst1_84_subs_time<-system.time( 
   
   cube4d_180_lst1_84_subs_gs<-lapply(1:length(cube4d_180_lst1_84_subs), function(i){
@@ -227,4 +227,170 @@ cube4d_180_lst1_84_subs_time<-system.time(
   })
 )
 
+#途中で落ちたので5セット目のみ計算しなおす
+cube4d_180_lst1_84_subs_5_gs_time<-system.time(
+cube4d_180_lst1_84_subs_5_gs<-parApply(cl, cube_para1, 1, function(p){
+  
+  wpd<-weighted_homology(X = cube4d_180_lst1_84_subs[[5]], maxdim = 4, maxscale = 2, l_rate = p[2], eta = p[1])
+  
+  #parallelフォルダにcsvを出力
+  write.csv(as.data.frame(wpd[["pd"]]), 
+            file = paste0("./parallel/", "data", 5, "_", "lrate", 
+                          gsub("\\.", "", p[2]), "eta", gsub("\\.", "", p[1]), 
+                          "_", format(Sys.time(), "%m%d_%H%M"), ".csv"))
+  
+  return(wpd)
+  
+})
+)
 
+#---------------------------------
+#csvに出力されたPDを読み込む---------
+
+list.files(path = "./parallel", pattern = paste0("data", 1, "_", "lrate", gsub("\\.", "", cube_para1$l_rate[27]), "eta", gsub("\\.", "", cube_para1$eta[27]), "_0305"), full.names = T)
+
+cube4d_180_lst1_84_subs_gs_pd1<-list.files(path = "./parallel", pattern = paste0("data", 1, "_", "lrate", gsub("\\.", "", cube_para1$l_rate[27]), "eta", gsub("\\.", "", cube_para1$eta[27]), "_0305"), full.names = T) %>% 
+  read_csv(col_types = "_idd")
+
+cube4d_180_lst1_84_subs_gs_1to3<-map(1:3, function(i){map(1:nrow(cube_para1), ~{
+  
+  wpd<-list.files(path = "./parallel", pattern = paste0("data", i, "_", "lrate", gsub("\\.", "", cube_para1$l_rate[.x]), "eta", gsub("\\.", "", cube_para1$eta[.x]), "_0305"), full.names = T) %>% 
+  read_csv(col_types = "_idd")
+  
+  return(lst(wpd=wpd, l_rate=cube_para1$l_rate[.x], cube_para1$eta[.x]))
+  
+  })})
+
+#サブサンプル4つ目
+cube4d_180_lst1_84_subs_gs_4<-map(1:nrow(cube_para1), ~{
+  
+  file<-list.files(path = "./parallel", pattern = paste0("data", 4, "_", "lrate", gsub("\\.", "", cube_para1$l_rate[.x]), "eta", gsub("\\.", "", cube_para1$eta[.x]), "_0305"), full.names = T)
+  
+  if(is_empty(file)){return(file)}
+  else{
+    
+    wpd<-read_csv(file, col_types = "_idd")
+    return(lst(wpd=wpd, l_rate=cube_para1$l_rate[.x], cube_para1$eta[.x]))
+  }
+  
+})
+
+every(cube4d_180_lst1_84_subs_gs_4, ~{equals(length(.), 3)}) #%>% which()
+
+#サブサンプル5のグリッドサーチ結果リストのname変更、ハイパラ追加
+
+cube4d_180_lst1_84_subs_5_gs_rename<-map(seq_along(cube4d_180_lst1_84_subs_5_gs), ~{
+  
+  names(cube4d_180_lst1_84_subs_5_gs[[.x]])[1]<-"wpd"
+  return(append(cube4d_180_lst1_84_subs_5_gs[[.x]], lst(l_rate=cube_para1$l_rate[.x], cube_para1$eta[.x])))
+  
+})
+
+#サブサンプル1~5のグリッドサーチ結果のPDまとめ
+cube4d_180_lst1_84_subs_gs<-append(cube4d_180_lst1_84_subs_gs_1to3, lst(cube4d_180_lst1_84_subs_gs_4, cube4d_180_lst1_84_subs_5_gs_rename))
+
+#サブサンプルのPLをまとめる
+cube4d_180_lst1_84_subs_gs_pls<-lapply(cube4d_180_lst1_84_subs_gs, function(X){
+  
+  sub_pls<-lapply(X, function(Y){calc_landscape(diag = as.matrix(Y[["wpd"]]), maxscale = 2, plot = F)})
+  
+})
+
+#サブサンプルのPLのH4局所最大値をまとめる
+cube4d_180_lst1_84_subs_gs_peaks<-lapply(cube4d_180_lst1_84_subs_gs_pls, function(X){
+  
+  sub_pls<-sapply(X, function(Y){calc.landscape.peak(X = Y[["4-land"]], dimension = 2, thresh = Y[["thresh"]]*(2*pi)/surface_nshpere(4), tseq = Y[["tseq"]], show = F)})
+  
+})
+
+#サブサンプル1~10のPLのH2局所最大値の平均
+cube4d_180_lst1_84_subs_gs_peaks_ave<-sapply(seq_along(cube4d_180_lst1_84_subs_gs_peaks[[1]]), function(i){
+  mpeaks<-sapply(cube4d_180_lst1_84_subs_gs_peaks, function(PL){PL[[i]]}) %>% mean()
+})
+
+#H2局所最大値の数をパラメータごとにプロット
+#サブサンプル1~10平均
+par(mai=c(0.7, 0.7, 0.3, 0.3))
+par(mgp=c(2, 1, 0))
+plot(cube_para1$l_rate, cube_para1$eta, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(cube_para1$l_rate, cube_para1$eta, labels = round(cube4d_180_lst1_84_subs_gs_peaks_ave, 2),
+     col = ifelse(cube4d_180_lst1_84_subs_gs_peaks_ave >= 0.5 & cube4d_180_lst1_84_subs_gs_peaks_ave < 1.5, 2, 4), cex = 0.8)
+
+#-------------------------
+#結合時刻変化手法で４次元直方体成功率実験----------
+#180点の4次元立方体。リスト1つ目の1~20セット使用
+#l_rate=0.4, eta=1.4
+
+{
+  cube4d_180_lst1_1to20_wvr_time2<-system.time(
+    cube4d_180_lst1_1to20_wvr_aggr2<-calc_distance_change_betti_paral(X = cube4d_180_list1[1:20], maxdim = 4, maxscale = 2, samples = 10, ncl = 4, 
+                                                                     ph_func = weighted_homology, l_rate=0.4, eta=1.4)
+  )
+  
+  save2RData(cube4d_180_lst1_1to20_wvr_time2)
+  save2RData(cube4d_180_lst1_1to20_wvr_aggr2)
+}
+
+
+#----------------------------------------
+#4次元直方体のサブサンプルでハイパラグリッドサーチ。その2------
+#H4成功率確認用
+#グリッドサーチ用ハイパラ。その2
+cube_eta2<-seq(1.3, 1.6, by=0.05)
+cube_lrate2<-seq(0.2, 0.8, by=0.05)
+cube_para2<-expand.grid(cube_eta2, cube_lrate2)
+colnames(cube_para2)<-c("eta", "l_rate")
+
+#parallelで並列計算時に使うオジェクト読み込み
+clusterExport(cl, varlist = c("cube4d_180_lst1_84_subs", "cube_para2"))
+
+#サブセット1~5をグリッドサーチ
+cube4d_180_lst1_84_subs_time2<-system.time( 
+  
+  cube4d_180_lst1_84_subs_gs2<-lapply(1:length(cube4d_180_lst1_84_subs), function(i){
+    
+    sub_gs<-parLapply(cl, 1:nrow(cube_para2), function(p){
+      
+      wpd<-weighted_homology(X = cube4d_180_lst1_84_subs[[i]], maxdim = 4, maxscale = 2, l_rate = cube_para2$l_rate[p], eta = cube_para2$eta[p])
+      
+      #parallelフォルダにcsvを出力
+      write.csv(as.data.frame(wpd[["pd"]]), 
+                file = paste0("./parallel/", "data", i, "_", "lrate", 
+                              gsub("\\.", "", cube_para2$l_rate[p]), "eta", gsub("\\.", "", cube_para2$eta[p]), 
+                              "_", format(Sys.time(), "%m%d_%H%M"), ".csv"))
+      
+      return(wpd)
+      
+    })
+    
+    return(sub_gs)
+    
+  })
+)
+
+#サブサンプルのPLをまとめる
+cube4d_180_lst1_84_subs_gs2_pls<-lapply(cube4d_180_lst1_84_subs_gs2, function(X){
+  
+  sub_pls<-lapply(X, function(Y){calc_landscape(diag = as.matrix(Y[["pd"]]), maxscale = 2, plot = F)})
+  
+})
+
+#サブサンプルのPLのH4局所最大値をまとめる
+cube4d_180_lst1_84_subs_gs2_peaks<-lapply(cube4d_180_lst1_84_subs_gs2_pls, function(X){
+  
+  sub_pls<-sapply(X, function(Y){calc.landscape.peak(X = Y[["4-land"]], dimension = 2, thresh = Y[["thresh"]]*(2*pi)/surface_nshpere(4), tseq = Y[["tseq"]], show = F)})
+  
+})
+
+#サブサンプル1~5のPLのH4局所最大値の平均
+cube4d_180_lst1_84_subs_gs2_peaks_ave<-sapply(seq_along(cube4d_180_lst1_84_subs_gs2_peaks[[1]]), function(i){
+  mpeaks<-sapply(cube4d_180_lst1_84_subs_gs2_peaks, function(PL){PL[[i]]}) %>% mean()
+})
+
+#H2局所最大値の数をパラメータごとにプロット
+#サブサンプル1~10平均
+par(mai=c(0.7, 0.7, 0.3, 0.3))
+par(mgp=c(2, 1, 0))
+plot(cube_para2$l_rate, cube_para2$eta, xlab="landmark rate", ylab="eta", type="n", cex.lab = 1.3)
+text(cube_para2$l_rate, cube_para2$eta, labels = round(cube4d_180_lst1_84_subs_gs2_peaks_ave, 2),
+     col = ifelse(cube4d_180_lst1_84_subs_gs2_peaks_ave >= 0.5 & cube4d_180_lst1_84_subs_gs2_peaks_ave < 1.5, 2, 4), cex = 0.8)

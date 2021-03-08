@@ -71,6 +71,27 @@ t2_inted_time_plt_ave<-t2_ctic_time_plt_all + geom_line(data = t2_inted_time_smz
 t2_inted_time_plt_sd<-t2_inted_time_plt_ave + geom_ribbon(data = t2_inted_time_smz, aes(ymin = mean - sd, ymax = mean + sd), fill = "royalblue1", alpha = 0.1)
 t2_inted_time_plt_all<-t2_inted_time_plt_sd + geom_point(data = t2_inted_time, aes(x = n_points, y = time, color = "proposed1"), size = 2)
 
+#補間点数をまとめる
+torus300_colle_setB_inted_points<-map(torus300_colle_setB_inted, ~map_int(., nrow))
+torus300_colle_setB_inted_points_mean<-map_dbl(trs300_col_setB_inted_points, mean)
+
+for (j in seq(300, 350, by=10)) {
+  assign(paste0("torus", j, "_colle_setB_inted_points"), map(get(paste0("torus", j, "_colle_setB_inted")), ~map_int(., nrow)))
+  assign(paste0("torus", j, "_colle_setB_inted_points_mean"), map_dbl(get(paste0("torus", j, "_colle_setB_inted_points")), mean))
+}
+
+trs300to350_col_setB_inted_points_mean<-map(seq(300, 350, by=10), ~get(paste0("torus", .x, "_colle_setB_inted_points_mean"))) %>% unlist()
+
+t2_inted_time %<>% add_column(total_points=trs300to350_col_setB_inted_points_mean, .after = 1) 
+
+trs300to350_inted_points_mean<-map_dbl(seq(300, 350, by=10), ~{
+  
+  get(paste0("torus", .x, "_colle_setB_inted_points")) %>% unlist() %>% mean()
+  
+})
+
+t2_inted_time_smz %<>% add_column(total_mean=trs300to350_inted_points_mean, .after = 1) 
+
 #-----------------------
 #CTIC手法と補間手法の計算時間プロット------
 ggsave("./pics/compute_time_ctic_interp.pdf", plot = t2_inted_time_plt_all, height = 8.5, width = 14, units = "in")
@@ -121,5 +142,186 @@ t2_wvr_time_plt_all<-t2_wvr_time_plt_sd + geom_point(data = t2_wvr_time, aes(x =
 
 ggsave("./pics/compute_time.pdf", plot = t2_time_plt_whole2, height = 8.5, width = 14, units = "in")
 
-# plot_success_rates(data = lst(t2_ctic_time, t2_inted_time, t2_wvr_time), aes_y = "time", ylim = c(0, NA),
-#                    fill_alpha = 0.1, scale_label = seq(300, 350, by = 10), xlab = "The number of points", ylab = "Computation time", white = T)
+plot_success_rates(data = lst(t2_ctic_time, t2_inted_time, t2_wvr_time), aes_y = "time", ylim = c(0, NA),
+                   fill_alpha = 0.1, scale_label = seq(300, 350, by = 10), xlab = "The number of points", ylab = "Computation time", legend_labels = c("Futagami", "Yamada", "Proposed"))
+
+t2_ctic_time_summary<-t2_ctic_time %>% group_by(n_points) %>% dplyr::summarise(across(.fns = lst(mean, sd)))
+
+t2_ctic_time_summary_lst<-list(t2_ctic_time_summary, t2_ctic_time_summary)
+
+#横軸を補間点も含めた全データ点数とした場合の計算時間
+#ggplotによるCTIC2019手法計算時間のプロット
+t2_ctic_time_plt_ave2<-ggplot(data = t2_ctic_time_smz, mapping = aes(x = n_points, y = mean)) + geom_line() 
+t2_ctic_time_plt_sd2<-t2_ctic_time_plt_ave2 + geom_ribbon(aes(ymin = mean - sd, ymax = mean + sd), alpha = 0.1)
+{
+  t2_ctic_time_plt_whl<-t2_ctic_time_plt_sd2 + geom_point(data = t2_ctic_time, aes(x = n_points, y = time, color = "futagami"), size = 2) +
+    scale_color_manual(breaks = c("futagami", "yamada", "proposed"), values = c("black","royalblue1", "red"), guide = "legend", name = "method", 
+                       labels = c("Futagami", "Yamada", "Proposed"))
+}
+
+{
+  t2_ctic_time_plt_whl2<-t2_ctic_time_plt_whl + 
+    labs(x = "The number of points", y = "Computational time [sec]") + 
+    theme(axis.text = element_text(size=25), axis.title = element_text(size=30), 
+          legend.text = element_text(size=25), legend.title = element_text(size=30)) + guides(color = guide_legend(override.aes = list(size = 5))) #+
+    #scale_x_continuous(breaks = seq(300, 350, by=10), labels = c(expression(30/pi^2), expression(31/pi^2), expression(32/pi^2), expression(33/pi^2), expression(34/pi^2), expression(35/pi^2)) )
+  
+  
+}
+
+#ggplotによる補間手法計算時間のプロット
+t2_inted_time_plt_ave2<-t2_ctic_time_plt_whl2 + geom_line(data = t2_inted_time_smz, aes(x = total_mean, y = mean), color = "royalblue1")
+t2_inted_time_plt_sd2<-t2_inted_time_plt_ave2 + geom_ribbon(data = t2_inted_time_smz, aes(x = total_mean, ymin = mean - sd, ymax = mean + sd), fill = "royalblue1", alpha = 0.1)
+t2_inted_time_plt_whl<-t2_inted_time_plt_sd2 + geom_point(data = t2_inted_time, aes(x = total_points, y = time, color = "yamada"), size = 2)
+
+#ggplotによるexp距離変化手法計算時間のプロット
+t2_wvr_time_plt_ave2<-t2_inted_time_plt_whl + geom_line(data = t2_wvr_time_smz, aes(x = n_points, y = mean), color = "red")
+t2_wvr_time_plt_sd2<-t2_wvr_time_plt_ave2 + geom_ribbon(data = t2_wvr_time_smz, aes(ymin = mean - sd, ymax = mean + sd), fill = "red", alpha = 0.1)
+t2_wvr_time_plt_whl<-t2_wvr_time_plt_sd2 + geom_point(data = t2_wvr_time, aes(x = n_points, y = time, colour = "proposed"), size = 2)
+
+ggsave("./pics/torus_compute_time_ctic_intrp_wvr.pdf", plot = t2_wvr_time_plt_whl, height = 8.2, width = 17, units = "in")
+
+
+#------------------- 
+#楕円体--------------
+
+#-------------------
+#ctic手法--------
+ellip150_ctic_time<-map_dbl(c(lst(ellip150_aggr1), ellip150_list2to5_aggr), ~sum(.[["times"]]))
+ellip160_ctic_time<-map_dbl(ellip160_list1to5_aggr, ~sum(.[["times"]]))
+ellip170_ctic_time<-map_dbl(ellip170_list1to5_aggr, ~sum(.[["times"]]))
+ellip180_ctic_time<-map_dbl(ellip180_list1to5_aggr, ~sum(.[["times"]]))
+ellip190_ctic_time<-map_dbl(ellip190_list1to5_aggr, ~sum(.[["times"]]))
+ellip200_ctic_time<-map_dbl(ellip200_list1to5_aggr, ~sum(.[["times"]]))
+
+ellip_ctic_time<-tibble("150"=ellip150_ctic_time,
+                     "160"=ellip160_ctic_time,
+                     "170"=ellip170_ctic_time,
+                     "180"=ellip180_ctic_time,
+                     "190"=ellip190_ctic_time,
+                     "200"=ellip200_ctic_time) %>% 
+  pivot_longer(cols = as.character(seq(150, 200, by=10)), names_to = "n_points", values_to = "time") %>% 
+  dplyr::arrange(n_points) 
+
+ellip_ctic_time$n_points %<>% as.numeric()
+
+ellip_ctic_time_smz<-ellip_ctic_time %>% group_by(n_points) %>% 
+  dplyr::summarise(across(.fns = lst(mean, sd)))
+
+#-------------------
+#補間手法--------
+ellip150_intrp_time<-map_dbl(c(lst(ellip150_inted_aggr1), ellip150_list2to5_inted_aggr), ~sum(.[["times"]]))
+ellip160_intrp_time<-map_dbl(ellip160_list1to5_inted_aggr, ~sum(.[["times"]]))
+ellip170_intrp_time<-map_dbl(ellip170_list1to5_inted_aggr, ~sum(.[["times"]]))
+ellip180_intrp_time<-map_dbl(ellip180_list1to5_inted_aggr, ~sum(.[["times"]]))
+ellip190_intrp_time<-map_dbl(ellip190_list1to5_inted_aggr, ~sum(.[["times"]]))
+ellip200_intrp_time<-map_dbl(ellip200_list1to5_inted_aggr, ~sum(.[["times"]]))
+
+ellip_intrp_time<-tibble("150"=ellip150_intrp_time,
+                        "160"=ellip160_intrp_time,
+                        "170"=ellip170_intrp_time,
+                        "180"=ellip180_intrp_time,
+                        "190"=ellip190_intrp_time,
+                        "200"=ellip200_intrp_time) %>% 
+  pivot_longer(cols = as.character(seq(150, 200, by=10)), names_to = "n_points", values_to = "time") %>% 
+  dplyr::arrange(n_points) 
+
+ellip_intrp_time$n_points %<>% as.numeric()
+
+ellip_intrp_time_smz<-ellip_intrp_time %>% group_by(n_points) %>% 
+  dplyr::summarise(across(.fns = lst(mean, sd)))
+
+#補間点数をまとめる
+ellip150_lst1to5_inted_npoints<-map(c(lst(ellip150_list1_inted), ellip150_list2to5_inted), ~{map_int(.x, ~{nrow(.)})})
+ellip150_lst1to5_inted_npoints_mean<-map_dbl(ellip150_lst1to5_inted_npoints, mean)
+
+ellip160_lst1to5_inted_npoints<-map(ellip160_list1to5_inted, ~{map_int(.x, nrow)})
+ellip160_lst1to5_inted_npoints_mean<-map_dbl(ellip160_lst1to5_inted_npoints, mean)
+
+ellip170_lst1to5_inted_npoints<-map(ellip170_list1to5_inted, ~{map_int(.x, nrow)})
+ellip170_lst1to5_inted_npoints_mean<-map_dbl(ellip170_lst1to5_inted_npoints, mean)
+
+ellip180_lst1to5_inted_npoints<-map(ellip180_list1to5_inted, ~{map_int(.x, nrow)})
+ellip180_lst1to5_inted_npoints_mean<-map_dbl(ellip180_lst1to5_inted_npoints, mean)
+
+ellip190_lst1to5_inted_npoints<-map(ellip190_list1to5_inted, ~{map_int(.x, nrow)})
+ellip190_lst1to5_inted_npoints_mean<-map_dbl(ellip190_lst1to5_inted_npoints, mean)
+
+ellip200_lst1to5_inted_npoints<-map(ellip200_list1to5_inted, ~{map_int(.x, nrow)})
+ellip200_lst1to5_inted_npoints_mean<-map_dbl(ellip200_lst1to5_inted_npoints, mean)
+
+ellip_intrp_time %<>% add_column(total_points = c(ellip150_lst1to5_inted_npoints_mean, ellip160_lst1to5_inted_npoints_mean, ellip170_lst1to5_inted_npoints_mean, ellip180_lst1to5_inted_npoints_mean, ellip190_lst1to5_inted_npoints_mean, ellip200_lst1to5_inted_npoints_mean), 
+           .after = 1)
+
+ellip150to200_inted_points_mean<-map_dbl(seq(150, 200, by=10), ~{
+  
+  get(paste0("ellip", .x, "_lst1to5_inted_npoints")) %>% unlist() %>% mean()
+  
+})
+
+ellip_intrp_time_smz %<>% add_column(total_mean=ellip150to200_inted_points_mean, .after = 1)
+
+#--------------------
+#結合時刻変化手法--------------
+ellip150_wvr_time<-map_dbl(c(lst(ellip150_wvr_aggr1), ellip150_list2to5_wvr_aggr), ~sum(.[["times"]]))
+ellip160_wvr_time<-map_dbl(ellip160_list1to5_wvr_aggr, ~sum(.[["times"]]))
+ellip170_wvr_time<-map_dbl(ellip170_list1to5_wvr_aggr, ~sum(.[["times"]]))
+ellip180_wvr_time<-map_dbl(ellip180_list1to5_wvr_aggr, ~sum(.[["times"]]))
+ellip190_wvr_time<-map_dbl(ellip190_list1to5_wvr_aggr, ~sum(.[["times"]]))
+ellip200_wvr_time<-map_dbl(ellip200_list1to5_wvr_aggr, ~sum(.[["times"]]))
+
+ellip_wvr_time<-tibble("150"=ellip150_wvr_time,
+                         "160"=ellip160_wvr_time,
+                         "170"=ellip170_wvr_time,
+                         "180"=ellip180_wvr_time,
+                         "190"=ellip190_wvr_time,
+                         "200"=ellip200_wvr_time) %>% 
+  pivot_longer(cols = as.character(seq(150, 200, by=10)), names_to = "n_points", values_to = "time") %>% 
+  dplyr::arrange(n_points) 
+
+ellip_wvr_time$n_points %<>% as.numeric()
+
+ellip_wvr_time_smz<-ellip_wvr_time %>% group_by(n_points) %>% 
+  dplyr::summarise(across(.fns = lst(mean, sd)))
+
+
+#-------------------------------
+#楕円体計算時間全体プロット---------
+
+ellip_cmpt_time_plt<-plot_success_rates(data = lst(ellip_ctic_time, ellip_intrp_time, ellip_wvr_time), sumry = lst(ellip_ctic_time_smz, ellip_intrp_time_smz, ellip_wvr_time_smz), 
+                   aes_y = "time", ylim = c(0, NA), scale_label = seq(150, 200, by=10), xlab = "The number of points", ylab = "Computation time", legend_labels = c("Futagami", "Yamada", "Proposed"))
+
+ggsave("./pics/ellip_compute_time_ctic_intrp_wvr.pdf", plot = ellip_cmpt_time_plt, height = 8.2, width = 17, units = "in")
+
+
+#ggplotによるCTIC2019手法計算時間のプロット
+ellip_ctic_time_plt_ave<-ggplot(data = ellip_ctic_time_smz, mapping = aes(x = n_points, y = time_mean)) + geom_line() 
+ellip_ctic_time_plt_sd<-ellip_ctic_time_plt_ave + geom_ribbon(aes(ymin = time_mean - time_sd, ymax = time_mean + time_sd), alpha = 0.1)
+{
+  ellip_ctic_time_plt_whole<-ellip_ctic_time_plt_sd + geom_point(data = ellip_ctic_time, aes(x = n_points, y = time, color = "futagami"), size = 2) +
+    scale_color_manual(breaks = c("futagami", "yamada", "proposed"), values = c("black","royalblue1", "red"), guide = "legend", name = "method", 
+                       labels = c("Futagami", "Yamada", "Proposed"))
+}
+
+{
+  ellip_ctic_time_plt_whole2<-ellip_ctic_time_plt_whole + 
+    labs(x = "The number of points", y = "Computational time [sec]") + 
+    theme(axis.text = element_text(size=25), axis.title = element_text(size=30), 
+          legend.text = element_text(size=25), legend.title = element_text(size=30)) + guides(color = guide_legend(override.aes = list(size = 5))) #+
+    #scale_x_continuous(breaks = seq(300, 350, by=10), labels = c(expression(30/pi^2), expression(31/pi^2), expression(32/pi^2), expression(33/pi^2), expression(34/pi^2), expression(35/pi^2)) )
+  
+  
+}
+
+#ggplotによる補間手法計算時間のプロット
+#横軸を補間後の全データ点数とした場合の計算時間
+ellip_intrp_time_ttlp_mean<-ellip_ctic_time_plt_whole2+geom_line(data = ellip_intrp_time_smz, mapping = aes(x = total_mean, y = time_mean), color = "royalblue1")
+ellip_intrp_time_ttlp_sd<-ellip_intrp_time_ttlp_mean + geom_ribbon(data = ellip_intrp_time_smz, mapping = aes(x = total_mean, ymin = time_mean-time_sd, ymax = time_mean+time_sd), fill = "royalblue1", alpha = 0.1)
+ellip_intrp_time_ttlp1<-ellip_intrp_time_ttlp_sd+geom_point(data = ellip_intrp_time, mapping = aes(x = total_points, y = time, colour = "yamada"), size = 2)
+
+#ggplotによるexp距離変化手法計算時間のプロット
+ellip_wvr_time_plt_ave<-ellip_intrp_time_ttlp1 + geom_line(data = ellip_wvr_time_smz, aes(x = n_points, y = time_mean), color = "red")
+ellip_wvr_time_plt_sd<-ellip_wvr_time_plt_ave + geom_ribbon(data = ellip_wvr_time_smz, aes(ymin = time_mean - time_sd, ymax = time_mean + time_sd), fill = "red", alpha = 0.1)
+ellip_wvr_time_plt_whl<-ellip_wvr_time_plt_sd + geom_point(data = ellip_wvr_time, aes(x = n_points, y = time, colour = "proposed"), size = 2)
+
+ggsave("./pics/ellip_compute_time.pdf", plot = ellip_wvr_time_plt_whl, height = 8.2, width = 17, units = "in")

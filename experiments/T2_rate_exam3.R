@@ -210,5 +210,5 @@ torus310_colle_setB<-lapply(torus310_colle_set, function(X)lapply(X, function(Y)
 #--------------------------------------
 #補間により増加した点数を調べる
 trs300_col_setB_inted_points<-map(torus300_colle_setB_inted, ~map_dbl(., nrow))
-unlist(trs300_col_setB_inted_points) %>% subtract(300) %>% mean() %>% divide_by(300)
+unlist(trs300_col_setB_inted_points) %>% subtract(300) %>% mean() #%>% divide_by(300)
 
