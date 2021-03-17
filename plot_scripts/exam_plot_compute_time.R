@@ -142,8 +142,10 @@ t2_wvr_time_plt_all<-t2_wvr_time_plt_sd + geom_point(data = t2_wvr_time, aes(x =
 
 ggsave("./pics/compute_time.pdf", plot = t2_time_plt_whole2, height = 8.5, width = 14, units = "in")
 
-plot_success_rates(data = lst(t2_ctic_time, t2_inted_time, t2_wvr_time), aes_y = "time", ylim = c(0, NA),
-                   fill_alpha = 0.1, scale_label = seq(300, 350, by = 10), xlab = "The number of points", ylab = "Computation time", legend_labels = c("Futagami", "Yamada", "Proposed"))
+t2_time_plt_whl3<-plot_success_rates(data = lst(t2_ctic_time, t2_inted_time, t2_wvr_time), aes_y = "time", ylim = c(0, NA),
+                   fill_alpha = 0.1, scale_label = seq(300, 350, by = 10), xlab = "The number of points", ylab = "Computation time", legend_labels = c("Futagami", "Yamada", "Proposed"), 
+                   point_size = 3, axis_text_size = 25, axis_title_size = 30, legend_text_size = 25, legend_title_size = 30)
+ggsave(filename = "./pics/t2_cmpt_time_ctic_intrp_wvr.pdf", plot = t2_time_plt_whl3, width = 14, height = 10, units = "in")
 
 t2_ctic_time_summary<-t2_ctic_time %>% group_by(n_points) %>% dplyr::summarise(across(.fns = lst(mean, sd)))
 
@@ -291,7 +293,7 @@ ellip_wvr_time_smz<-ellip_wvr_time %>% group_by(n_points) %>%
 ellip_cmpt_time_plt<-plot_success_rates(data = lst(ellip_ctic_time, ellip_intrp_time, ellip_wvr_time), sumry = lst(ellip_ctic_time_smz, ellip_intrp_time_smz, ellip_wvr_time_smz), 
                    aes_y = "time", ylim = c(0, NA), scale_label = seq(150, 200, by=10), xlab = "The number of points", ylab = "Computation time", legend_labels = c("Futagami", "Yamada", "Proposed"))
 
-ggsave("./pics/ellip_compute_time_ctic_intrp_wvr.pdf", plot = ellip_cmpt_time_plt, height = 8.2, width = 17, units = "in")
+ggsave("./pics/ellip_compute_time_ctic_intrp_wvr.pdf", plot = ellip_cmpt_time_plt, height = 10, width = 14, units = "in")
 
 
 #ggplotによるCTIC2019手法計算時間のプロット

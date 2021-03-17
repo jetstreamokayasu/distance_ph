@@ -41,6 +41,15 @@ dev.off()
 # trs350_col1_2_pd<-trs350_col1_2_inst$get_pd() %>% pd_conv_stats2tda()
 # plot(trs350_col1_2_pd)
 
+#graphicでPDを書き直す
+abline(v=0)
+plot(trs300_col1_3_inst$get_pd()[, 2:3], bty="l")
+abline(a = 0, b = 1)
+
+pdf("./pics/trs300_col1_3_pd2.pdf", width = 8, height = 8)
+plot_diag(trs300_col1_3_inst$get_pd(), lim = c(0, 3.0))
+dev.off()
+
 #exp距離変化適用
 trs300_col1_3_inst$create_changed_distmat(l_rate = 0.8, eta = 3.0)
 trs300_col1_3_inst$alt_distmat[[1]]$calc_pd(maxdim = 2, maxscale = 3)
@@ -49,6 +58,11 @@ pdf("./pics/trs300_col1_3_altdist1_pd.pdf", width = 8, height = 8)
 par(cex.lab = 1.5, mgp = c(2.5, 1, 0))
 trs300_col1_3_inst$alt_distmat[[1]]$plot_diag()
 dev.off()
+
+pdf("./pics/trs300_col1_3_altdist1_pd2.pdf", width = 8, height = 8)
+plot_diag(trs300_col1_3_inst$alt_distmat[[1]]$get_pd(), lim = c(0, 3.0))
+dev.off()
+
 
 trs300_col1_40_inst$create_changed_distmat(l_rate = 0.8, eta = 3.0)
 trs300_col1_40_inst$alt_distmat[[1]]$calc_pd(maxdim = 2, maxscale = 3)
@@ -100,10 +114,17 @@ par(cex.lab = 1.5, mgp = c(2.5, 1, 0), cex = 1)
 t3rs450_lst1_4_inst$plot_diag()
 dev.off()
 
+pdf("./pics/t3rs450_lst1_4_pd.pdf", width = 8, height = 8)
+plot_diag(t3rs450_lst1_4_inst$get_pd(), lim = c(0, 8.1))
+dev.off()
+
+
 pdf("./pics/t3rs450_lst1_4_pdH2.pdf", width = 8, height = 8)
 par(cex.lab = 1.5, mgp = c(2.5, 1, 0), cex = 1)
 t3rs450_lst1_4_inst$alt_distmat[[1]]$plot_diag()
 dev.off()
+
+plot_diag(t3rs450_lst1_4_inst$alt_distmat[[1]]$get_pd(), lim = c(0, 8.1))
 
 pdf("./pics/t3rs450_lst1_4_pdH3.pdf", width = 8, height = 8)
 par(cex.lab = 1.5, mgp = c(2.5, 1, 0), cex = 1)
