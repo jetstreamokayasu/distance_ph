@@ -172,3 +172,10 @@ t2_300lv_inted_plt_all2<-plot_success_rates(data = lst(t2_300lv_ctic_rate, t2_30
                    legend_labels = c("Futagami", "Yamada", "Proposed"), point_size = 3, axis_text_size = 25, axis_title_size = 30, legend_text_size = 25, legend_title_size = 30)
 
 ggsave("./pics/success_ctic_intr_T2H2.pdf", plot = t2_300lv_inted_plt_all2, height = 8.5, width = 14, units = "in")
+
+#結合時刻変化手法込み。横軸はデータ点数
+t2_300lv_ctic_inted_wvr_plt2<-plot_success_rates(data = lst(t2_300lv_ctic_rate, t2_300lv_inted_rate, wvr_rates_tbl), sumry = lst(t2_300lv_ctic_smz, t2_300lv_inted_smz, wvr_rates_smz), aes_y = "dim2rate", 
+                                            legend_labels = c("Futagami", "Yamada", "Proposed"), point_size = 3, axis_text_size = 25, axis_title_size = 30, legend_text_size = 25, legend_title_size = 30, 
+                                            scale_label = seq(300, 350, by=10), xlab = "The number of points")
+
+ggsave("./pics/success_ctic_intr_wvr_T2H2_2.pdf", plot = t2_300lv_ctic_inted_wvr_plt2, height = 8.5, width = 14, units = "in")

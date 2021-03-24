@@ -165,7 +165,16 @@ t3orus4_list3_1to30aggrs3_time<-system.time(
   t3orus4_list3_1to30aggrs3<-calc_distance_change_betti_paral(X = t3orus4_list3B[1:30], maxdim = 3, maxscale = 9, samples = 5, 
                                                               ph_func = weighted_homology, l_rate=0.5, eta=6.5) )   
 
-t3orus4_list3_31to100_wvr_aggrs3_time<-system.time(
+#計算時間を再び求める
+{t3orus4_list3_1to30aggrs4_time<-system.time(
+  t3orus4_list3_1to30aggrs4<-calc_distance_change_betti_paral(X = t3orus4_list3B[1:30], maxdim = 3, maxscale = 9, samples = 5, 
+                                                              ph_func = weighted_homology, l_rate=0.5, eta=6.5) )
+  save2RData(t3orus4_list3_1to30aggrs4)
+  save2RData(t3orus4_list3_1to30aggrs4_time)
+  
+  }   
+
+ t3orus4_list3_31to100_wvr_aggrs3_time<-system.time(
   t3orus4_list3_31to100_wvr_aggrs3<-calc_distance_change_betti_paral(X = t3orus4_list3B[31:100], maxdim = 3, maxscale = 9, samples = 5, 
                                                               ph_func = weighted_homology, l_rate=0.5, eta=6.5) )   
 

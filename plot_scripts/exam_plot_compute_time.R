@@ -327,3 +327,15 @@ ellip_wvr_time_plt_sd<-ellip_wvr_time_plt_ave + geom_ribbon(data = ellip_wvr_tim
 ellip_wvr_time_plt_whl<-ellip_wvr_time_plt_sd + geom_point(data = ellip_wvr_time, aes(x = n_points, y = time, colour = "proposed"), size = 2)
 
 ggsave("./pics/ellip_compute_time.pdf", plot = ellip_wvr_time_plt_whl, height = 8.2, width = 17, units = "in")
+
+#--------------------------------
+#3次元トーラスの計算時間----
+
+#500点
+t3rs_lst4_times<-c(t3orus4_list3_1to30aggrs4$times, t3orus4_list3_31to100_wvr_aggrs3$times)
+
+t3rs450_times<-c(t3orus450_list1_1to30_wvr_aggrs1$times, t3orus450_list1_31to100_wvr_aggrs1$times)
+t3rs460_times<-c(t3orus460_list1_1to30_wvr_aggrs1$times, t3orus460_list1_31to100_wvr_aggrs1$times)
+t3rs470_times<-c(t3orus470_list1_1to30_wvr_aggrs1$times, t3orus470_list1_31to100_wvr_aggrs1$times)
+t3rs480_times<-c(t3orus480_list1_1to30_wvr_aggrs1$times, t3orus480_list1_31to100_wvr_aggrs1$times)
+t3rs490_times<-c(t3orus490_list1_1to30_wvr_aggrs1$times, t3orus490_list1_31to100_wvr_aggrs1$times)

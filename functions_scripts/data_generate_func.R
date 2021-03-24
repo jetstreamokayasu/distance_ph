@@ -78,6 +78,7 @@ xRect_unif<-function(n, sides = rep(1, length = 3), d = 3){
   
   attr(rect, "face_point")<-face_point
   attr(rect, "face")<-face
+  attr(rect, "face_area")<-face_area
   attr(rect, "prob")<-prob
   
   return(rect)
@@ -303,3 +304,15 @@ fill_ifmissing<-function(...){
   }
   
 }
+
+#---------------------------------------
+#変数が.GlobalEnvに存在するか判定-------
+isin_environment<-function(val){
+  
+  val_name<-substitute(val) %>% as.character()
+  
+  return(val_name %in% ls(envir = .GlobalEnv))
+  
+}
+
+

@@ -231,3 +231,6 @@ abline(0, 1)
 #フィルトレーション終了
 plot(rbind(c(0, sqrt(3)*2/3),c(0, sqrt(13)/2), c(0, 3)), pch=16, cex=2, xlim = c(0, 4), ylim = c(0, 4))
 abline(0, 1)
+
+#-------------------
+sqrt((4*cos(pi/6))^2+(4*sin(pi/6)+4)^2) %>% subtract(8, .)

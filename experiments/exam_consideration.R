@@ -114,7 +114,7 @@ par(cex.lab = 1.5, mgp = c(2.5, 1, 0), cex = 1)
 t3rs450_lst1_4_inst$plot_diag()
 dev.off()
 
-pdf("./pics/t3rs450_lst1_4_pd.pdf", width = 8, height = 8)
+pdf("./pics/t3rs450_lst1_4_pd2.pdf", width = 8, height = 8)
 plot_diag(t3rs450_lst1_4_inst$get_pd(), lim = c(0, 8.1))
 dev.off()
 
@@ -124,11 +124,18 @@ par(cex.lab = 1.5, mgp = c(2.5, 1, 0), cex = 1)
 t3rs450_lst1_4_inst$alt_distmat[[1]]$plot_diag()
 dev.off()
 
+pdf("./pics/t3rs450_lst1_4_pdH2_2.pdf", width = 8, height = 8)
 plot_diag(t3rs450_lst1_4_inst$alt_distmat[[1]]$get_pd(), lim = c(0, 8.1))
+dev.off()
+
 
 pdf("./pics/t3rs450_lst1_4_pdH3.pdf", width = 8, height = 8)
 par(cex.lab = 1.5, mgp = c(2.5, 1, 0), cex = 1)
 t3rs450_lst1_4_inst$alt_distmat[[2]]$plot_diag()
+dev.off()
+
+pdf("./pics/t3rs450_lst1_4_pdH3_2.pdf", width = 8, height = 8)
+plot_diag(t3rs450_lst1_4_inst$alt_distmat[[2]]$get_pd(), lim = c(0, 8.1))
 dev.off()
 
 #-----------------------------------------
@@ -158,6 +165,10 @@ par(cex.lab = 1.5, mgp = c(2.5, 1, 0), cex = 1)
 elp150_lst2_5_inst$plot_diag()
 dev.off()
 
+pdf("./pics/elp150_lst2_5_pd2.pdf", width = 8, height = 8)
+plot_diag(elp150_lst2_5_inst$get_pd(), lim = c(0, 2.0))
+dev.off()
+
 elp150_lst2_5_inst$create_changed_distmat(l_rate=0.45, eta=3.7)
 elp150_lst2_5_inst$alt_distmat[[1]]$calc_pd(maxdim = 2, maxscale = 3)
 
@@ -170,10 +181,42 @@ par(cex.lab = 1.5, mgp = c(2.5, 1, 0), cex = 1)
 elp150_lst2_5_inst$alt_distmat[[1]]$plot_diag()
 dev.off()
 
+pdf("./pics/elp150_lst2_5_altdist_pd2.pdf", width = 8, height = 8)
+plot_diag(elp150_lst2_5_inst$alt_distmat[[1]]$get_pd(), lim = c(0, 2.0))
+dev.off()
+
 elp150_lst2_5_inted<-TDAdataset$new(ellip150_list2to5_inted[[1]][[5]])
 elp150_lst2_5_inted$calc_pd(maxdim = 2, maxscale = 3)
 
 pdf("./pics/elp150_lst2_5_inted_pd.pdf", width = 8, height = 8)
 par(cex.lab = 1.5, mgp = c(2.5, 1, 0), cex = 1)
 elp150_lst2_5_inted$plot_diag()
+dev.off()
+
+#------------------
+#4次元直方体--------
+#250点
+
+#ctic手法で失敗
+cube_ctic_fail<-which((cube4d_250_lst1_1to20_aggr[[4]] < 0.5) | (cube4d_250_lst1_1to20_aggr[[4]] >= 1.5))
+
+#結合時刻早期化手法で成功
+cube_wvr_suc<-range_index(cube4d_250_lst1_1to20_wvr_aggr2[[4]], min = 0.5, max = 1.5)
+
+cube4d250_8_inst<-TDAdataset$new(cube4d_250_lst1[[8]])
+
+cube4d250_8_inst$create_changed_distmat(l_rate = 0.5, eta = 1.4)
+
+{
+  cube4d250_8_inst$calc_pd(maxdim = 4, maxscale = 2)
+  cube4d250_8_inst$alt_distmat[[1]]$calc_pd(maxdim = 4, maxscale = 2)
+}
+
+
+pdf("./pics/cube4d250_8_pd.pdf", width = 8, height = 8)
+plot_diag(cube4d250_8_inst$get_pd(), lim = c(0, 1.2))
+dev.off()
+
+pdf("./pics/cube4d250_8_altdist_pd.pdf", width = 8, height = 8)
+plot_diag(cube4d250_8_inst$alt_distmat[[1]]$get_pd(), lim = c(0, 1.2))
 dev.off()

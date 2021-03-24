@@ -105,3 +105,12 @@ e_surf<-ellip_surface(5, 1, 1)
 }
 
 ggsave("./pics/ellip_success_plt.pdf", plot = ellip_whole_plt)
+
+
+#--------------------
+#雑誌論文用ggplot-------------
+ellip_ctic_intr_wvr_plt2<-plot_success_rates(data = lst(ellip_rates_tbl, ellip_inted_rates_tbl, ellip_wvr_rates_tbl), sumry = lst(ellip_rates_smz, ellip_inted_rates_smz, ellip_wvr_rates_smz), aes_y = "dim2rate", 
+                                                 legend_labels = c("Futagami", "Yamada", "Proposed"), point_size = 3, axis_text_size = 25, axis_title_size = 30, legend_text_size = 25, legend_title_size = 30, 
+                                                 scale_label = seq(150, 200, by=10), xlab = "The number of points")
+
+ggsave("./pics/ellip_ctic_intr_wvr_plt2.pdf", plot = ellip_ctic_intr_wvr_plt2, height = 8.5, width = 14, units = "in")
