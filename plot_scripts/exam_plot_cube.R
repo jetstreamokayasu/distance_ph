@@ -1,17 +1,17 @@
 #4次元直方体の実験結果プロット
-cb4d_250_wvr_rate<-map_dbl(lst(cube4d_250_lst1_1to20_wvr_aggr2, cube4d_250_lst1_21to30_wvr_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/30
-cb4d_240_wvr_rate<-map_dbl(lst(cube4d_240_lst1_1to20_wvr_aggr, cube4d_240_lst1_21to30_wvr_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/30
-cb4d_230_wvr_rate<-map_dbl(lst(cube4d_230_lst1_1to20_wvr_aggr, cube4d_230_lst1_21to30_wvr_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/30
-cb4d_220_wvr_rate<-map_dbl(lst(cube4d_220_lst1_1to20_wvr_aggr, cube4d_220_lst1_21to30_wvr_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/30
-cb4d_210_wvr_rate<-map_dbl(lst(cube4d_210_lst1_1to20_wvr_aggr, cube4d_210_lst1_21to30_wvr_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/30
-cb4d_200_wvr_rate<-map_dbl(lst(cube4d_200_lst1_1to20_wvr_aggr, cube4d_200_lst1_21to30_wvr_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/30
+cb4d_250_wvr_rate<-map_dbl(lst(cube4d_250_lst1_1to20_wvr_aggr2, cube4d_250_lst1_21to30_wvr_aggr, cube4d_250_lst1_31to40_wvr_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/40
+cb4d_240_wvr_rate<-map_dbl(lst(cube4d_240_lst1_1to20_wvr_aggr, cube4d_240_lst1_21to30_wvr_aggr, cube4d_240_lst1_31to40_wvr_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/40
+cb4d_230_wvr_rate<-map_dbl(lst(cube4d_230_lst1_1to20_wvr_aggr, cube4d_230_lst1_21to30_wvr_aggr, cube4d_230_lst1_31to40_wvr_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/40
+cb4d_220_wvr_rate<-map_dbl(lst(cube4d_220_lst1_1to20_wvr_aggr, cube4d_220_lst1_21to30_wvr_aggr, cube4d_220_lst1_31to40_wvr_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/40
+cb4d_210_wvr_rate<-map_dbl(lst(cube4d_210_lst1_1to20_wvr_aggr, cube4d_210_lst1_21to30_wvr_aggr, cube4d_210_lst1_31to40_wvr_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/40
+cb4d_200_wvr_rate<-map_dbl(lst(cube4d_200_lst1_1to20_wvr_aggr, cube4d_200_lst1_21to30_wvr_aggr, cube4d_200_lst1_31to40_wvr_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/40
 
-cb4d_250_ctic_rate<-map_dbl(lst(cube4d_250_lst1_1to20_aggr, cube4d_250_lst1_21to30_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/30
-cb4d_240_ctic_rate<-map_dbl(lst(cube4d_240_lst1_1to20_aggr, cube4d_240_lst1_21to30_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/30
-cb4d_230_ctic_rate<-map_dbl(lst(cube4d_230_lst1_1to20_aggr, cube4d_230_lst1_21to30_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/30
-cb4d_220_ctic_rate<-map_dbl(lst(cube4d_220_lst1_1to20_aggr, cube4d_220_lst1_21to30_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/30
-cb4d_210_ctic_rate<-map_dbl(lst(cube4d_210_lst1_1to20_aggr, cube4d_210_lst1_21to30_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/30
-cb4d_200_ctic_rate<-map_dbl(lst(cube4d_200_lst1_1to20_aggr, cube4d_200_lst1_21to30_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/30
+cb4d_250_ctic_rate<-map_dbl(lst(cube4d_250_lst1_1to20_aggr, cube4d_250_lst1_21to30_aggr, cube4d_250_lst1_31to40_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/40
+cb4d_240_ctic_rate<-map_dbl(lst(cube4d_240_lst1_1to20_aggr, cube4d_240_lst1_21to30_aggr, cube4d_240_lst1_31to40_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/40
+cb4d_230_ctic_rate<-map_dbl(lst(cube4d_230_lst1_1to20_aggr, cube4d_230_lst1_21to30_aggr, cube4d_230_lst1_31to40_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/40
+cb4d_220_ctic_rate<-map_dbl(lst(cube4d_220_lst1_1to20_aggr, cube4d_220_lst1_21to30_aggr, cube4d_220_lst1_31to40_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/40
+cb4d_210_ctic_rate<-map_dbl(lst(cube4d_210_lst1_1to20_aggr, cube4d_210_lst1_21to30_aggr, cube4d_210_lst1_31to40_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/40
+cb4d_200_ctic_rate<-map_dbl(lst(cube4d_200_lst1_1to20_aggr, cube4d_200_lst1_21to30_aggr, cube4d_200_lst1_31to40_aggr), ~{cycle_number(., 4)[2]}) %>% sum()/40
 
 cb4d_wvr_rate<-tibble("250"=cb4d_250_wvr_rate,
                       "240"=cb4d_240_wvr_rate,
@@ -40,5 +40,5 @@ cb4d_rate_plt<-plot_success_rates(data = lst(cb4d_ctic_rate, cb4d_wvr_rate), aes
                    legend_labels = c("Futagami", "Proposed"), col_vals = c("black", "red"), axis_text_size = 25, 
                    axis_title_size = 30, legend_text_size = 25, legend_title_size = 30)
 
-ggsave("./pics/cb4d_rate_plt2.pdf", plot = cb4d_rate_plt, height = 8.5, width = 14, units = "in")
+ggsave("./pics/cb4d_rate_plt3.pdf", plot = cb4d_rate_plt, height = 8.5, width = 14, units = "in")
 

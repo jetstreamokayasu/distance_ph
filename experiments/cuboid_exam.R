@@ -183,12 +183,6 @@ clusterEvalQ(cl,{
   library(TDA)
 })
 
-clusterEvalQ(cl, {
-  source('~/R/ph_jikken2/new-okayasu/BootstrapHomology-mk1.R', encoding = 'UTF-8')
-  source(list.files(path = getwd(), recursive=T, pattern="smooth_landscape_func.R", full.names = T), encoding = 'UTF-8')
-  source(list.files(path = getwd(), recursive=T, pattern="auto_estimate_betti_functions.R", full.names = T), encoding = 'UTF-8')
-  source(list.files(path = getwd(), recursive=T, pattern="dist_ch_func.R", full.names = T), encoding = 'UTF-8')
-})
 
 stopCluster(cl)
 
@@ -467,25 +461,25 @@ cube4d_250_lst1_15_inst$subsamples[[1]]$calc_pd(maxdim = 4, maxscale = 2)#740sec
 # }
 
 #250点の4次元立方体。リスト1つ目の31~40セット使用
-{{#結合時刻早期化手法
+{#結合時刻早期化手法
   cube4d_250_lst1_31to40_wvr_time<-system.time(
     cube4d_250_lst1_31to40_wvr_aggr<-calc_distance_change_betti_paral(X = cube4d_250_lst1[31:40], maxdim = 4, maxscale = 2, samples = 5, ncl = 6, 
                                                                       ph_func = weighted_homology, l_rate=0.5, eta=1.4)
   )
   
-  save2RData(cube4d_250_lst1_31to40_wvr_time2)
-  save2RData(cube4d_250_lst1_31to40_wvr_aggr2)
+  save2RData(cube4d_250_lst1_31to40_wvr_time)
+  save2RData(cube4d_250_lst1_31to40_wvr_aggr)
 }
 
 {#ctic手法
   cube4d_250_lst1_31ot40_time<-system.time(
-    cube4d_250_lst1_31to40_aggr<-smooth_landscape_method_paral(X = cube4d_250_lst1[31:40], maxdim = 4, maxscale = 2, samples = 5, ncl = 6)
+    cube4d_250_lst1_31to40_aggr<-smooth_landscape_method_paral(X = cube4d_250_lst1[31:40], maxdim = 4, maxscale = 2, samples = 5, ncl = 4)
   )
   
-  save2RData(cube4d_250_lst1_31to40_time)
+  save2RData(cube4d_250_lst1_31ot40_time)
   save2RData(cube4d_250_lst1_31to40_aggr)
 }
-}
+
 #-------------------------
 #結合時刻変化手法で4次元直方体成功率実験----------
 #240点の4次元立方体。リスト1つ目の1~20セット使用
@@ -537,6 +531,27 @@ cube4d_240_lst1<-map(1:100, ~xRect_unif(n = 240, sides = c(rep(1, length = 4), 5
 }
 }
 
+#240点の4次元立方体。リスト1つ目の31~40セット使用
+{
+{#結合時刻早期化手法
+  cube4d_240_lst1_31to40_wvr_time<-system.time(
+    cube4d_240_lst1_31to40_wvr_aggr<-calc_distance_change_betti_paral(X = cube4d_240_lst1[31:40], maxdim = 4, maxscale = 2, samples = 5, ncl = 6, 
+                                                                      ph_func = weighted_homology, l_rate=0.5, eta=1.4)
+  )
+  
+  save2RData(cube4d_240_lst1_31to40_wvr_time)
+  save2RData(cube4d_240_lst1_31to40_wvr_aggr)
+}
+
+{#ctic手法
+  cube4d_240_lst1_31ot40_time<-system.time(
+    cube4d_240_lst1_31to40_aggr<-smooth_landscape_method_paral(X = cube4d_240_lst1[31:40], maxdim = 4, maxscale = 2, samples = 5, ncl = 6)
+  )
+  
+  save2RData(cube4d_240_lst1_31ot40_time)
+  save2RData(cube4d_240_lst1_31to40_aggr)
+}
+}
 #-------------------------
 #結合時刻変化手法で4次元直方体成功率実験----------
 #230点の4次元立方体。リスト1つ目の1~20セット使用
@@ -585,6 +600,28 @@ cube4d_230_lst1<-map(1:100, ~xRect_unif(n = 230, sides = c(rep(1, length = 4), 5
     
     save2RData(cube4d_230_lst1_21to30_time)
     save2RData(cube4d_230_lst1_21to30_aggr)
+  }
+}
+
+#230点の4次元立方体。リスト1つ目の31~40セット使用
+{
+  {#結合時刻早期化手法
+    cube4d_230_lst1_31to40_wvr_time<-system.time(
+      cube4d_230_lst1_31to40_wvr_aggr<-calc_distance_change_betti_paral(X = cube4d_230_lst1[31:40], maxdim = 4, maxscale = 2, samples = 5, ncl = 6, 
+                                                                        ph_func = weighted_homology, l_rate=0.5, eta=1.4)
+    )
+    
+    save2RData(cube4d_230_lst1_31to40_wvr_time)
+    save2RData(cube4d_230_lst1_31to40_wvr_aggr)
+  }
+  
+  {#ctic手法
+    cube4d_230_lst1_31ot40_time<-system.time(
+      cube4d_230_lst1_31to40_aggr<-smooth_landscape_method_paral(X = cube4d_230_lst1[31:40], maxdim = 4, maxscale = 2, samples = 5, ncl = 6)
+    )
+    
+    save2RData(cube4d_230_lst1_31ot40_time)
+    save2RData(cube4d_230_lst1_31to40_aggr)
   }
 }
 
@@ -641,6 +678,28 @@ cube4d_220_lst1<-map(1:100, ~xRect_unif(n = 220, sides = c(rep(1, length = 4), 5
   }
 }
 
+#220点の4次元立方体。リスト1つ目の31~40セット使用
+{
+  {#結合時刻早期化手法
+    cube4d_220_lst1_31to40_wvr_time<-system.time(
+      cube4d_220_lst1_31to40_wvr_aggr<-calc_distance_change_betti_paral(X = cube4d_220_lst1[31:40], maxdim = 4, maxscale = 2, samples = 5, ncl = 6, 
+                                                                        ph_func = weighted_homology, l_rate=0.5, eta=1.4)
+    )
+    
+    save2RData(cube4d_220_lst1_31to40_wvr_time)
+    save2RData(cube4d_220_lst1_31to40_wvr_aggr)
+  }
+  
+  {#ctic手法
+    cube4d_220_lst1_31ot40_time<-system.time(
+      cube4d_220_lst1_31to40_aggr<-smooth_landscape_method_paral(X = cube4d_220_lst1[31:40], maxdim = 4, maxscale = 2, samples = 5, ncl = 6)
+    )
+    
+    save2RData(cube4d_220_lst1_31ot40_time)
+    save2RData(cube4d_220_lst1_31to40_aggr)
+  }
+}
+
 #-------------------------
 #結合時刻変化手法で4次元直方体成功率実験----------
 #210点の4次元立方体。リスト1つ目の1~20セット使用
@@ -691,6 +750,28 @@ cube4d_210_lst1<-map(1:100, ~xRect_unif(n = 210, sides = c(rep(1, length = 4), 5
     
     save2RData(cube4d_210_lst1_21to30_time)
     save2RData(cube4d_210_lst1_21to30_aggr)
+  }
+}
+
+#210点の4次元立方体。リスト1つ目の31~40セット使用
+{
+  {#結合時刻早期化手法
+    cube4d_210_lst1_31to40_wvr_time<-system.time(
+      cube4d_210_lst1_31to40_wvr_aggr<-calc_distance_change_betti_paral(X = cube4d_210_lst1[31:40], maxdim = 4, maxscale = 2, samples = 5, ncl = 6, 
+                                                                        ph_func = weighted_homology, l_rate=0.5, eta=1.4)
+    )
+    
+    save2RData(cube4d_210_lst1_31to40_wvr_time)
+    save2RData(cube4d_210_lst1_31to40_wvr_aggr)
+  }
+  
+  {#ctic手法
+    cube4d_210_lst1_31ot40_time<-system.time(
+      cube4d_210_lst1_31to40_aggr<-smooth_landscape_method_paral(X = cube4d_210_lst1[31:40], maxdim = 4, maxscale = 2, samples = 5, ncl = 6)
+    )
+    
+    save2RData(cube4d_210_lst1_31ot40_time)
+    save2RData(cube4d_210_lst1_31to40_aggr)
   }
 }
 
@@ -757,4 +838,27 @@ cube4d_200_lst1<-map(1:100, ~xRect_unif(n = 200, sides = c(rep(1, length = 4), 5
   
   save2RData(cube4d_200_lst1_21to30_wvr_time2)
   save2RData(cube4d_200_lst1_21to30_wvr_aggr2)
+}
+
+
+#200点の4次元立方体。リスト1つ目の31~40セット使用
+{
+  {#結合時刻早期化手法
+    cube4d_200_lst1_31to40_wvr_time<-system.time(
+      cube4d_200_lst1_31to40_wvr_aggr<-calc_distance_change_betti_paral(X = cube4d_200_lst1[31:40], maxdim = 4, maxscale = 2, samples = 5, ncl = 6, 
+                                                                        ph_func = weighted_homology, l_rate=0.5, eta=1.4)
+    )
+    
+    save2RData(cube4d_210_lst1_31to40_wvr_time)
+    save2RData(cube4d_210_lst1_31to40_wvr_aggr)
+  }
+  
+  {#ctic手法
+    cube4d_200_lst1_31ot40_time<-system.time(
+      cube4d_200_lst1_31to40_aggr<-smooth_landscape_method_paral(X = cube4d_200_lst1[31:40], maxdim = 4, maxscale = 2, samples = 5, ncl = 6)
+    )
+    
+    save2RData(cube4d_200_lst1_31ot40_time)
+    save2RData(cube4d_200_lst1_31to40_aggr)
+  }
 }

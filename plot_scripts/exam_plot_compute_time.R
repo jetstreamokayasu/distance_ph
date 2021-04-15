@@ -217,15 +217,15 @@ t2_ctic_intrp_cmpt_wvr_plt + geom_bar(data = t2_inted_time_smz, mapping = aes(x 
 
 #補間後の平均点の棒グラフ
 inted_p_bar<-ggplot()+geom_bar(data = t2_inted_time_smz, mapping = aes(x = n_points, y = total_mean*y_scaler/2), 
-                               stat = "identity", fill = "orange", alpha = 0.1, width = 5, col = "orange") + 
-  geom_text(data = t2_inted_time_smz, mapping = aes(x = n_points, label = total_mean, y = total_mean*y_scaler/2 + 30), position = position_dodge(0.9), vjust = 0)
-#inted_p_bar
+                               stat = "identity", fill = "royalblue1", alpha = 0.1, width = 5, col = "royalblue1") #+ 
+  #geom_text(data = t2_inted_time_smz, mapping = aes(x = n_points, label = total_mean, y = total_mean*y_scaler/2 + 30), position = position_dodge(0.9), vjust = 0, size = 8)
+inted_p_bar
 #ctic手法の計算時間
 t2_ctic_time_plt_ave2<-inted_p_bar + geom_line(data = t2_ctic_time_smz, mapping = aes(x = n_points, y = time_mean))
-t2_ctic_time_plt_sd2<-t2_ctic_time_plt_ave2 + geom_ribbon(data = t2_ctic_time_smz, aes(x = n_points, ymin = time_mean - time_sd, ymax = time_mean + time_sd), alpha = 0.3)
+t2_ctic_time_plt_sd2<-t2_ctic_time_plt_ave2 + geom_ribbon(data = t2_ctic_time_smz, aes(x = n_points, ymin = time_mean - time_sd, ymax = time_mean + time_sd), alpha = 0.2)
 #t2_ctic_time_plt_sd2
 {
-  t2_ctic_time_plt_all2<-t2_ctic_time_plt_sd2 + geom_point(data = t2_ctic_time, aes(x = n_points, y = time, color = "Futagami"), size = 2) +
+  t2_ctic_time_plt_all2<-t2_ctic_time_plt_sd2 + geom_point(data = t2_ctic_time, aes(x = n_points, y = time, color = "Futagami"), size = 4) +
     scale_color_manual(breaks = c("Futagami", "Yamada", "Proposed"), values = c("black","royalblue1", "red"), guide = "legend", name = "method", 
                        labels = c("Futagami", "Yamada", "Proposed"))
 }
@@ -242,19 +242,19 @@ t2_ctic_time_plt_sd2<-t2_ctic_time_plt_ave2 + geom_ribbon(data = t2_ctic_time_sm
 
 #補間手法の計算時間
 t2_inted_time_plt_ave2<-t2_ctic_time_plt_all2 + geom_line(data = t2_inted_time_smz, aes(x = n_points, y = time_mean), color = "royalblue1")
-t2_inted_time_plt_sd2<-t2_inted_time_plt_ave2 + geom_ribbon(data = t2_inted_time_smz, aes(x = n_points, ymin = time_mean - time_sd, ymax = time_mean + time_sd), fill = "royalblue1", alpha = 0.3)
-t2_inted_time_plt_all2<-t2_inted_time_plt_sd2 + geom_point(data = t2_inted_time, aes(x = n_points, y = time, color = "Yamada"), size = 2)
+t2_inted_time_plt_sd2<-t2_inted_time_plt_ave2 + geom_ribbon(data = t2_inted_time_smz, aes(x = n_points, ymin = time_mean - time_sd, ymax = time_mean + time_sd), fill = "royalblue1", alpha = 0.2)
+t2_inted_time_plt_all2<-t2_inted_time_plt_sd2 + geom_point(data = t2_inted_time, aes(x = n_points, y = time, color = "Yamada"), size = 4)
 
 #結合時刻早期化手法の計算時間
 t2_wvr_time_plt_ave2<-t2_inted_time_plt_all2 + geom_line(data = t2_wvr_time_smz, aes(x = n_points, y = time_mean), color = "red")
-t2_wvr_time_plt_sd2<-t2_wvr_time_plt_ave2 + geom_ribbon(data = t2_wvr_time_smz, aes(x = n_points, ymin = time_mean - time_sd, ymax = time_mean + time_sd), fill = "red", alpha = 0.3)
-t2_wvr_time_plt_all2<-t2_wvr_time_plt_sd2 + geom_point(data = t2_wvr_time, aes(x = n_points, y = time, colour = "Proposed"), size = 2)
+t2_wvr_time_plt_sd2<-t2_wvr_time_plt_ave2 + geom_ribbon(data = t2_wvr_time_smz, aes(x = n_points, ymin = time_mean - time_sd, ymax = time_mean + time_sd), fill = "red", alpha = 0.2)
+t2_wvr_time_plt_all2<-t2_wvr_time_plt_sd2 + geom_point(data = t2_wvr_time, aes(x = n_points, y = time, colour = "Proposed"), size = 4)
 
 #右縦軸を作成
 t2_ctic_intr_wvr_cmpt_pbar<-t2_wvr_time_plt_all2 + scale_y_continuous(limits = c(0, 5500), sec.axis = sec_axis(trans = ~ (./y_scaler)*2, name = "The mean of the total of \n original and added points"))
 
-#t2_ctic_intr_wvr_cmpt_pbar
-ggsave("./pics/t2_ctic_intr_wvr_cmpt_pbar2.pdf", plot = t2_ctic_intr_wvr_cmpt_pbar, height = 8.5, width = 14, units = "in")
+t2_ctic_intr_wvr_cmpt_pbar
+ggsave("./pics/t2_ctic_intr_wvr_cmpt_pbar5.pdf", plot = t2_ctic_intr_wvr_cmpt_pbar, height = 8.5, width = 14, units = "in")
 
 #ggplot()+geom_ribbon(data = t2_inted_time_smz, aes(x = n_points, ymin = time_mean - time_sd, ymax = time_mean + time_sd), fill = "royalblue1", alpha = 0.1)
 
@@ -372,8 +372,8 @@ y_scaler2<-(y3_lim[2]-y3_lim[1])/(y2_lim[2]-y2_lim[1])
 
 #補間後の平均点の棒グラフ
 ellip_inted_bar<-ggplot()+geom_bar(data = ellip_intrp_time_smz, mapping = aes(x = n_points, y = total_mean*y_scaler2/2), 
-                               stat = "identity", fill = "orange", alpha = 0.1, width = 5, col = "orange") + 
-  geom_text(data = ellip_intrp_time_smz, mapping = aes(x = n_points, label = total_mean, y = total_mean*y_scaler2/2 + 10), position = position_dodge(0.9), vjust = 0)
+                               stat = "identity", fill = "royalblue1", alpha = 0.1, width = 5, col = "royalblue1") #+ 
+  #geom_text(data = ellip_intrp_time_smz, mapping = aes(x = n_points, label = total_mean, y = total_mean*y_scaler2/2 + 10), position = position_dodge(0.9), vjust = 0, size = 8)
 
 ellip_inted_bar
 # ellip_cmpt_time_plt<-plot_success_rates(data = lst(ellip_ctic_time, ellip_intrp_time, ellip_wvr_time), sumry = lst(ellip_ctic_time_smz, ellip_intrp_time_smz, ellip_wvr_time_smz), 
@@ -384,10 +384,10 @@ ellip_inted_bar
 
 #ggplotによるCTIC2019手法計算時間のプロット
 ellip_ctic_time_plt_ave<-ellip_inted_bar + geom_line(data = ellip_ctic_time_smz, mapping = aes(x = n_points, y = time_mean))
-ellip_ctic_time_plt_sd<-ellip_ctic_time_plt_ave + geom_ribbon(data = ellip_ctic_time_smz, mapping = aes(x = n_points, ymin = time_mean - time_sd, ymax = time_mean + time_sd), alpha = 0.3)
+ellip_ctic_time_plt_sd<-ellip_ctic_time_plt_ave + geom_ribbon(data = ellip_ctic_time_smz, mapping = aes(x = n_points, ymin = time_mean - time_sd, ymax = time_mean + time_sd), alpha = 0.2)
 ellip_ctic_time_plt_sd
 {
-  ellip_ctic_time_plt_whole<-ellip_ctic_time_plt_sd + geom_point(data = ellip_ctic_time, aes(x = n_points, y = time, color = "futagami"), size = 2) +
+  ellip_ctic_time_plt_whole<-ellip_ctic_time_plt_sd + geom_point(data = ellip_ctic_time, aes(x = n_points, y = time, color = "futagami"), size = 4) +
     scale_color_manual(breaks = c("futagami", "yamada", "proposed"), values = c("black","royalblue1", "red"), guide = "legend", name = "method", 
                        labels = c("Futagami", "Yamada", "Proposed"))
 }
@@ -408,21 +408,22 @@ ellip_ctic_time_plt_whole2
 # ellip_intrp_time_ttlp1<-ellip_intrp_time_ttlp_sd+geom_point(data = ellip_intrp_time, mapping = aes(x = total_points, y = time, colour = "yamada"), size = 2)
 
 ellip_intrp_time_ttlp_mean<-ellip_ctic_time_plt_whole2+geom_line(data = ellip_intrp_time_smz, mapping = aes(x = n_points, y = time_mean), color = "royalblue1")
-ellip_intrp_time_ttlp_sd<-ellip_intrp_time_ttlp_mean + geom_ribbon(data = ellip_intrp_time_smz, mapping = aes(x = n_points, ymin = time_mean-time_sd, ymax = time_mean+time_sd), fill = "royalblue1", alpha = 0.3)
-ellip_intrp_time_ttlp1<-ellip_intrp_time_ttlp_sd+geom_point(data = ellip_intrp_time, mapping = aes(x = n_points, y = time, colour = "yamada"), size = 2)
-ellip_intrp_time_ttlp1
+ellip_intrp_time_ttlp_sd<-ellip_intrp_time_ttlp_mean + geom_ribbon(data = ellip_intrp_time_smz, mapping = aes(x = n_points, ymin = time_mean-time_sd, ymax = time_mean+time_sd), fill = "royalblue1", alpha = 0.2)
+ellip_intrp_time_ttlp1<-ellip_intrp_time_ttlp_sd+geom_point(data = ellip_intrp_time, mapping = aes(x = n_points, y = time, colour = "yamada"), size = 4)
+#ellip_intrp_time_ttlp1
 
 #ggplotによるexp距離変化手法計算時間のプロット
 ellip_wvr_time_plt_ave<-ellip_intrp_time_ttlp1 + geom_line(data = ellip_wvr_time_smz, aes(x = n_points, y = time_mean), color = "red")
-ellip_wvr_time_plt_sd<-ellip_wvr_time_plt_ave + geom_ribbon(data = ellip_wvr_time_smz, aes(x = n_points, ymin = time_mean - time_sd, ymax = time_mean + time_sd), fill = "red", alpha = 0.1)
-ellip_wvr_time_plt_whl<-ellip_wvr_time_plt_sd + geom_point(data = ellip_wvr_time, aes(x = n_points, y = time, colour = "proposed"), size = 2)
+ellip_wvr_time_plt_sd<-ellip_wvr_time_plt_ave + geom_ribbon(data = ellip_wvr_time_smz, aes(x = n_points, ymin = time_mean - time_sd, ymax = time_mean + time_sd), fill = "red", alpha = 0.2)
+ellip_wvr_time_plt_whl<-ellip_wvr_time_plt_sd + geom_point(data = ellip_wvr_time, aes(x = n_points, y = time, colour = "proposed"), size = 4)
 
-ellip_wvr_time_plt_whl
+#ellip_wvr_time_plt_whl
 
 #右縦軸を作成
 ellip_ctic_intr_wvr_cmpt_pbar<-ellip_wvr_time_plt_whl + scale_y_continuous(limits = y3_lim, sec.axis = sec_axis(trans = ~ (./y_scaler2)*2, name = "The mean of the total of \n original and added points"))
+ellip_ctic_intr_wvr_cmpt_pbar
 
-ggsave("./pics/ellip_compute_time2.pdf", plot = ellip_ctic_intr_wvr_cmpt_pbar, height = 8.5, width = 14, units = "in")
+ggsave("./pics/ellip_compute_time6.pdf", plot = ellip_ctic_intr_wvr_cmpt_pbar, height = 8.5, width = 14, units = "in")
 
 #--------------------------------
 #3次元トーラスの計算時間----
